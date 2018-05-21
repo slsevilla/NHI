@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1526686367814.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "327637591",
+    "id" : "BABF9F92",
+    "lastKnownWriteTime" : 1526856057,
+    "last_content_update" : 1526856057559,
+    "path" : "C:/Program Files/Git/Coding/ldz/ui.R",
+    "project_path" : "ui.R",
+    "properties" : {
+        "cursorPosition" : "116,8",
+        "scrollLine" : "94"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
