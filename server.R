@@ -3,13 +3,12 @@ library(car)
 library(shiny)
 library("RColorBrewer")
 library(leaflet)
+library(knitr)
 
 #######################################################################################
 ###                                      NOTES                                      ###
 #######################################################################################
-##This code is written to take in the generated pCOA weighted unifrac values and generate
-##a pCOA plot using the top three values. It will also allow users to upload a labels 
-##document, which will allow for additional visualization of categorical labels.
+##
 
 #######################################################################################
 ###                                      Code                                      ###
@@ -17,35 +16,89 @@ library(leaflet)
 
 function(input,output, session){
  
- ########################################################################
- #############################Input Files Page###########################
- 
- #Takes the input file of filled with any registration data
- data_complete <- reactive({
-  file <- input$filedir
-  if (is.null(filedir))
-   return(NULL)
+ ###################################################################################################################
+ ####################################################### Page 1 ####################################################
+  #Takes the input file saving it to data_expect matrix
+  data_expect <- reactive({
+    admin1 <- input$admin.pre.file1
+    if (is.null(admin1)) return(NULL)
+    read.csv(fill=TRUE,file=input$admin.pre.file1$datapath, header=TRUE, colClasses = "factor")
+  })  
+  #Create File Summary information
+  output$data.expect <- renderTable({
+    if(is.null(data_expect())) return ()
+    input$admin.pre.file1
+  })
+  #Display output for user
+  output$pre.confirm <- renderUI({
+    if(is.null(data_expect())) return()
+    tableOutput("data.expect")
+  })
   
-  data_table <- read.table(fill=TRUE, file=input$filedir$datapath)
-  return(data_table)
- })
- 
- #Display the summary for the PCOA and Lables files provided by the user
- #Each file becomes separate row of summary information to view
- output$filedir <- renderTable({
-  if(is.null(data_complete())) return ()
-  input$filedir
- })
- output$table <- renderUI({
-  if(is.null(data_complete())) return()
-  else
-   tabsetPanel(
-    tabPanel("File Input Summary", tableOutput("filedir"))
-   )
- })
- 
- #Displays a confirmation message to user to continue with tasks
- observeEvent(input$goButton,{
-  output$text <- renderText({
-   "Directory has been uploaded - Please continue with tasks"})  
- })
+  #Data Confirmations 
+  ########################################################
+  
+  #Displays a confirmation message for the door signs
+  observeEvent(input$door,{
+    output$confirm.door <- renderText({
+      "Upload Complete - Download Door signs"})  
+  })
+  
+  #Displays a confirmation message for the door signs
+  observeEvent(input$studlabels,{
+    output$confirm.studlabels <- renderText({
+      "Upload Complete - Download Student Labels"})  
+  })
+  
+  #Displays a confirmation message for the door signs
+  observeEvent(input$roomassign,{
+    output$confirm.roomassign <- renderText({
+      "Upload Complete - Download Rooming Assignment Sheets"})  
+  })
+  #Displays a confirmation message for the registration  signs
+  observeEvent(input$missingforms,{
+    output$confirm.missingforms <- renderText({
+      "Upload Complete - Download Missing Forms List"})  
+  })
+  #Displays a confirmation message for the registration  signs
+  observeEvent(input$balancesheet,{
+    output$confirm.balancesheet <- renderText({
+      "Upload Complete - Download Students with Balance List"})  
+  })
+  
+  ###Create sub-tables
+  ########################################################
+  student_owes <- reactive({
+    if(is.null(input$admin.pre.file1)) return()
+    student_owes <- subset(data_expect(), !BALANCE=='$ -')
+  })
+  student_forms <- reactive({
+    if(is.null(input$admin.pre.file1)) return()
+    student_forms <- subset(data_expect(), FIN.FORM=='No' | MED.FORM=='No' )
+  })
+  student_door <- reactive({
+    if(is.null(input$admin.pre.file1)) return()
+    student_door <- data_expect()[c("FNAME", "MNAME", "LNAME", "HS", "CITY", "ST")]
+  })
+  
+  #####File Downloads
+  ########################################################
+  output$download_balancesheet <- downloadHandler(
+    filename = function() {"StudentswithBalance.csv"},
+    content = function(file) {
+      write.csv(student_owes(), file, row.names = FALSE)
+    }
+  )
+  output$download_missingforms <- downloadHandler(
+    filename = function() {"StudentsMissingForms.csv"},
+    content = function(file) {
+      write.csv(student_forms(), file, row.names = FALSE)
+    }
+  )
+  output$download_door <- downloadHandler(
+    filename = function() {"DoorSigns_MM.csv"},
+    content = function(file) {
+      write.csv(student_door(), file, row.names = FALSE)
+    }
+  )
+}

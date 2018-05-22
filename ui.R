@@ -4,9 +4,14 @@ library(shiny)
 library(shinyjs)
 library(shinydashboard)
 library("RColorBrewer")
+library(rJava)
+library(ReporteRsjars)
+library(ReporteRs)
 #######################################################################################
 ###                                      NOTES                                      ###
 #######################################################################################
+##to run RJava make sure that the home is set correctly using:
+## Sys.setenv(JAVA_HOME='C:\\Program Files\\Java\\jre1.8.0_171')
 
 
 #######################################################################################
@@ -28,7 +33,8 @@ header <- dashboardHeader(title = "Lorenzo de Zavala Youth Legislative Session")
 ##Create the sidebard 
 sidebar <- dashboardSidebar(
  sidebarMenu(
-  menuItem("Administrative", tabName="admin"),
+  menuItem("Day 0 Administrative Tasks", tabName="admin_pre"),
+  menuItem("Day1-7 Administrative Tasks", tabName="admin_post"),
   menuItem("Points", tabName="points"),
   menuItem("Awards", tabName="awards")
   )
@@ -37,123 +43,181 @@ sidebar <- dashboardSidebar(
 #######################################################################################
 ########################## MainBody Information - Page 1###############################
 
-##Create rows of data
-###File upload
-fcol1.1 <- fluidRow(
+##Create rows for file input - Pre-Registration
+###File upload of excepted demographic
+admin.pre.reg <- fluidRow(
   column(12,
-         fileInput("filedir","Upload the Student Demographic Database"),
-         fileInput("filereg", "Upload the Completed Registration Database"),
-         actionButton("data.dem", "Submit Demographic File (Required)"),
-         actionButton("data.reg", "Submit Registration File (Optional)")
-         )
+      fileInput("admin.pre.file1","Upload the Expected Student Demographic Database")#,
+      )
   )
-##Confirmation of accepted database
-fcol1.2 <- fluidRow(
+admin.pre.confirm <- fluidRow(
+  column(8,
+         uiOutput("pre.confirm"))
+  )
+
+##Ouputs selection for user - all pre-registration tasks
+admin.pre.out.1 <- fluidRow(
+  column(6, actionButton("door", "Create Student Door Signs")),
+  downloadButton('download_door', 'Download'),
+  hidden(verbatimTextOutput("confirm.door"))
+)
+admin.pre.out.2 <- fluidRow (
+  column(6, actionButton("studlabels", "Create Student Labels")),
+  downloadButton('download_studlabels', 'Download'),
+  hidden(verbatimTextOutput("confirm.studlabels"))
+)
+admin.pre.out.3 <- fluidRow(
+  column(6, actionButton("balancesheet", "Generate Students with Balance forms")),
+  downloadButton('download_balancesheet', 'Download'),
+  hidden(verbatimTextOutput("confirm.balancesheet"))
+)
+admin.pre.out.4 <- fluidRow(
+  column(6, actionButton("missingforms", "Generate Students with Missing forms")),
+  downloadButton('download_missingforms', 'Download'),
+  hidden(verbatimTextOutput("confirm.missingforms"))
+)
+admin.pre.out.5 <- fluidRow(
+  column(6, actionButton("roomassign", "Create Rooming Assignment Lists")),
+  downloadButton('download_roomassign', 'Download'),
+  hidden(verbatimTextOutput("confirm.roomassign"))
+)
+###Combine all previous rows together
+admin.pre.out.combo <- fluidRow(
+  column(6,
+         box(title="Door Signs", width=NULL, status="primary", collapsible = TRUE,
+             solidHeader = TRUE, admin.pre.out.1),
+         box(title = "Student Labels", width=NULL, status="primary", collapsible = TRUE,
+             solidHeader = TRUE, admin.pre.out.2)
+  ),
+  column(6,
+         box(title="Students with Balance", width=NULL, status="primary", collapsible = TRUE,
+             solidHeader = TRUE, admin.pre.out.3),
+         box(title="Students without Forms", width=NULL, status="primary", collapsible = TRUE,
+             solidHeader = TRUE, admin.pre.out.4),
+         box(title = "Rooming Assignments", width=NULL, status="primary", collapsible = TRUE,
+             solidHeader = TRUE, admin.pre.out.5)
+  )
+)
+
+##Create boxed for Page 1
+###Generate Boxes for text submission, verification, and user options
+box.pre.1 <- box(title = "Upload Pre-Registration Database File", width=4, status="primary", 
+              solidHeader = TRUE, admin.pre.reg)
+box.pre.2 <- box(title = "Pre-Registration Database Confirmation", width=8, status="primary", 
+              solidHeader = TRUE, admin.pre.confirm)
+box.pre.3 <- box(title = "Ouput Files", width=12, status="primary", 
+              solidHeader = TRUE, admin.pre.out.combo)
+#######################################################################################
+########################## MainBody Information - Page 1###############################
+
+##Create rows for file input - Post-Registration
+##File upload of registered students demographic
+admin.post.reg <- fluidRow(
   column(12,
-         hidden(
-           verbatimTextOutput("text"))
+         fileInput("admin.post.file1", "Upload the Completed Registration Database"),
+         actionButton("data.post.reg", "Submit Completed Registration File"),
+         hidden(verbatimTextOutput("text2"))
   )
 )
-##Ouputs selection for user
-fcol1.3 <- fluidRow(
-  column(6, actionButton("doorsign", "Create Student Door Signs"))
+admin.post.confirm <- fluidRow(
+  column(12,
+         uiOutput("post.confirm"))
 )
-fcol1.4 <- fluidRow (
-  column(6, actionButton("studlabels", "Create Student Labels"))
+
+##Ouputs selection for user - Post Registration
+admin.post.1 <- fluidRow(
+  column(6, actionButton("roomingassign", "Create Rooming Assignment Lists"))
 )
-fcol1.5 <- fluidRow(
-  column(6, actionButton("regforms", "Generate Registration, and missing forms documents"))
-)
-fcol1.6 <- fluidRow(
-  column(6, actionButton("roomingassign", "Create Rooming Assginment Lists"))
-)
-fcol1.7 <- fluidRow(
+admin.post.2 <- fluidRow(
   column(6, actionButton("excurs", "Create Excursion Lists"))
 )
-fcol1.8 <- fluidRow(
+admin.post.3 <- fluidRow(
   column(6, actionButton("regcomp", "Create Attending Student Database & Non-attendance database"))
 )
 ###Combine all previous rows together
-fcol1combined <- fluidRow(
-  column(6,
-         box(title="Door Signs", width=NULL, status="primary", collapsible = TRUE,
-             solidHeader = TRUE, fcol1.4),
-         box(title = "Student Labels", width=NULL, status="primary", collapsible = TRUE,
-             solidHeader = TRUE, fcol1.4),
-         box(title = "Registration Database & Forms", width=NULL, status="primary", collapsible = TRUE,
-             solidHeader = TRUE, fcol1.5)
-  ),
+admin.post.out.combo <- fluidRow(
   column(6,
          box(title="Rooming Assignments", width=NULL, status="primary", collapsible = TRUE,
-             solidHeader = TRUE, fcol1.6),
+             solidHeader = TRUE, admin.post.1),
          box(title="Excursion Lists", width=NULL, status="primary", collapsible = TRUE,
-             solidHeader = TRUE, fcol1.7),
-         box(title="Attending/Abasent Student Demographics", width=NULL, status="primary", 
-             collapsible=TRUE, solidHeader = TRUE, fcol1.8)
+             solidHeader = TRUE, admin.post.2)
+  ),
+  column(6,
+         box(title="Attending/Absent Student Demographic Databases", width=NULL, status="primary", 
+             collapsible=TRUE, solidHeader = TRUE, admin.post.3)
   )
 )
 
 ##Create boxed for Page 1
 ###Generate Boxes for text submission, verification, and user options
-box1.1 <- box(title = "Upload Database File", width=4, status="primary", 
-              solidHeader = TRUE, fcol1.1)
-box1.2 <- box(title = "Database Confirmation", width=8, status="primary", 
-              solidHeader = TRUE, fcol1.2)
-box1.3 <- box(title = "Ouput Files", width=8, status="primary", 
-              solidHeader = TRUE, fcol1combined)
+
+box.post.1 <- box(title = "Upload Post Registration Database File", width=8, status="primary", 
+                  solidHeader = TRUE, admin.post.reg)
+box.post.2 <- box(title = "Pre-Registration Database Confirmation", width=4, status="primary", 
+                  solidHeader = TRUE, admin.post.confirm)
+box.post.3 <- box(title = "Ouput Files", width=12, status="primary", 
+                  solidHeader = TRUE, admin.post.out.combo)
 
 #######################################################################################
-########################## MainBody Information - Page 2###############################
+########################## MainBody Information - Page 3###############################
 ##Create rows of data
-###File upload
-fcol1.1 <- fluidRow(
-  column(12,
-         fileInput("filedir","Upload the Student Demographic Database"),
-         actionButton("goButton", "Submit Demographic File")
-  )
+###Create point sheets for the General Assembly
+fcol2.1 <- fluidRow(
+  column(6,
+         fileInput("file2.1.1","Upload the Attending Student Demographic Database"),
+         actionButton("points.genass", "Submit Attending Student Demographic File")
+  ),
+  column(6,
+         hidden(verbatimTextOutput("text2"))
+         # output("download file for students - general assembly")
+        )
 )
-○ 1
-§ Input
-□ Excel 
-□ sheet of active students
-§ Output
-□ Excel
-□ Sheets for student by last name for general assembly point keeping
-○ 2 
-□ Input
-□ Excel
-□ Student demographic database
-□ Student Positions database
-□ Output
-□ Excel
-□ Student position + demographic database
-○ 3
-§ Input
-□ Excel
-□ Student position + demographic database
-§ Output
-□ Excel
-□ Student sheets broken up my position and listed categories of specific points
-○ 4
-§ Input
-□ 1
-® Excel
-® Student position + demographic database
-□ 2
-® Folder (Excel files)
-® Student points
-§ Output
-□ Excel 
-Student final points database
-
+###Create a Student Demographics + Position Database
+fcol2.2 <- fluidRow(
+  column(6,
+         fileInput("file2.2.1","Upload the Attending Student Demographic Database"),
+         fileInput("file2.2.2", "Upload the Student Position Database"),
+         actionButton("data.demo.posi", "Submit Attending Student + Position Files")
+  ),
+  column(6,
+         hidden(verbatimTextOutput("text2"))
+         #output("download Student Demographic + Position Database")
+         )
+)
+###Create point sheets by position
+fcol2.3 <- fluidRow(
+  column(6,
+         fileInput("file2.3.1","Upload the Student Demographic + Position Database"),
+         actionButton("points.pos", "Submit Attending Student + Position Files")
+  ),
+  column(6,
+         hidden(verbatimTextOutput("text2"))
+        # output("download Student by position point sheets")
+         )
+)
+###Update database with daily points sheets
+fcol2.4 <- fluidRow(
+  column(6,
+         fileInput("file2.4.1","Upload the Student Demographic + Position Database"),
+        # folderloc("folder2.4", "Location of folder with points"),
+         actionButton("points.tally", "Submit Points files to be tallied")
+  ),
+  column(6,
+         hidden(verbatimTextOutput("text2"))
+         #output("download final points database")
+         )
+)
 
 ##Create boxed for Page 1
 ###Generate Boxes for text submission, verification, and user options
-box1.1 <- box(title = "Upload Database File", width=4, status="primary", solidHeader = TRUE, fcol1.1)
-box1.2 <- box(title = "Database Confirmation", width=8, status="primary", solidHeader = TRUE, fcol1.2)
-box1.3 <- box(title = "Ouput Files", width=8, status="primary", solidHeader = TRUE, fcol1combined)
-
-
+box2.1 <- box(title = "General Assembly Points", width=12, 
+              status="primary", solidHeader = TRUE, fcol2.1)
+box2.2 <- box(title = "Student Demographic and Position Database", width=12, 
+              status="primary", solidHeader = TRUE, fcol2.2)
+box2.3 <- box(title = "Daily Points", width=12, 
+              status="primary", solidHeader = TRUE, fcol2.3)
+box2.4 <- box(title = "Final Points Database", width=12, 
+              status="primary", solidHeader = TRUE, fcol2.4)
 
 #######################################################################################
 ########################## Output Main Body Information ###############################
@@ -161,10 +225,15 @@ box1.3 <- box(title = "Ouput Files", width=8, status="primary", solidHeader = TR
 ##Combine all body information, and assign outputs to each appropriate tab 
 body <- dashboardBody(
  tabItems(
-  tabItem(tabName="admin",
-          box1.1, 
-          box1.2,
-          box1.3
+  tabItem(tabName="admin_pre",
+          box.pre.1, 
+          box.pre.2,
+          box.pre.3
+          ),
+  tabItem(tabName="admin_post",
+          box.post.1,
+          box.post.2,
+          box.post.3
           )
  )
 )
