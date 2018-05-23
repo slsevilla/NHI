@@ -11,7 +11,7 @@ library(ReporteRs)
 ###                                      NOTES                                      ###
 #######################################################################################
 ##to run RJava make sure that the home is set correctly using:
-## Sys.setenv(JAVA_HOME='C:\\Program Files\\Java\\jre1.8.0_171')
+Sys.setenv(JAVA_HOME='C:\\Program Files\\Java\\jre1.8.0_171')
 
 
 #######################################################################################

@@ -5,14 +5,14 @@
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "2618424821",
+    "hash" : "1011725698",
     "id" : "5A74421F",
-    "lastKnownWriteTime" : 1526688051,
-    "last_content_update" : 1526688051395,
+    "lastKnownWriteTime" : 1527045180,
+    "last_content_update" : 1527045180,
     "path" : "C:/Program Files/Git/Coding/ldz/server.R",
     "project_path" : "server.R",
     "properties" : {
-        "cursorPosition" : "46,64",
+        "cursorPosition" : "1,12",
         "scrollLine" : "0"
     },
     "relative_order" : 2,
