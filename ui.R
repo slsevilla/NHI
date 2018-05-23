@@ -40,8 +40,8 @@ sidebar <- dashboardSidebar(
   )
  )
 
-#######################################################################################
 ########################## MainBody Information - Page 1###############################
+#######################################################################################
 
 ##Create rows for file input - Pre-Registration
 ###File upload of excepted demographic
@@ -57,9 +57,12 @@ admin.pre.confirm <- fluidRow(
 
 ##Ouputs selection for user - all pre-registration tasks
 admin.pre.out.1 <- fluidRow(
-  column(6, actionButton("door", "Create Student Door Signs")),
-  downloadButton('download_door', 'Download'),
-  hidden(verbatimTextOutput("confirm.door"))
+  column(6, actionButton("door_sign", "Create Student Door Signs")),
+  downloadButton('download_door_sign', 'Download'),
+  hidden(verbatimTextOutput("confirm.door_sign")),
+  column(6, actionButton("door_room", "Create Rooming Assignment Lists")),
+  downloadButton('download_door_room', 'Download'),
+  hidden(verbatimTextOutput("confirm.door_room"))
 )
 admin.pre.out.2 <- fluidRow (
   column(6, actionButton("studlabels", "Create Student Labels")),
@@ -76,11 +79,8 @@ admin.pre.out.4 <- fluidRow(
   downloadButton('download_missingforms', 'Download'),
   hidden(verbatimTextOutput("confirm.missingforms"))
 )
-admin.pre.out.5 <- fluidRow(
-  column(6, actionButton("roomassign", "Create Rooming Assignment Lists")),
-  downloadButton('download_roomassign', 'Download'),
-  hidden(verbatimTextOutput("confirm.roomassign"))
-)
+
+
 ###Combine all previous rows together
 admin.pre.out.combo <- fluidRow(
   column(6,
@@ -93,9 +93,7 @@ admin.pre.out.combo <- fluidRow(
          box(title="Students with Balance", width=NULL, status="primary", collapsible = TRUE,
              solidHeader = TRUE, admin.pre.out.3),
          box(title="Students without Forms", width=NULL, status="primary", collapsible = TRUE,
-             solidHeader = TRUE, admin.pre.out.4),
-         box(title = "Rooming Assignments", width=NULL, status="primary", collapsible = TRUE,
-             solidHeader = TRUE, admin.pre.out.5)
+             solidHeader = TRUE, admin.pre.out.4)
   )
 )
 
@@ -107,9 +105,9 @@ box.pre.2 <- box(title = "Pre-Registration Database Confirmation", width=8, stat
               solidHeader = TRUE, admin.pre.confirm)
 box.pre.3 <- box(title = "Ouput Files", width=12, status="primary", 
               solidHeader = TRUE, admin.pre.out.combo)
-#######################################################################################
-########################## MainBody Information - Page 1###############################
 
+########################## MainBody Information - Page 2###############################
+#######################################################################################
 ##Create rows for file input - Post-Registration
 ##File upload of registered students demographic
 admin.post.reg <- fluidRow(
@@ -158,8 +156,8 @@ box.post.2 <- box(title = "Pre-Registration Database Confirmation", width=4, sta
 box.post.3 <- box(title = "Ouput Files", width=12, status="primary", 
                   solidHeader = TRUE, admin.post.out.combo)
 
-#######################################################################################
 ########################## MainBody Information - Page 3###############################
+#######################################################################################
 ##Create rows of data
 ###Create point sheets for the General Assembly
 fcol2.1 <- fluidRow(
@@ -219,9 +217,9 @@ box2.3 <- box(title = "Daily Points", width=12,
 box2.4 <- box(title = "Final Points Database", width=12, 
               status="primary", solidHeader = TRUE, fcol2.4)
 
-#######################################################################################
-########################## Output Main Body Information ###############################
 
+########################## Output Main Body Information ###############################
+#######################################################################################
 ##Combine all body information, and assign outputs to each appropriate tab 
 body <- dashboardBody(
  tabItems(
