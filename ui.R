@@ -33,7 +33,7 @@ header <- dashboardHeader(title = "Lorenzo de Zavala Youth Legislative Session")
 ##Create the sidebard 
 sidebar <- dashboardSidebar(
  sidebarMenu(
-  menuItem("Day 0 Administrative Tasks", tabName="admin_pre"),
+  menuItem("Day 0 Tasks", tabName="admin_pre"),
   menuItem("Day1-7 Administrative Tasks", tabName="admin_post"),
   menuItem("Points", tabName="points"),
   menuItem("Awards", tabName="awards")
@@ -57,43 +57,56 @@ admin.pre.confirm <- fluidRow(
 
 ##Ouputs selection for user - all pre-registration tasks
 admin.pre.out.1 <- fluidRow(
-  column(6, actionButton("door_sign", "Create Student Door Signs")),
-  downloadButton('download_door_sign', 'Download'),
-  hidden(verbatimTextOutput("confirm.door_sign")),
-  column(6, actionButton("door_room", "Create Rooming Assignment Lists")),
-  downloadButton('download_door_room', 'Download'),
-  hidden(verbatimTextOutput("confirm.door_room"))
+  column(6, actionButton("d0_travelverify", "Create Day0 Travel Verification Docs")),
+  downloadButton('download_d0_travelverify', 'Download'),
+  hidden(verbatimTextOutput("confirm.d0_travelverify"))
 )
-admin.pre.out.2 <- fluidRow (
+admin.pre.out.2 <- fluidRow(
+  column(6, actionButton("studselfverify", "Create Student Self-Verification Forms")),
+  downloadButton('download_studselfverify', 'Download'),
+  hidden(verbatimTextOutput("confirm.studselfverify"))
+)
+admin.pre.out.3 <- fluidRow (
   column(6, actionButton("studlabels", "Create Student Labels")),
   downloadButton('download_studlabels', 'Download'),
   hidden(verbatimTextOutput("confirm.studlabels"))
 )
-admin.pre.out.3 <- fluidRow(
-  column(6, actionButton("balancesheet", "Generate Students with Balance forms")),
-  downloadButton('download_balancesheet', 'Download'),
-  hidden(verbatimTextOutput("confirm.balancesheet"))
-)
 admin.pre.out.4 <- fluidRow(
-  column(6, actionButton("missingforms", "Generate Students with Missing forms")),
-  downloadButton('download_missingforms', 'Download'),
-  hidden(verbatimTextOutput("confirm.missingforms"))
+  column(6, actionButton("studbalance", "Generate Students with Balance forms")),
+  downloadButton('download_studbalance', 'Download'),
+  hidden(verbatimTextOutput("confirm.studbalance")),
+  column(6, actionButton("studforms", "Generate Students with Missing forms")),
+  downloadButton('download_studforms', 'Download'),
+  hidden(verbatimTextOutput("confirm.studforms"))
+)
+admin.pre.out.5 <- fluidRow(
+  column(6, actionButton("studdoor", "Create Student Door Signs")),
+  downloadButton('download_studdoor', 'Download'),
+  hidden(verbatimTextOutput("confirm.door_sign")),
+  column(6, actionButton("d0_room_F", "Create Rooming Assignment Lists - Female")),
+  downloadButton('download_d0_room_F', 'Download'),
+  hidden(verbatimTextOutput("confirm.d0_room_F")),
+  column(6, actionButton("d0_room_M", "Create Rooming Assignment Lists - Male")),
+  downloadButton('download_d0_room_M', 'Download'),
+  hidden(verbatimTextOutput("confirm.d0_room_M"))
 )
 
 
 ###Combine all previous rows together
 admin.pre.out.combo <- fluidRow(
   column(6,
-         box(title="Door Signs", width=NULL, status="primary", collapsible = TRUE,
+         box(title="Day 0 Travel Verify", width=NULL, status="primary", collapsible = TRUE,
              solidHeader = TRUE, admin.pre.out.1),
-         box(title = "Student Labels", width=NULL, status="primary", collapsible = TRUE,
-             solidHeader = TRUE, admin.pre.out.2)
+         box(title="Student Self-Verification", width=NULL, status="primary", collapsible = TRUE,
+             solidHeader = TRUE, admin.pre.out.2),
+         box(title="Student Labels", width=NULL, status="primary", collapsible = TRUE,
+             solidHeader = TRUE, admin.pre.out.3),
+         box(title = "Student Balances & Missing Forms", width=NULL, status="primary", collapsible = TRUE,
+             solidHeader = TRUE, admin.pre.out.4)
   ),
   column(6,
-         box(title="Students with Balance", width=NULL, status="primary", collapsible = TRUE,
-             solidHeader = TRUE, admin.pre.out.3),
-         box(title="Students without Forms", width=NULL, status="primary", collapsible = TRUE,
-             solidHeader = TRUE, admin.pre.out.4)
+         box(title = "Door Signs", width=NULL, status="primary", collapsible = TRUE,
+             solidHeader = TRUE, admin.pre.out.5)
   )
 )
 
