@@ -33,8 +33,9 @@ header <- dashboardHeader(title = "Lorenzo de Zavala Youth Legislative Session")
 ##Create the sidebard 
 sidebar <- dashboardSidebar(
  sidebarMenu(
-  menuItem("Day 0 Tasks", tabName="admin_pre"),
+  menuItem("Day 0 Admin Tasks", tabName="admin_pre"),
   menuItem("Day1-7 Administrative Tasks", tabName="admin_post"),
+  menuItem("Protocol", tabName="protocol"),
   menuItem("Points", tabName="points"),
   menuItem("Awards", tabName="awards")
   )
@@ -230,6 +231,43 @@ box2.3 <- box(title = "Daily Points", width=12,
 box2.4 <- box(title = "Final Points Database", width=12, 
               status="primary", solidHeader = TRUE, fcol2.4)
 
+########################## MainBody Information - Page 4###############################
+#######################################################################################
+##Create rows of data
+###Upload Forming the Community Database
+proto.staff1 <- fluidRow(
+  column(6,
+         fileInput("proto.file1","Upload the Forming the community Database")
+  ),
+  column(6,
+         hidden(verbatimTextOutput("proto.comfirm"))
+  )
+)
+
+##Ouputs selection for user - all pre-registration tasks
+proto.out.1 <- fluidRow(
+  column(6, 
+         downloadButton('report', 'Genearte Report'),
+         hidden(verbatimTextOutput("confirm.proto.report"))
+  )
+)
+
+
+###Combine all outputs together
+proto.combo<- fluidRow(
+  column(6,
+         box(title="Forming the Community", width=NULL, status="primary", collapsible = TRUE,
+             solidHeader = TRUE, proto.out.1)
+  )
+)
+
+
+##Create boxed for Page 1
+###Generate Boxes for text submission, verification, and user options
+box.proto.1 <- box(title = "Forming the Community", width=12, 
+                   status="primary", solidHeader = TRUE, proto.staff1)
+box.proto.2 <- box(title = "Ouput Files", width=12, status="primary", 
+                   solidHeader = TRUE, proto.combo)
 
 ########################## Output Main Body Information ###############################
 #######################################################################################
@@ -245,7 +283,11 @@ body <- dashboardBody(
           box.post.1,
           box.post.2,
           box.post.3
-          )
+          ),
+  tabItem(tabName="protocol",
+          box.proto.1,
+          box.proto.2
+  )
  )
 )
 dashboardPage(header,sidebar,body)

@@ -180,14 +180,53 @@ function(input,output, session){
       write.csv(d0_room_M(), file, row.names = FALSE)
     }
   )
+
+  ####################################################### Page 4 ####################################################
+  ###################################################################################################################
   
+  ###Input Files
+  ###############################################################################################################
+  #Takes the input file saving it to data_expect matrix
+  data_staff <- reactive({
+    staff1 <- input$proto.file1
+    if (is.null(staff1)) return(NULL)
+    read.csv(fill=TRUE,file=input$proto.file1$datapath, header=TRUE, colClasses = "factor")
+  })  
+  #Create File Summary information
+  output$data.staff <- renderTable({
+    if(is.null(data_staff())) return ()
+    input$proto.file1
+  })
+  #Display output for user
+  output$confirm.proto.report <- renderUI({
+    if(is.null(data_staff())) return()
+    tableOutput("data.staff")
+  })
   
+  ###Generate Reports
+  output$report <- downloadHandler(
   
-  output$test <- downloadHandler(
-    filename = function() {"DoorSigns_MM.csv"},
-    content = function(file) {
-      write.csv(student_door_room(), file, row.names = FALSE)
+    # For PDF output, change this to "report.pdf"
+  filename = "report.docx",
+  
+  content = function(file) {
+    # Copy the report file to a temporary directory before processing it, in
+    # case we don't have write permissions to the current working dir (which
+    # can happen when deployed).
+    tempReport <- file.path(tempdir(), "formingthecommunity.Rmd")
+    file.copy("formingthecommunity.Rmd", tempReport, overwrite = TRUE)
+    
+    # Set up parameters to pass to Rmd document
+    params <- list(n= studforms(),
+                   data = studforms())
+    
+    # Knit the document, passing in the `params` list, and eval it in a
+    # child of the global environment (this isolates the code in the document
+    # from the code in this app).
+    rmarkdown::render(tempReport, output_file = file,
+                      params = params,
+                      envir = new.env(parent = globalenv())
+                      )
     }
   )
-
 }

@@ -1,0 +1,38 @@
+---
+title: "FormingTheCommunity"
+author: "NHI"
+date: "May 24, 2018"
+output: word_document
+params: 
+  n: NA
+  data: NA
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#Forming the Community
+Goal: PARTICIPANTS DEVELOP FAMILIARITY WITH EACH OTHER, BUILD A STRONG SENSE OF UNITY AND COMMON PURPOSE, AND A WILLINGNESS TO BE ACTIVE PARTICIPANTS IN THE VARIOUS LEARNING EXPERIENCES OF THE LDZ. 
+
+##OFFICIAL WELCOME
+(DELIVERED BY A STAFF MEMBER “MC”)
+
+[With Emphasis] Welcome DELEGATES to the 2018…NATIONAL…Lorenzo de Zavala…Youth…Legislative…Session…
+
+We will now begin the official roll call. Who is here from…
+```{r, echo=FALSE}
+
+```
+
+Thank you all for being with us, we will continue with our program
+
+I would now like to welcome to the stage, Education Director: 
+```{r, echo=FALSE}
+params$n
+```
+
+I would now like to welcome to the stage, Education Director: 
+```{r, echo=FALSE}
+params$dt
+```
