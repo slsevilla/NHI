@@ -6,17 +6,15 @@ output: word_document
 params: 
   n: NA
   data: NA
+  test: NA
+  test2: NA
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
 #Forming the Community
-Goal: PARTICIPANTS DEVELOP FAMILIARITY WITH EACH OTHER, BUILD A STRONG SENSE OF UNITY AND COMMON PURPOSE, AND A WILLINGNESS TO BE ACTIVE PARTICIPANTS IN THE VARIOUS LEARNING EXPERIENCES OF THE LDZ. 
+Goal: Participants develop familiiarty with each other, build a strong sense of unity, and common purpose, and a willingness to be active participants in the various learning experiences of the LDZ.
 
 ##OFFICIAL WELCOME
-(DELIVERED BY A STAFF MEMBER “MC”)
+(DELIVERED BY A STAFF MEMBER - Called the MC)
 
 [With Emphasis] Welcome DELEGATES to the 2018…NATIONAL…Lorenzo de Zavala…Youth…Legislative…Session…
 
@@ -28,11 +26,21 @@ We will now begin the official roll call. Who is here from…
 Thank you all for being with us, we will continue with our program
 
 I would now like to welcome to the stage, Education Director: 
-```{r, echo=FALSE}
+```{r}
 params$n
 ```
 
 I would now like to welcome to the stage, Education Director: 
-```{r, echo=FALSE}
-params$dt
+```{r}
+params$data
+```
+
+I would now like to welcome to the stage, Education Director: 
+```{r}
+params$test
+```
+
+I would now like to welcome to the stage, Education Director: 
+```{r}
+params$test2
 ```

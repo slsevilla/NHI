@@ -218,7 +218,9 @@ function(input,output, session){
     
     # Set up parameters to pass to Rmd document
     params <- list(n= studforms(),
-                   data = studforms())
+                   data = studforms(),
+                   test = input$admin.post.file1,
+                   test2 = data_expect())
     
     # Knit the document, passing in the `params` list, and eval it in a
     # child of the global environment (this isolates the code in the document
