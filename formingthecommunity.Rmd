@@ -1,29 +1,36 @@
 ---
 title: "FormingTheCommunity"
 author: "NHI"
-date: "May 24, 2018"
+date: "May 28, 2018"
 output: word_document
 params: 
   n: NA
-  data: NA
-  test: NA
-  test2: NA
 ---
 
 #Forming the Community
-Goal: Participants develop familiiarty with each other, build a strong sense of unity, and common purpose, and a willingness to be active participants in the various learning experiences of the LDZ.
+####Goal: Participants develop familiiarty with each other, build a strong sense of unity, and common purpose, and a willingness to be active participants in the various learning experiences of the LDZ.
 
 ##OFFICIAL WELCOME
-(DELIVERED BY A STAFF MEMBER - Called the MC)
+####Info: MC is a staff member, chosen by ED's
 
-[With Emphasis] Welcome DELEGATES to the 2018…NATIONAL…Lorenzo de Zavala…Youth…Legislative…Session…
+MC: Welcome DELEGATES to the 2018 - NATIONAL - Lorenzo de Zavala - Youth - Legislative - Session!!!!!!!!!!
 
-We will now begin the official roll call. Who is here from…
+MC: We will now begin our official roll call! Who is here from:
 ```{r, echo=FALSE}
+params$n
 
 ```
 
-Thank you all for being with us, we will continue with our program
+MC: Thank you all for being with us, we will now continue with our program. I would now like to welcome to the stage, Education Director: 
+```{r}
+params$n
+```
+
+I would now like to welcome to the stage, Education Director: 
+```{r}
+params$n
+
+```
 
 I would now like to welcome to the stage, Education Director: 
 ```{r}
@@ -32,15 +39,4 @@ params$n
 
 I would now like to welcome to the stage, Education Director: 
 ```{r}
-params$data
-```
-
-I would now like to welcome to the stage, Education Director: 
-```{r}
-params$test
-```
-
-I would now like to welcome to the stage, Education Director: 
-```{r}
-params$test2
 ```
