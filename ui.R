@@ -33,6 +33,7 @@ header <- dashboardHeader(title = "Lorenzo de Zavala Youth Legislative Session")
 sidebar <- dashboardSidebar(
  sidebarMenu(
   menuItem("HQ Database Conversion", tabName="HQ"),
+  menuItem("Staff Database Conversion", tabName="Staff"),
   menuItem("Day 0 Admin Tasks", tabName="admin_pre"),
   menuItem("Day1-7 Administrative Tasks", tabName="admin_post"),
   menuItem("Protocol", tabName="protocol"),
@@ -40,7 +41,7 @@ sidebar <- dashboardSidebar(
   menuItem("Awards", tabName="awards")
   )
  )
-########################## MainBody Information - Page 1###############################
+########################## MainBody Information - HQ Database Conversion###############################
 #######################################################################################
 #HQ Demographic File
 ##File upload of HQ demographic file
@@ -134,8 +135,83 @@ box.hq.2 <- box(title = "Student Database Confirmation", width=8, status="primar
 box.hq.3 <- box(title = "Ouput Files", width=12, status="primary", collapsible = TRUE, 
                  solidHeader = TRUE, hq.combo)
 
+########################## MainBody Information - Staff Database Conversion###############################
+#######################################################################################
+#HQ Demographic File
+##File upload of HQ demographic file
+staff.db.input <- fluidRow(
+  column(12,
+         fileInput("staff.db1","Upload the Staff Info Database"),
+         downloadButton('download_staffdemo', 'Download Database')
+  )
+)
+##Confirm File Upload
+staff.confirm <- fluidRow(
+  column(8,
+         uiOutput("confirm.staffdemo"))
+)
 
-########################## MainBody Information - Page 2###############################
+#Outputs for Databae Generation
+##Generate drop downs for user to choose from to match the headers of selected file to 
+###required Expected_StudentDemo file
+staff.out.1 <- fluidRow(
+  column(4, uiOutput("staff_FNAME")),
+  column(4, uiOutput("staff_MNAME")),
+  column(4, uiOutput("staff_LNAME"))
+)
+staff.out.2 <- fluidRow(
+  column(6, uiOutput("staff_CITY")),
+  column(6, uiOutput("staff_ST"))
+)
+staff.out.3 <- fluidRow(
+  column(6, uiOutput("staff_HSSTAT")),
+  column(6, uiOutput("staff_HS"))
+)
+staff.out.4 <- fluidRow(
+  column(4, uiOutput("staff_COLSTAT")),
+  column(4, uiOutput("staff_UNIV")),
+  column(4, uiOutput("staff_MAJ"))
+)
+staff.out.5 <- fluidRow(
+  column(6, uiOutput("staff_STAT")),
+  column(6, uiOutput("staff_ROLE"))
+)
+staff.out.6 <- fluidRow(
+  column(4, uiOutput("staff_GD")),
+  column(4, uiOutput("staff_LDZ")),
+  column(4, uiOutput("staff_CWS"))
+)
+
+#Create one large output box
+staff.combo <- fluidRow(
+  column(6,
+         box(title="Name", width=NULL, status="primary", collapsible = TRUE,
+             solidHeader = TRUE, staff.out.1),
+         box(title="Location", width=NULL, status="primary", collapsible = TRUE,
+             solidHeader = TRUE, staff.out.2),
+         box(title="Role", width=NULL, status="primary", collapsible=TRUE,
+             solidHeader=TRUE, staff.out.5)
+  ),
+  column(6,
+         box(title="High School", width=NULL, status="primary", collapsible = TRUE,
+             solidHeader = TRUE, staff.out.3),
+         box(title="College", width=NULL, status="primary", collapsible = TRUE,
+             solidHeader = TRUE, staff.out.4),
+         box(title="NHI Info", width=NULL, status="primary", collapsible=TRUE,
+             solidHeader=TRUE, staff.out.6)
+  )
+)
+
+##Create page boxes
+###Generate Boxes for text submission, confirmation, and user downloads
+box.staff.1 <- box(title = "Upload Staff Database File", width=4, status="primary", 
+                solidHeader = TRUE, staff.db.input)
+box.staff.2 <- box(title = "Staff Database Confirmation", width=8, status="primary", 
+                solidHeader = TRUE, staff.confirm)
+box.staff.3 <- box(title = "Ouput Files", width=12, status="primary", collapsible = TRUE, 
+                solidHeader = TRUE, staff.combo)
+
+########################## MainBody Information - Day 0 Admin Tasks##############################
 #######################################################################################
 
 ##Expected Student Demographic Database
@@ -341,32 +417,37 @@ box2.3 <- box(title = "Daily Points", width=12,
 box2.4 <- box(title = "Final Points Database", width=12, 
               status="primary", solidHeader = TRUE, fcol2.4)
 
-########################## MainBody Information - Page 5###############################
+########################## MainBody Information - Protocol###############################
 #######################################################################################
 ##Create rows of data
 ###Upload Forming the Community Database
-proto.staff1 <- fluidRow(
+proto.ftc <- fluidRow(
   column(6,
-         fileInput("proto.file1","Upload the Forming the community Database")
+         fileInput("proto.file1","Upload the StudentDemo_Expected File")
   ),
   column(6,
-         hidden(verbatimTextOutput("proto.comfirm"))
+         fileInput("proto.file2","Upload the StaffDemo File")
+  ),
+  column(12,
+         fileInput("proto.file3","Upload the FTC Template File")
   )
 )
 
 ##Ouputs selection for user - all pre-registration tasks
 proto.out.1 <- fluidRow(
   column(6, 
-         downloadButton('report', 'Genearte Report'),
-         hidden(verbatimTextOutput("confirm.proto.report"))
+         downloadButton('download_ftc_protocol', 'Download FTC_Protocol')
+  ),
+  column(6, 
+         downloadButton('download_ftc_staff', 'Download FTC_Staff')
   )
 )
 
 
 ###Combine all outputs together
 proto.combo<- fluidRow(
-  column(6,
-         box(title="Forming the Community", width=NULL, status="primary", collapsible = TRUE,
+  column(12,
+         box(title="Forming the Community Output", width=NULL, status="primary", collapsible = TRUE,
              solidHeader = TRUE, proto.out.1)
   )
 )
@@ -375,7 +456,7 @@ proto.combo<- fluidRow(
 ##Create boxed for Page 1
 ###Generate Boxes for text submission, verification, and user options
 box.proto.1 <- box(title = "Forming the Community", width=12, 
-                   status="primary", solidHeader = TRUE, proto.staff1)
+                   status="primary", solidHeader = TRUE, proto.ftc)
 box.proto.2 <- box(title = "Ouput Files", width=12, status="primary", 
                    solidHeader = TRUE, proto.combo)
 
@@ -388,6 +469,11 @@ body <- dashboardBody(
            box.hq.1, 
            box.hq.2,
            box.hq.3
+   ),
+   tabItem(tabName="Staff",
+           box.staff.1, 
+           box.staff.2,
+           box.staff.3
    ),
    tabItem(tabName="admin_pre",
           box.day0.1, 

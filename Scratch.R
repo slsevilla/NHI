@@ -19,3 +19,27 @@ temptable2
 templist <- temptable2$x
 templist
 
+ftc <- read.csv("C:\\Users\\sevillas2\\Google Drive\\My Documents\\Programs & Orgs\\National Hispanic Institute\\Template National LDZ\\Director Guides\\Downloaded Files\\FormingTheCommunityTemplate.csv", header=TRUE)
+staff <- read.csv("C:\\Users\\sevillas2\\Google Drive\\My Documents\\Programs & Orgs\\National Hispanic Institute\\Template National LDZ\\Director Guides\\Downloaded Files\\Staff_Demo.csv", header=TRUE)
+std <- read.csv("C:\\Users\\sevillas2\\Google Drive\\My Documents\\Programs & Orgs\\National Hispanic Institute\\Template National LDZ\\Director Guides\\Downloaded Files\\StudentDemo_Expected.csv", header=TRUE)
+
+staff_list <- staff[,"HS"]
+i=1
+
+staff$HS <- as.character(staff$HS)
+
+for (a in staff_list){
+  if(a==""){
+    i=i+1
+    next
+  } else{
+    print (a)
+    print (i)
+    temp <- as.character(staff[i,"HS"])
+    print (temp)
+    staff[i,"HS"] <- sub("^", "from ", temp )
+    print (staff[i,"HS"])
+    i=i+1
+  }
+}
+

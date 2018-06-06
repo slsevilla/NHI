@@ -14,7 +14,7 @@ library(knitr)
 #####################################################################################
 
 function(input,output, session){
-######################################### Page 1 ####################################
+######################################### HQ Database Conversion ####################################
 #####################################################################################
   
   #User Input File
@@ -324,7 +324,7 @@ function(input,output, session){
     }
   )
 
-######################################## Page 2 #################################### 
+######################################## Day 0 Admin Tasks #################################### 
 ###################################################################################  
   
   #File input
@@ -465,8 +465,8 @@ function(input,output, session){
   })
   staff_labels <- reactive({
     if(is.null(input$day0.file2)) return()
-    staff_labels <- staff_labels()[c("FNAME", "MNAME", "LNAME", "HS", "UNIV", "CITY",
-                                  "ST")]
+    staff_labels <- staff_file()[c("FNAME", "MNAME", "LNAME", "HS", "UNIV", "CITY",
+                                  "ST", "ROLE")]
   })           
   
   #File Downloads
@@ -501,71 +501,388 @@ function(input,output, session){
     }
   )
   output$download_studdoor <- downloadHandler(
-    filename = function() {"DoorSigns_MM.csv"},
+    filename = function() {"DoorSigns.csv"},
     content = function(file) {
     }
   )
   output$download_d0_room_F <- downloadHandler(
-    filename = function() {"Day0_Rooms_F_MM.csv"},
+    filename = function() {"Day0_Rooms_F.csv"},
     content = function(file) {
       write.csv(d0_room_F(), file, row.names = FALSE)
     }
   ) 
   output$download_d0_room_M <- downloadHandler(
-    filename = function() {"Day0_Rooms_M_MM.csv"},
+    filename = function() {"Day0_Rooms_M.csv"},
     content = function(file) {
       write.csv(d0_room_M(), file, row.names = FALSE)
     }
   )
   output$download_stafflabels <- downloadHandler(
-    filename = function() {"StaffLabels_MM.csv"},
+    filename = function() {"StaffLabels.csv"},
     content = function(file) {
-      write.csv(d0_room_M(), file, row.names = FALSE)
+      write.csv(staff_labels(), file, row.names = FALSE)
     }
   )
   
 
-########################################### Page 3 ##################################
+########################################### Protocol ##################################
 #####################################################################################
   
   #Input Files
-  ##Takes the input file saving it to day0_expect matrix
-  data_staff <- reactive({
-    staff1 <- input$proto.file1
-    if (is.null(staff1)) return(NULL)
+  ##Takes the input file saving it to staff database
+  proto_stud <- reactive({
+    stud1 <- input$proto.file1
+    if (is.null(stud1)) return(NULL)
     read.csv(fill=TRUE,file=input$proto.file1$datapath, header=TRUE, 
              colClasses = "factor")
-  })  
-  ##Create File Summary information
-  output$data.staff <- renderTable({
-    if(is.null(data_staff())) return ()
-    input$proto.file1
   })
-  ##Display output for user
-  output$confirm.proto.report <- renderUI({
-    if(is.null(data_staff())) return()
-    tableOutput("data.staff")
+  proto_staff <- reactive({
+    staff1 <- input$proto.file2
+    if (is.null(staff1)) return(NULL)
+    read.csv(fill=TRUE,file=input$proto.file2$datapath, header=TRUE, 
+             colClasses = "factor")
   })
+  proto_form <- reactive({
+    form1 <- input$proto.file3
+    if (is.null(form1)) return(NULL)
+    read.csv(fill=TRUE,file=input$proto.file3$datapath, header=TRUE, 
+             colClasses = "factor")
+  }) 
   
-  #Generate Reports
-  output$report <- downloadHandler(
-  
-    ##For PDF output, change this to "report.pdf"
-    filename = "report.docx",
-    content = function(file) {
+  #Database Creation
+  ftc_protocol <- reactive({
+    if(is.null(input$proto.file1)) return()
+    if(is.null(input$proto.file3)) return()
     
-      # Copy the report file to a temporary directory before processing it
-      tempReport <- file.path(tempdir(), "formingthecommunity.Rmd")
-      file.copy("formingthecommunity.Rmd", tempReport, overwrite = TRUE)
+    #Create dataframe of states, then a list
+    states_col <- unique(proto_stud()["ST"])
+    states_col <- states_col[,1]
+    
+    #Create a new list
+    states_list <- c()
+    for (a in states_col){
+      states_list <- c(states_list, a)
+    }
+    #Past list together with a comma between
+    states_list <- paste(states_list, collapse=" -- ")
+
+    #Protocol Database
+    ftc_protocol<- proto_form()[c("Year", "Program", "MC", "ED.Welcoming", "Staff.Speaker.1",
+                                  "Staff.Speaker.2", "Highest.Staff", "ED.Opening")]
+    #Add states list
+    ftc_protocol <- merge(ftc_protocol, states_list)
+
+  })
+  ftc_staff <- reactive({
+    if(is.null(input$proto.file2)) return()
+
+    #Create dataframe of states, then a list
+    staff_ori <- proto_staff()[c("FNAME","MNAME","LNAME","CITY","ST","HSSTAT","HS","COLSTAT","UNIV","MAJ",
+                                 "STAT","GD","LDZ","CWS","ROLE")]
+    
+    #Merge Names
+    staff_update <- unite(staff_ori, NAME, c(FNAME,MNAME,LNAME), sep = " ", remove = FALSE)
+    
+    #Update HS/Univ
+    ##HS
+      i = 1
+      staff_list <- staff_ori[,"HS"]
+      staff_update[,"HS"] <- as.character(staff_update[,"HS"])
       
-      # Set up parameters to pass to Rmd document
-      params <- list(n= hq_input())
-      
-      # Knit the document, passing in the `params` list, and eval it
-      rmarkdown::render(tempReport, output_file = file,
-                        params = params,
-                        envir = new.env(parent = globalenv())
-                        )
+      for (a in staff_list){
+        print (a)
+        if(a==""){
+          i=i+1
+          next
+        } else{
+          temp <- staff_update[i,"HS"]
+          staff_update[i,"HS"] <- sub("^", "from ", temp )
+          i=i+1
+        }
       }
+      ##Univ
+      i = 1
+      staff_list <- staff_ori[,"UNIV"]
+      staff_update[,"UNIV"] <- as.character(staff_update[,"UNIV"])
+      
+      for (a in staff_list){
+        print (a)
+        if(a==""){
+          i=i+1
+          next
+        } else{
+          temp <- staff_update[i,"UNIV"]
+          print (temp)
+          staff_update[i,"UNIV"] <- sub("^", "from ", temp )
+          i=i+1
+        }
+      }
+    
+      #Update Major
+      i = 1
+      staff_list <- staff_ori[,"MAJ"]
+      staff_update[,"MAJ"] <- as.character(staff_update[,"MAJ"])
+      
+      for (a in staff_list){
+        print (a)
+        if(a==""){
+          i=i+1
+          next
+        } else{
+          temp <- staff_update[i,"MAJ"]
+          staff_update[i,"MAJ"] <- sub("^", "majoring in ", temp )
+          i=i+1
+        }
+      }
+      
+      #Update student status
+      i = 1
+      staff_list <- staff_ori[,"COLSTAT"]
+      staff_update[,"HSSTAT"] <- as.character(staff_update[,"HSSTAT"])
+      staff_update[,"COLSTAT"] <- as.character(staff_update[,"COLSTAT"])
+      
+      for (a in staff_list){
+        print (a)
+        if(a==""){
+          temp <- staff_update[i,"HSSTAT"]
+          staff_update[i,"HSSTAT"] <- sub("^", "a high school ", temp )
+          i=i+1
+        } else if (a=="Graduated"){
+          staff_update[i,"COLSTAT"] <- "a professional, having graduated"
+          i=i+1
+        } else if (a=="Graduate"){
+          staff_update[i,"COLSTAT"] <- "a graduate student "
+          i=i+1
+        } else{
+          temp <- staff_update[i,"COLSTAT"]
+          staff_update[i,"COLSTAT"] <- sub("^", "a college ", temp )
+          i=i+1
+        }
+      }
+      
+    #Staff Final Database
+    staff_final <- staff_update[,c("CITY","ST","GD","LDZ","CWS","ROLE","NAME",
+                                   "HS","UNIV", "MAJ", "COLSTAT", "HSSTAT")]
+    
+    
+    
+  })
+  
+  #Output Files
+  output$download_ftc_protocol <- downloadHandler(
+    filename = function() {"FTC_Protocol.csv"},
+    content = function(file) {
+      write.csv(ftc_protocol(), file, row.names = FALSE)
+    }
   )
+  output$download_ftc_staff <- downloadHandler(
+    filename = function() {"FTC_Staff.csv"},
+    content = function(file) {
+      write.csv(ftc_staff(), file, row.names = FALSE)
+    }
+  )
+  
+  
+######################################### Staff Database Conversion ####################################
+#####################################################################################
+  
+  #User Input File
+  ##Import file
+  staff_db <- reactive({
+    staff_db <- input$staff.db1
+    if(is.null(staff_db)) return(NULL)
+    read.csv(fill=TRUE,file=input$staff.db1$datapath,header=TRUE,colClasses = "factor"
+    )
+  })
+  ##Create File Summary information
+  output$staff.db.input <- renderTable({
+    if(is.null(staff_db())) return ()
+    input$staff.db1
+  })
+  ##Display confirmation of upload for user
+  output$confirm.staffdemo <- renderUI({
+    if(is.null(staff_db())) return()
+    tableOutput("staff.db.input")
+  })
+  
+  #User Dropdowns
+  ##Generate Drop Downs for user to choose
+  observe({
+    req(input$staff.db1)
+    dsnames <- names(staff_db())
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$staff_ROLE<- renderUI({
+      selectInput("staff_ROLE", "Program Role", cb_options)
+    })
+  })
+  observe({
+    req(input$staff.db1)
+    dsnames <- names(staff_db())
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$staff_FNAME<- renderUI({
+      selectInput("staff_FNAME", "First Name", cb_options)
+    })
+  })
+  observe({
+    req(input$staff.db1)
+    dsnames <- names(staff_db())
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$staff_MNAME<- renderUI({
+      selectInput("staff_MNAME", "Middle Name", cb_options)
+    })
+  })
+  observe({
+    req(input$staff.db1)
+    dsnames <- names(staff_db())
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$staff_LNAME<- renderUI({
+      selectInput("staff_LNAME", "Last Name", cb_options)
+    })
+  })
+  observe({
+    req(input$staff.db1)
+    dsnames <- names(staff_db())
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$staff_CITY<- renderUI({
+      selectInput("staff_CITY", "Home City", cb_options)
+    })
+  })
+  observe({
+    req(input$staff.db1)
+    dsnames <- names(staff_db())
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$staff_ST<- renderUI({
+      selectInput("staff_ST", "Home State", cb_options)
+    })
+  })
+  observe({
+    req(input$staff.db1)
+    dsnames <- names(staff_db())
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$staff_STAT<- renderUI({
+      selectInput("staff_STAT", "Academic Status", cb_options)
+    })
+  })
+  observe({
+    req(input$staff.db1)
+    dsnames <- names(staff_db())
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$staff_HS<- renderUI({
+      selectInput("staff_HS", "High School", cb_options)
+    })
+  })
+  observe({
+    req(input$staff.db1)
+    dsnames <- names(staff_db())
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$staff_UNIV<- renderUI({
+      selectInput("staff_UNIV", "College/Univ", cb_options)
+    })
+  })
+  observe({
+    req(input$staff.db1)
+    dsnames <- names(staff_db())
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$staff_MAJ<- renderUI({
+      selectInput("staff_MAJ", "Major", cb_options)
+    })
+  })
+  observe({
+    req(input$staff.db1)
+    dsnames <- names(staff_db())
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$staff_GD<- renderUI({
+      selectInput("staff_GD", "GD Info", cb_options)
+    })
+  })
+  observe({
+    req(input$staff.db1)
+    dsnames <- names(staff_db())
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$staff_LDZ<- renderUI({
+      selectInput("staff_LDZ", "LDZ Info", cb_options)
+    })
+  })
+  observe({
+    req(input$staff.db1)
+    dsnames <- names(staff_db())
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$staff_CWS<- renderUI({
+      selectInput("staff_CWS", "CWS Info", cb_options)
+    })
+  })
+  observe({
+    req(input$staff.db1)
+    dsnames <- names(staff_db())
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$staff_HSSTAT<- renderUI({
+      selectInput("staff_HSSTAT", "HS Level", cb_options)
+    })
+  })
+  observe({
+    req(input$staff.db1)
+    dsnames <- names(staff_db())
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$staff_COLSTAT<- renderUI({
+      selectInput("staff_COLSTAT", "College Level", cb_options)
+    })
+  })
+  
+  #Generate Student Database
+  ###Create database from user generated files, and matched column headers
+  staff_database <- reactive({
+    if(is.null(staff_db)) return(NULL)
+    
+    #Read in input table, and determine total number of rows
+    table_in <- staff_db()
+    
+    #Create an output table that matches the number of rows 
+    n<- nrow(table_in)
+    table_out <- data.frame(x=1:n)
+    
+    #Append each necessary column, based on user input to the new table
+    table_out$FNAME <- table_in[,input$staff_FNAME]
+    table_out$MNAME <- table_in[,input$staff_MNAME]
+    table_out$LNAME <- table_in[,input$staff_LNAME]
+    table_out$CITY <- table_in[,input$staff_CITY]
+    table_out$ST <- table_in[,input$staff_ST]
+    table_out$HSSTAT <- table_in[,input$staff_HSSTAT]
+    table_out$HS <- table_in[,input$staff_HS]
+    table_out$COLSTAT <- table_in[,input$staff_COLSTAT]
+    table_out$UNIV <- table_in[,input$staff_UNIV]
+    table_out$MAJ <- table_in[,input$staff_MAJ]
+    table_out$STAT <- table_in[,input$staff_STAT]
+    table_out$GD <- table_in[,input$staff_GD]
+    table_out$LDZ <- table_in[,input$staff_LDZ]
+    table_out$CWS <- table_in[,input$staff_CWS]
+    table_out$ROLE <- table_in[,input$staff_ROLE]
+    
+    #Return the full, new table after removing starting column
+    table_out <- subset(table_out, select=-c(x))
+    table_out
+  })
+  
+  ###Send file to download screen
+  output$download_staffdemo <- downloadHandler(
+    filename = function() {"Staff_Demo.csv"},
+    content = function(file) {
+      write.csv(staff_database(), file, row.names = FALSE)
+    }
+  )
+
 }
