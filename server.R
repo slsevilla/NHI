@@ -318,7 +318,7 @@ function(input,output, session){
   
   ###Send file to download screen
   output$download_hq <- downloadHandler(
-    filename = function() {"Expected_StudentDemo.csv"},
+    filename = function() {"StudentDemo_Expected.csv"},
     content = function(file) {
       write.csv(hq_database(), file, row.names = FALSE)
     }
@@ -328,22 +328,39 @@ function(input,output, session){
 ###################################################################################  
   
   #File input
-  ##Generate database for input file
+  ##Generate database for input file1
   day0_expect <- reactive({
     admin1 <- input$day0.file1
     if (is.null(admin1)) return(NULL)
     read.csv(fill=TRUE,file=input$day0.file1$datapath, header=TRUE, 
              colClasses = "factor")
   })  
-  #Create File Summary information
+  #Create File Summary information for file1
   output$day0.expect <- renderTable({
     if(is.null(day0_expect())) return ()
     input$day0.file1
   })
-  #Display confirmation of upload for user
+  #Display confirmation of upload for user for file 1
   output$confirm.day0 <- renderUI({
     if(is.null(day0_expect())) return()
     tableOutput("day0.expect")
+  })
+  ##Generate database for input file2
+  staff_file <- reactive({
+    admin2 <- input$day0.file2
+    if (is.null(admin2)) return(NULL)
+    read.csv(fill=TRUE,file=input$day0.file2$datapath, header=TRUE, 
+             colClasses = "factor")
+  })  
+  #Create File Summary information for file2
+  output$staff.file <- renderTable({
+    if(is.null(staff_file())) return ()
+    input$day0.file2
+  })
+  #Display confirmation of upload for user for file 1
+  output$confirm.staff_file <- renderUI({
+    if(is.null(staff_file())) return()
+    tableOutput("staff.file")
   })
   
   #Data Confirmations 
@@ -355,7 +372,7 @@ function(input,output, session){
   ##Displays a confirmation message for the student self verification
   observeEvent(input$studselfverify,{
     output$confirm.studselfverify <- renderText({
-      "Upload Complete - Download Student Self-Verification Forms"})  
+      "Upload Complete - Download Student Self-Update Forms"})  
   })
   ##Displays a confirmation message for the door signs
   observeEvent(input$studlabels,{
@@ -386,6 +403,11 @@ function(input,output, session){
   observeEvent(input$d0_room_M,{
     output$confirm.d0_room_M <- renderText({
       "Upload Complete - Download Day 0 Rooming Lists for Male Students"})  
+  })
+  ##Displays a confirmation message for the staff labels
+  observeEvent(input$stafflabels,{
+    output$confirm.stafflabels <- renderText({
+      "Upload Complete - Download Staff Label File"})  
   })
   
   #Create sub-tables
@@ -441,16 +463,21 @@ function(input,output, session){
     d0_room_M <- d0_room_M[c("FNAME", "MNAME", "LNAME", "CITY", "ST", "DOT", "DORM",
                              "ROOM")]
   })
+  staff_labels <- reactive({
+    if(is.null(input$day0.file2)) return()
+    staff_labels <- staff_labels()[c("FNAME", "MNAME", "LNAME", "HS", "UNIV", "CITY",
+                                  "ST")]
+  })           
   
   #File Downloads
   output$download_d0_travelverify <- downloadHandler(
-    filename = function() {"D0_TravelVerify.csv"},
+    filename = function() {"D0_AttendTravel_Verify.csv"},
     content = function(file) {
       write.csv(d0_travelverify(), file, row.names = FALSE)
     }
   )
   output$download_studselfverify <- downloadHandler(
-    filename = function() {"StudentSelfVerify.csv"},
+    filename = function() {"StudentDemo_SelfUpdate.csv"},
     content = function(file) {
       write.csv(studselfverify(), file, row.names = FALSE)
     }
@@ -476,7 +503,6 @@ function(input,output, session){
   output$download_studdoor <- downloadHandler(
     filename = function() {"DoorSigns_MM.csv"},
     content = function(file) {
-      write.csv(studdoor(), file, row.names = FALSE)
     }
   )
   output$download_d0_room_F <- downloadHandler(
@@ -491,6 +517,13 @@ function(input,output, session){
       write.csv(d0_room_M(), file, row.names = FALSE)
     }
   )
+  output$download_stafflabels <- downloadHandler(
+    filename = function() {"StaffLabels_MM.csv"},
+    content = function(file) {
+      write.csv(d0_room_M(), file, row.names = FALSE)
+    }
+  )
+  
 
 ########################################### Page 3 ##################################
 #####################################################################################

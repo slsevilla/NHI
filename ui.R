@@ -32,7 +32,7 @@ header <- dashboardHeader(title = "Lorenzo de Zavala Youth Legislative Session")
 ##Create the sidebard 
 sidebar <- dashboardSidebar(
  sidebarMenu(
-  menuItem("HQ File Conversion", tabName="HQ"),
+  menuItem("HQ Database Conversion", tabName="HQ"),
   menuItem("Day 0 Admin Tasks", tabName="admin_pre"),
   menuItem("Day1-7 Administrative Tasks", tabName="admin_post"),
   menuItem("Protocol", tabName="protocol"),
@@ -142,12 +142,14 @@ box.hq.3 <- box(title = "Ouput Files", width=12, status="primary", collapsible =
 ###File upload of excepted demographics, created from Page1
 day0.input <- fluidRow(
   column(12,
-      fileInput("day0.file1","Upload the Expected Student Demographic Database")#,
+      fileInput("day0.file1","Upload the Expected Student Demographic Database"),
+      fileInput("day0.file2", "Upload the Staff Demographic Database")
       )
   )
 day0.confirm <- fluidRow(
   column(8,
-         uiOutput("confirm.day0"))
+         uiOutput("confirm.day0"),
+         uiOutput("confirm.staff_file"))
   )
 
 ##Outputs for Registration Tasks
@@ -193,6 +195,12 @@ day0.out.5 <- fluidRow(
   downloadButton('download_d0_room_M', 'Download'),
   hidden(verbatimTextOutput("confirm.d0_room_M"))
 )
+###Generates labels for the staff badges
+day0.out.6 <- fluidRow(
+  column(6, actionButton("stafflabels", "Create Staff Labels")),
+  downloadButton('download_stafflabels', 'Download'),
+  hidden(verbatimTextOutput("confirm.stafflabels"))
+)
 
 ##Create one large output box
 day0.out.combo <- fluidRow(
@@ -208,7 +216,9 @@ day0.out.combo <- fluidRow(
   ),
   column(6,
          box(title = "Door Signs", width=NULL, status="primary", collapsible = TRUE,
-             solidHeader = TRUE, day0.out.5)
+             solidHeader = TRUE, day0.out.5),
+         box(title = "Staff Labels", width=NULL, status="primary", collapsible = TRUE,
+             solidHeader = TRUE, day0.out.6)
   )
 )
 
