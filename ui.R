@@ -37,10 +37,11 @@ sidebar <- dashboardSidebar(
   menuItem("Day 0 Admin Tasks", tabName="admin_pre"),
   menuItem("Day1-7 Administrative Tasks", tabName="admin_post"),
   menuItem("Protocol", tabName="protocol"),
+  menuItem("Election", tabName="elect"),
   menuItem("Points", tabName="points"),
   menuItem("Awards", tabName="awards"),
   menuItem("Merchandise", tabName="merch"),
-  
+  menuItem("Legislative", tabName="Leg")
   )
  )
 ########################## MainBody Information - HQ Database Conversion###############################
@@ -308,7 +309,7 @@ box.day0.2 <- box(title = "Pre-Registration Database Confirmation", width=8, sta
               solidHeader = TRUE, day0.confirm)
 box.day0.3 <- box(title = "Ouput Files", width=12, status="primary", 
               solidHeader = TRUE, day0.out.combo)
-########################## MainBody Information - Page 3###############################
+########################## MainBody Information - Day 1-7 Admin Tasks###############################
 #######################################################################################
 ##Create rows for file input - Post-Registration
 ##File upload of registered students demographic
@@ -358,66 +359,72 @@ box.post.2 <- box(title = "Pre-Registration Database Confirmation", width=4, sta
 box.post.3 <- box(title = "Ouput Files", width=12, status="primary", 
                   solidHeader = TRUE, admin.post.out.combo)
 
-########################## MainBody Information - Page 4###############################
+########################## MainBody Information - Points###############################
 #######################################################################################
-##Create rows of data
-###Create point sheets for the General Assembly
-fcol2.1 <- fluidRow(
+#Formining the Community Points
+points.1 <- fluidRow(
   column(6,
-         fileInput("file2.1.1","Upload the Attending Student Demographic Database"),
-         actionButton("points.genass", "Submit Attending Student Demographic File")
+         fileInput("points.file1","Upload the Attending Student Demographic File")
   ),
   column(6,
-         hidden(verbatimTextOutput("text2"))
-         # output("download file for students - general assembly")
-        )
+         downloadButton('download_points_ftc', 'Download FTC Point Sheets')
+  )
 )
-###Create a Student Demographics + Position Database
-fcol2.2 <- fluidRow(
+#General Convention
+points.2 <- fluidRow(
   column(6,
-         fileInput("file2.2.1","Upload the Attending Student Demographic Database"),
-         fileInput("file2.2.2", "Upload the Student Position Database"),
-         actionButton("data.demo.posi", "Submit Attending Student + Position Files")
+         fileInput("points.file2","Upload the Registered Student Demographic File")
   ),
-  column(6,
-         hidden(verbatimTextOutput("text2"))
-         #output("download Student Demographic + Position Database")
-         )
-)
-###Create point sheets by position
-fcol2.3 <- fluidRow(
-  column(6,
-         fileInput("file2.3.1","Upload the Student Demographic + Position Database"),
-         actionButton("points.pos", "Submit Attending Student + Position Files")
+  column(3,
+         uiOutput("gc.day")
   ),
-  column(6,
-         hidden(verbatimTextOutput("text2"))
-        # output("download Student by position point sheets")
-         )
-)
-###Update database with daily points sheets
-fcol2.4 <- fluidRow(
-  column(6,
-         fileInput("file2.4.1","Upload the Student Demographic + Position Database"),
-        # folderloc("folder2.4", "Location of folder with points"),
-         actionButton("points.tally", "Submit Points files to be tallied")
-  ),
-  column(6,
-         hidden(verbatimTextOutput("text2"))
-         #output("download final points database")
-         )
+  
+  column(3,
+         downloadButton('download_points_gc', 'Download GC Point Sheets')
+  )
 )
 
-##Create boxed for Page 1
-###Generate Boxes for text submission, verification, and user options
-box2.1 <- box(title = "General Assembly Points", width=12, 
-              status="primary", solidHeader = TRUE, fcol2.1)
-box2.2 <- box(title = "Student Demographic and Position Database", width=12, 
-              status="primary", solidHeader = TRUE, fcol2.2)
-box2.3 <- box(title = "Daily Points", width=12, 
-              status="primary", solidHeader = TRUE, fcol2.3)
-box2.4 <- box(title = "Final Points Database", width=12, 
-              status="primary", solidHeader = TRUE, fcol2.4)
+#Daily Totals
+points.out1 <- fluidRow(
+  column(6,
+         fileInput("points.file10","Upload the Forming the Community File")
+  ),
+  column(6,
+         downloadButton('download_points_day1', 'Download Day 1 Totals')
+  )
+)
+points.out2 <- fluidRow(
+  column(6,
+         fileInput("points.file11.1","Upload the GC Day 2 File")
+  ),
+  column(6,
+         fileInput("points.file11.2","Upload the Nomination Final File")
+  ),
+  column(3,
+         downloadButton('download_points_day2', 'Download Day 2 Totals')
+  )
+)
+
+
+###Combine all outputs together
+points.combo<- fluidRow(
+  column(12,
+         box(title="Day 1 Output", width=NULL, status="primary", collapsible = TRUE,
+             solidHeader = TRUE, points.out1)
+  ),
+  column(12,
+         box(title="Day 2 Output", width=NULL, status="primary", collapsible = TRUE,
+             solidHeader = TRUE, points.out2)
+  )
+)
+
+#Generate Boxes for text submission, verification, and user options
+box.points.1 <- box(title = "Forming the Community", width=12, 
+              status="primary", solidHeader = TRUE, points.1)
+box.points.2 <- box(title = "General Convention", width=12, 
+                    status="primary", solidHeader = TRUE, points.2)
+box.points.7 <- box(title = "Daily Totals", width=12, 
+                    status="primary", solidHeader = TRUE, points.combo)
 
 ########################## MainBody Information - Protocol###############################
 #######################################################################################
@@ -511,6 +518,55 @@ box.merch.1 <- box(title = "Merchandise Inputs", width=12,
 box.merch.2 <- box(title = "Ouput Files", width=12, status="primary", 
                    solidHeader = TRUE, merch.combo)
 
+########################## MainBody Information - Elections###############################
+#######################################################################################
+##Create rows of data
+###Upload Forming the Community Database
+merch.inv <- fluidRow(
+  column(6,
+         fileInput("merch.file1","Upload the Merchandise Ledger File")
+  ),
+  column(6,
+         fileInput("merch.file2","Upload the Inventory File")
+  )
+)
+
+##Ouputs selection for user - all pre-registration tasks
+merch.out.1 <- fluidRow(
+  column(12, 
+         downloadButton('download_merch_ledger', 'Download Merch Ledger')
+  )
+)
+merch.out.2 <- fluidRow(
+  column(6, 
+         uiOutput("merch.day")
+  ),
+  column(6, 
+         downloadButton('download_merch_inv', 'Download Inventory')
+  )
+  
+)
+
+###Combine all outputs together
+merch.combo<- fluidRow(
+  column(12,
+         box(title="Financial Ledger", width=NULL, status="primary", collapsible = TRUE,
+             solidHeader = TRUE, merch.out.1)
+  ),
+  column(12,
+         box(title="Inventory Worksheets", width=NULL, status="primary", collapsible = TRUE,
+             solidHeader = TRUE, merch.out.2)
+  )
+)
+
+
+##Create boxed for Page 1
+###Generate Boxes for text submission, verification, and user options
+box.merch.1 <- box(title = "Merchandise Inputs", width=12, 
+                   status="primary", solidHeader = TRUE, merch.inv)
+box.merch.2 <- box(title = "Ouput Files", width=12, status="primary", 
+                   solidHeader = TRUE, merch.combo)
+
 ########################## Output Main Body Information ###############################
 #######################################################################################
 ##Combine all body information, and assign outputs to each appropriate tab 
@@ -539,6 +595,11 @@ body <- dashboardBody(
   tabItem(tabName="protocol",
           box.proto.1,
           box.proto.2
+  ),
+  tabItem(tabName="points",
+          box.points.1,
+          box.points.2,
+          box.points.7
   ),
   tabItem(tabName="merch",
           box.merch.1,

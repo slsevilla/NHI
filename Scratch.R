@@ -22,11 +22,30 @@ templist
 inv <- read.csv("C:\\Users\\sevillas2\\Google Drive\\My Documents\\Programs & Orgs\\National Hispanic Institute\\Template National LDZ\\Director Guides\\Director of Merchandise\\Inventory_Day0.csv", header=TRUE)
 fin <- read.csv("C:\\Users\\sevillas2\\Google Drive\\My Documents\\Programs & Orgs\\National Hispanic Institute\\Template National LDZ\\Director Guides\\Director of Merchandise\\MerchandiseLedger.csv", header=TRUE)
 
-i = 1
-n = nrow(inv)-1
+gc <- read.csv("C:\\Users\\sevillas2\\Google Drive\\My Documents\\Programs & Orgs\\National Hispanic Institute\\Template National LDZ\\Director Guides\\Downloaded Files\\GC_Day2_Points.csv", header=TRUE)
+nom <- read.csv("C:\\Users\\sevillas2\\Google Drive\\My Documents\\Programs & Orgs\\National Hispanic Institute\\Template National LDZ\\Director Guides\\Downloaded Files\\Nomination_final.csv", header=TRUE)
 
-for (i in 1:n){  
-  inv[i,"Starting.Count"] <- inv[i,"Starting.Count"] - inv[i,"Units.Sold.Total"]
-  inv[i,"Units.Sold.Total"] <- 0
+gc$NAME <- as.character(gc$NAME)
+nom$NAME <- as.character(nom$NAME)
+
+name_list <- gc$NAME
+row.names(nom) <- nom$NAME
+
+for (a in name_list){
+  value=0
+  i=1
+  print (a) 
+  
+  #print (points_gc_w[i,"NAME"])
+  nom[a,"WIN"] <- value
   i=i+1
+  #}
 }
+for (a in name_list2){
+  value=0
+  points_gc_w[a,"OR"] <- value
+  
+  #}
+}
+
+points_gc_w

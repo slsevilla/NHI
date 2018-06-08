@@ -996,5 +996,254 @@ function(input,output, session){
       write.csv(merch_finledger(), file, row.names = FALSE)
     }
   )
+
+  ######################################### Points ####################################
+  #####################################################################################
+  #################Forming the Community  #################
+  ##Import expected student demo file
+  points.ftc <- reactive({
+    points.ftc <- input$points.file1
+    if(is.null(points.ftc)) return(NULL)
+    read.csv(fill=TRUE,file=input$points.file1$datapath,header=TRUE
+    )
+  })
   
-  }
+  ##Create dataframe with users name merged, for staff to print and track points
+  points_ftc <- reactive({
+    if(is.null(points.ftc)) return(NULL)
+    
+    #Read in the database
+    points_ftc_w <- points.ftc()[c("FNAME", "MNAME", "LNAME", "DOT")]
+    
+    #Start counter, and end counter as the number of rows
+    i=0
+    n=nrow(points_ftc_w)
+    
+    #Run through each row of the table, creating a merged name field for identification
+    for (i in 1:n){
+      first <- points_ftc_w[i,"FNAME"]
+      middle <- points_ftc_w[i,"MNAME"]
+      last <- points_ftc_w[i,"LNAME"]
+      
+      #Merge the first and last name
+      #If there is a middle name, add that as well
+      names <- paste(last, first, sep=", ")
+      if (!(is.null(middle))){
+        names <- paste(names,middle,sep=" ")
+      }
+      
+      #Trim any white space from the name
+      names <- trimws(names, which = c("both", "left", "right"))
+      
+      #Add names and total points column to table
+      points_ftc_w[i,"NAME"] <- names
+      points_ftc_w[,"TOTAL_PTS"] <- ""
+      
+      #Output a table with only name, dot group, and total points columns
+      points_ftc_f <- points_ftc_w[,c("NAME", "DOT","TOTAL_PTS")]
+    }
+    
+    #Output database
+    points_ftc_f[]
+  })
+  
+  ##Send file to download screen
+  output$download_points_ftc <- downloadHandler(
+    filename = function() {"FormingTheCommunity_Points.csv"},
+    content = function(file) {
+      write.csv(points_ftc(), file, row.names = FALSE)
+    }
+  )
+
+  #################General Convention  #################
+  ##Import expected student demo file
+  points.gc <- reactive({
+    points.gc <- input$points.file2
+    if(is.null(points.gc)) return(NULL)
+    read.csv(fill=TRUE,file=input$points.file2$datapath,header=TRUE
+    )
+  })
+  
+  #Create drop down choices for user to select the day to be created
+  observe({
+    dsnames <- c("GC_Day2", "GC_Day3")
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$gc.day<- renderUI({
+      selectInput("gc_day", "Which day to create for?", cb_options)
+    })
+  })
+  
+  ##Create dataframe with users name merged, for staff to print and track points
+  points_gc <- reactive({
+    if(is.null(points.gc)) return(NULL)
+    
+    #Read in the database
+    points_gc_w <- points.gc()[c("FNAME", "MNAME", "LNAME", "DOT")]
+    
+    #Start counter, and end counter as the number of rows
+    i=0
+    n=nrow(points_gc_w)
+    
+    #Run through each row of the table, creating a merged name field for identification
+    for (i in 1:n){
+      first <- points_gc_w[i,"FNAME"]
+      middle <- points_gc_w[i,"MNAME"]
+      last <- points_gc_w[i,"LNAME"]
+      
+      #Merge the first and last name
+      #If there is a middle name, add that as well
+      names <- paste(last, first, sep=", ")
+      if (middle==""){
+        names <- paste(names,middle,sep=" ")
+      }
+      
+      #Trim any white space from the name
+      names <- trimws(names, which = c("both", "left", "right"))
+      
+      #Add names and total points column to table
+      points_gc_w[i,"NAME"] <- names
+      points_gc_w[,"TOTAL_PTS"] <- ""
+      
+      #Output a table with only name, dot group, and total points columns
+      points_gc_f <- points_gc_w[,c("NAME", "DOT","TOTAL_PTS")]
+    }
+    
+    #Output database
+    points_gc_f[]
+  })
+  
+  ##Send file to download screen
+  output$download_points_gc <- downloadHandler(
+    filename = function() {
+      paste(input$gc_day, ".csv", sep="_Points")
+    },
+    content = function(file) {
+      write.csv(points_gc(), file, row.names = FALSE)
+    }
+  )
+  
+  #################Daily Points Summaries  #################
+  #Day1
+  ##Import files
+  points.day1 <- reactive({
+    points.day1 <- input$points.file10
+    if(is.null(points.day1)) return(NULL)
+    read.csv(fill=TRUE,file=input$points.file10$datapath,header=TRUE
+    )
+  })
+
+  ##Create Day 1 table Summary
+  points_day1 <- reactive({
+    if(is.null(points.day1)) return(NULL)
+    
+    points_ftc_w <- points.day1()[c("NAME", "TOTAL_PTS")]
+    
+    i = 0
+    n=nrow(points_ftc_w)
+    
+    for(i in 1:n){
+      value = points_ftc_w[i,"TOTAL_PTS"]
+      
+      if(is.na(value)){
+        points_ftc_w[i,"TOTAL_PTS"] =0
+      }
+    }
+    
+    #Remove Dot info from the table
+    points_ftc_f <- points_ftc_w[,c("NAME","TOTAL_PTS")]
+    
+  })
+  
+  #Day 2
+  ##Import Files
+  points.day2.1 <- reactive({
+    points.day2.1 <- input$points.file11.1
+    if(is.null(points.day2.1)) return(NULL)
+    read.csv(fill=TRUE,file=input$points.file11.1$datapath,header=TRUE
+    )
+  })
+  points.day2.2<- reactive({
+    points.day2.2 <- input$points.file11.2
+    if(is.null(points.day2.2)) return(NULL)
+    read.csv(fill=TRUE,file=input$points.file11.2$datapath,header=TRUE
+    )
+  })
+  
+  #Create Day 2 table Summary
+  points_day2 <- reactive({
+    if(is.null(points.day2.1)) return(NULL)
+    if(is.null(points.day2.1)) return(NULL)
+    
+    #######General Convention Addition    #######
+    ##Create new table
+    points_gc_w <- points.day2.1()[c("NAME", "TOTAL_PTS")]
+    
+    #Set counters at 0, and to end on the total number of rows
+    i = 0
+    n=nrow(points_gc_w)
+    
+    for(i in 1:n){
+      value = points_gc_w[i,"TOTAL_PTS"]
+      
+      if(is.na(value)){
+        points_gc_w[i,"TOTAL_PTS"] =0
+      }
+    }
+    
+    #Remove Dot info from the table, assign row names
+    points_gc_f <- points_gc_w[,c("NAME","TOTAL_PTS")]
+    row.names(points_gc_f) <- points_gc_f$NAME
+    
+    ########Nominations Points    #######
+    #Read in the GC Day 2 database
+    points_nom_w <- points.day2.2()[c("NAME", "POSITION")]
+    
+    #Set student name as the row name
+    row.names(points_nom_w) <- points_nom_w$NAME
+    name_list <- points_nom_w$NAME
+    
+    #Go through each nam of the database 
+    for (a in name_list){
+      value=0
+      position <- points_nom_w[a,"POSITION"]
+      
+      if(position=="SENATE"){
+        value=5
+      } else if (position=="JUSTICE"){
+        value=15
+      } else if (position=="VICE-PRESIDENT"){
+        value=20
+      } else if (position=="PRESIDENT"){
+        value=25
+      } 
+      
+      #Send value to points
+      points_nom_w[a,"NOM_PTS"] <- value
+      
+      #Sum for total points
+      points_nom_w[a,"GC_PTS"] <- points_gc_f[a,"TOTAL_PTS"]
+      points_nom_w[a,"TOTAL"] <- points_nom_w[a,"NOM_PTS"] + points_nom_w[a,"GC_PTS"]
+    }
+    
+    #Create final table
+    points_day2 <- points_nom_w[c("NAME","GC_PTS","NOM_PTS","TOTAL")]
+    points_day2
+  })
+  
+  ##Send daily output files to download screen
+  output$download_points_day1 <- downloadHandler(
+    filename = function() {"Day1_Points.csv"},
+    content = function(file) {
+      write.csv(points_day1(), file, row.names = FALSE)
+    }
+  )
+  
+  ##Send daily output files to download screen
+  output$download_points_day2 <- downloadHandler(
+    filename = function() {"Day2_Points.csv"},
+    content = function(file) {
+      write.csv(points_day2(), file, row.names = FALSE)
+    }
+  )
+}
