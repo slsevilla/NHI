@@ -885,4 +885,116 @@ function(input,output, session){
     }
   )
 
-}
+
+######################################### Merchandise ####################################
+#####################################################################################
+  
+  #User Input File
+  ##Import inventory file
+  merch.fin <- reactive({
+    merch.fin <- input$merch.file1
+    if(is.null(merch.fin)) return(NULL)
+    read.csv(fill=TRUE,file=input$merch.file1$datapath,header=TRUE
+    )
+  })
+  merch.inv <- reactive({
+    merch.inv <- input$merch.file2
+    if(is.null(merch.inv)) return(NULL)
+    read.csv(fill=TRUE,file=input$merch.file2$datapath,header=TRUE
+    )
+  })
+
+  #Create drop down choices for user to select the day to be created
+  observe({
+    dsnames <- c("Inventory_Day1", "Inventory_Day2", "Inventory_Day3", "Inventory_Day4", 
+                 "Inventory_Day5", "Inventory_Day6", "Inventory_Day7", "Inventory_Day8")
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$merch.day<- renderUI({
+      selectInput("merch_day", "Which day to create for (tomorrow's #)", cb_options)
+    })
+  })
+  
+  #Perform calculations for the inventory record. This will take the starting count and subtract
+  #the count sold for the day. It will reset the value of the sold value back to zero.
+  merch_inv <- reactive({
+    if(is.null(merch.inv)) return(NULL)
+    
+    #Read in the database
+    merch_inv_w <- merch.inv()[c("Item.Description", "Starting.Count", "Cost.Per.Unit", "Units.Sold.Total",
+                               "Units.Paid.Square","Units.Paid.Cash")]
+
+    #Define starting counter, and end equal to the number of rows
+    i = 1
+    n = nrow(merch_inv_w[])
+    
+    #Perofrm a loop of each row, subtracting the sold number from the starting value
+    for (i in 1:n){  
+      merch_inv_w[i,"Starting.Count"] <- merch_inv_w[i,"Starting.Count"] - merch_inv_w[i,"Units.Sold.Total"]
+      merch_inv_w[i,"Units.Sold.Total"] <- 0
+      i=i+1
+    }
+    
+    #Send the updated database
+    merch_inv_w[]
+  })
+  
+  #Perform calculations for the financial ledger record. This will take the data from the inventory form
+  #and calculate how much money was made throughout the day. It will also tally the total number for verification
+  #with petty cash amount
+  merch_finledger <- reactive({
+    if(is.null(merch.inv)) return(NULL)
+    if(is.null(merch.fin)) return(NULL)
+    
+    
+    #Read in the database
+    merch_inv_w <- merch.inv()[c("Cost.Per.Unit", "Units.Paid.Square","Units.Paid.Cash")]
+    merch_fin_w <- merch.fin()[c("Day", "Profit.on.Square","Profit.in.Cash", "Total.Petty.Cash")]
+    
+    #Define starting counter, and end equal to the number of rows
+    i = 1
+    n <- nrow(merch_inv_w[])
+    square_sum = 0
+    cash_sum = 0
+    
+    #Perofrm a loop of each row, adding the total profits in cash or on the square
+    for (i in 1:n){
+      square_sum <- merch_inv_w[i,"Cost.Per.Unit"] * merch_inv_w[i,"Units.Paid.Square"] + square_sum
+      cash_sum <- merch_inv_w[i,"Cost.Per.Unit"] * merch_inv_w[i,"Units.Paid.Cash"] + cash_sum
+      i=i+1
+    }
+   
+    #Create a new row based on the day and fill it with the next day
+    n <- nrow(merch_fin_w)
+    merch_fin_w[n+1,"Day"] <- n
+    
+    #Push the values obtained to the rows
+    merch_fin_w[n+1,"Profit.on.Square"] <- square_sum
+    merch_fin_w[n+1,"Profit.in.Cash"] <- cash_sum
+    merch_fin_w[n+1,"Total.Petty.Cash"] <- merch_fin_w[n,"Total.Petty.Cash"] + cash_sum
+    
+    #Send the updated database
+    merch_fin_w[]
+  })
+  
+  
+
+  #Send file to download screen
+  output$download_merch_inv <- downloadHandler(
+    filename = function() {
+      paste(input$merch_day, ".csv", sep="")
+    },
+    content = function(file) {
+      write.csv(merch_inv(), file, row.names = FALSE)
+    }
+    )
+  
+  #
+  output$download_merch_ledger <- downloadHandler(
+    filename = function() {"MerchandiseLedger.csv"},
+    content = function(file) {
+      write.csv(merch_finledger(), file, row.names = FALSE)
+    }
+  )
+  
+  }

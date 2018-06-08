@@ -38,7 +38,9 @@ sidebar <- dashboardSidebar(
   menuItem("Day1-7 Administrative Tasks", tabName="admin_post"),
   menuItem("Protocol", tabName="protocol"),
   menuItem("Points", tabName="points"),
-  menuItem("Awards", tabName="awards")
+  menuItem("Awards", tabName="awards"),
+  menuItem("Merchandise", tabName="merch"),
+  
   )
  )
 ########################## MainBody Information - HQ Database Conversion###############################
@@ -460,6 +462,55 @@ box.proto.1 <- box(title = "Forming the Community", width=12,
 box.proto.2 <- box(title = "Ouput Files", width=12, status="primary", 
                    solidHeader = TRUE, proto.combo)
 
+########################## MainBody Information - Merchandise###############################
+#######################################################################################
+##Create rows of data
+###Upload Forming the Community Database
+merch.inv <- fluidRow(
+  column(6,
+         fileInput("merch.file1","Upload the Merchandise Ledger File")
+  ),
+ column(6,
+         fileInput("merch.file2","Upload the Inventory File")
+  )
+)
+
+##Ouputs selection for user - all pre-registration tasks
+merch.out.1 <- fluidRow(
+  column(12, 
+         downloadButton('download_merch_ledger', 'Download Merch Ledger')
+  )
+)
+merch.out.2 <- fluidRow(
+  column(6, 
+         uiOutput("merch.day")
+  ),
+  column(6, 
+         downloadButton('download_merch_inv', 'Download Inventory')
+  )
+  
+)
+
+###Combine all outputs together
+merch.combo<- fluidRow(
+  column(12,
+         box(title="Financial Ledger", width=NULL, status="primary", collapsible = TRUE,
+             solidHeader = TRUE, merch.out.1)
+  ),
+  column(12,
+         box(title="Inventory Worksheets", width=NULL, status="primary", collapsible = TRUE,
+             solidHeader = TRUE, merch.out.2)
+  )
+)
+
+
+##Create boxed for Page 1
+###Generate Boxes for text submission, verification, and user options
+box.merch.1 <- box(title = "Merchandise Inputs", width=12, 
+                   status="primary", solidHeader = TRUE, merch.inv)
+box.merch.2 <- box(title = "Ouput Files", width=12, status="primary", 
+                   solidHeader = TRUE, merch.combo)
+
 ########################## Output Main Body Information ###############################
 #######################################################################################
 ##Combine all body information, and assign outputs to each appropriate tab 
@@ -488,6 +539,10 @@ body <- dashboardBody(
   tabItem(tabName="protocol",
           box.proto.1,
           box.proto.2
+  ),
+  tabItem(tabName="merch",
+          box.merch.1,
+          box.merch.2
   )
  )
 )
