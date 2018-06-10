@@ -6,18 +6,24 @@ library(leaflet)
 library(knitr)
 
 #####################################################################################
+#####################################################################################
 ###                                      NOTES                                   ###
 ###################################################################################
+####################################################################################
 
+
+####################################################################################
 #####################################################################################
 ###                                      Code                                    ###
 #####################################################################################
+####################################################################################
+
 
 function(input,output, session){
-######################################### HQ Database Conversion ####################################
+############################## HQ Database Conversion################################
 #####################################################################################
   
-  #User Input File
+  ############################## Input File
   ##Import file
   hq_input <- reactive({
     hq_input <- input$hq.file1
@@ -36,7 +42,7 @@ function(input,output, session){
     tableOutput("hq.input")
   })
   
-  #User Dropdowns
+  ############################## User Dropdowns
   ##Generate Drop Downs for user to choose
   observe({
     req(input$hq.file1)
@@ -264,7 +270,7 @@ function(input,output, session){
     })
   })
   
-  #Generate Student Database
+  ############################## Generate Student Database
   ###Create database from user generated files, and matched column headers
   hq_database <- reactive({
     if(is.null(hq_input)) return(NULL)
@@ -316,7 +322,7 @@ function(input,output, session){
     table_out
   })
   
-  ###Send file to download screen
+  ################################Send file to download screen
   output$download_hq <- downloadHandler(
     filename = function() {"StudentDemo_Expected.csv"},
     content = function(file) {
@@ -324,10 +330,203 @@ function(input,output, session){
     }
   )
 
-######################################## Day 0 Admin Tasks #################################### 
-###################################################################################  
+############################ Staff Database Conversion ###############################
+#####################################################################################
   
-  #File input
+  #################################User Input File
+  ##Import file
+  staff_db <- reactive({
+    staff_db <- input$staff.db1
+    if(is.null(staff_db)) return(NULL)
+    read.csv(fill=TRUE,file=input$staff.db1$datapath,header=TRUE,colClasses = "factor"
+    )
+  })
+  
+  #################################User Dropdowns
+  ##Generate Drop Downs for user to choose
+  observe({
+    req(input$staff.db1)
+    dsnames <- names(staff_db())
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$staff_ROLE<- renderUI({
+      selectInput("staff_ROLE", "Program Role", cb_options)
+    })
+  })
+  observe({
+    req(input$staff.db1)
+    dsnames <- names(staff_db())
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$staff_FNAME<- renderUI({
+      selectInput("staff_FNAME", "First Name", cb_options)
+    })
+  })
+  observe({
+    req(input$staff.db1)
+    dsnames <- names(staff_db())
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$staff_MNAME<- renderUI({
+      selectInput("staff_MNAME", "Middle Name", cb_options)
+    })
+  })
+  observe({
+    req(input$staff.db1)
+    dsnames <- names(staff_db())
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$staff_LNAME<- renderUI({
+      selectInput("staff_LNAME", "Last Name", cb_options)
+    })
+  })
+  observe({
+    req(input$staff.db1)
+    dsnames <- names(staff_db())
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$staff_CITY<- renderUI({
+      selectInput("staff_CITY", "Home City", cb_options)
+    })
+  })
+  observe({
+    req(input$staff.db1)
+    dsnames <- names(staff_db())
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$staff_ST<- renderUI({
+      selectInput("staff_ST", "Home State", cb_options)
+    })
+  })
+  observe({
+    req(input$staff.db1)
+    dsnames <- names(staff_db())
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$staff_STAT<- renderUI({
+      selectInput("staff_STAT", "Academic Status", cb_options)
+    })
+  })
+  observe({
+    req(input$staff.db1)
+    dsnames <- names(staff_db())
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$staff_HS<- renderUI({
+      selectInput("staff_HS", "High School", cb_options)
+    })
+  })
+  observe({
+    req(input$staff.db1)
+    dsnames <- names(staff_db())
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$staff_UNIV<- renderUI({
+      selectInput("staff_UNIV", "College/Univ", cb_options)
+    })
+  })
+  observe({
+    req(input$staff.db1)
+    dsnames <- names(staff_db())
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$staff_MAJ<- renderUI({
+      selectInput("staff_MAJ", "Major", cb_options)
+    })
+  })
+  observe({
+    req(input$staff.db1)
+    dsnames <- names(staff_db())
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$staff_GD<- renderUI({
+      selectInput("staff_GD", "GD Info", cb_options)
+    })
+  })
+  observe({
+    req(input$staff.db1)
+    dsnames <- names(staff_db())
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$staff_LDZ<- renderUI({
+      selectInput("staff_LDZ", "LDZ Info", cb_options)
+    })
+  })
+  observe({
+    req(input$staff.db1)
+    dsnames <- names(staff_db())
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$staff_CWS<- renderUI({
+      selectInput("staff_CWS", "CWS Info", cb_options)
+    })
+  })
+  observe({
+    req(input$staff.db1)
+    dsnames <- names(staff_db())
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$staff_HSSTAT<- renderUI({
+      selectInput("staff_HSSTAT", "HS Level", cb_options)
+    })
+  })
+  observe({
+    req(input$staff.db1)
+    dsnames <- names(staff_db())
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$staff_COLSTAT<- renderUI({
+      selectInput("staff_COLSTAT", "College Level", cb_options)
+    })
+  })
+  
+  #################################Generate Staff Database
+  ###Create database from user generated files, and matched column headers
+  staff_database <- reactive({
+    if(is.null(staff_db)) return(NULL)
+    
+    #Read in input table, and determine total number of rows
+    table_in <- staff_db()
+    
+    #Create an output table that matches the number of rows 
+    n<- nrow(table_in)
+    table_out <- data.frame(x=1:n)
+    
+    #Append each necessary column, based on user input to the new table
+    table_out$FNAME <- table_in[,input$staff_FNAME]
+    table_out$MNAME <- table_in[,input$staff_MNAME]
+    table_out$LNAME <- table_in[,input$staff_LNAME]
+    table_out$CITY <- table_in[,input$staff_CITY]
+    table_out$ST <- table_in[,input$staff_ST]
+    table_out$HSSTAT <- table_in[,input$staff_HSSTAT]
+    table_out$HS <- table_in[,input$staff_HS]
+    table_out$COLSTAT <- table_in[,input$staff_COLSTAT]
+    table_out$UNIV <- table_in[,input$staff_UNIV]
+    table_out$MAJ <- table_in[,input$staff_MAJ]
+    table_out$STAT <- table_in[,input$staff_STAT]
+    table_out$GD <- table_in[,input$staff_GD]
+    table_out$LDZ <- table_in[,input$staff_LDZ]
+    table_out$CWS <- table_in[,input$staff_CWS]
+    table_out$ROLE <- table_in[,input$staff_ROLE]
+    
+    #Return the full, new table after removing starting column
+    table_out <- subset(table_out, select=-c(x))
+    table_out
+  })
+  
+  ###################################Send file to download screen
+  output$download_staffdemo <- downloadHandler(
+    filename = function() {"Staff_Demo.csv"},
+    content = function(file) {
+      write.csv(staff_database(), file, row.names = FALSE)
+    }
+  )
+  
+  
+############################## Day 0 Admin Tasks #################################### 
+####################################################################################  
+  
+  ###############################File input
   ##Generate database for input file1
   day0_expect <- reactive({
     admin1 <- input$day0.file1
@@ -363,54 +562,7 @@ function(input,output, session){
     tableOutput("staff.file")
   })
   
-  #Data Confirmations 
-  ##Displays a confirmation message for the attendance/travel verification
-  observeEvent(input$d0_travelverify,{
-    output$confirm.d0_travelverify <- renderText({
-      "Upload Complete - Download D0 Attend/Travel Verification"})  
-  })
-  ##Displays a confirmation message for the student self verification
-  observeEvent(input$studselfverify,{
-    output$confirm.studselfverify <- renderText({
-      "Upload Complete - Download Student Self-Update Forms"})  
-  })
-  ##Displays a confirmation message for the door signs
-  observeEvent(input$studlabels,{
-    output$confirm.studlabels <- renderText({
-      "Upload Complete - Download Student Labels"})  
-  })
-  ##Displays a confirmation message for the registration  signs
-  observeEvent(input$studbalance,{
-    output$confirm.studbalance <- renderText({
-      "Upload Complete - Download Students with Balance List"})  
-  })
-  ##Displays a confirmation message for the registration  signs
-  observeEvent(input$studforms,{
-    output$confirm.studforms <- renderText({
-      "Upload Complete - Download Missing Forms List"})  
-  })
-  ##Displays a confirmation message for the door signs
-  observeEvent(input$door_sign,{
-    output$confirm.door_sign <- renderText({
-      "Upload Complete - Download Door signs"})  
-  })
-  ##Displays a confirmation message for the rooming lists on Day 0- female
-  observeEvent(input$d0_room_F,{
-    output$confirm.d0_room_F <- renderText({
-      "Upload Complete - Download Day 0 Rooming Lists for Female Students"})  
-  })
-  ##Displays a confirmation message for the rooming lists on Day 0- Male
-  observeEvent(input$d0_room_M,{
-    output$confirm.d0_room_M <- renderText({
-      "Upload Complete - Download Day 0 Rooming Lists for Male Students"})  
-  })
-  ##Displays a confirmation message for the staff labels
-  observeEvent(input$stafflabels,{
-    output$confirm.stafflabels <- renderText({
-      "Upload Complete - Download Staff Label File"})  
-  })
-  
-  #Create sub-tables
+  ################################Create sub-tables
   d0_travelverify <- reactive({
     if(is.null(input$day0.file1)) return()
     d0_travelverify <- day0_expect()[c("FNAME", "MNAME", "LNAME", "CELL", "P1.CELL",
@@ -469,7 +621,7 @@ function(input,output, session){
                                   "ST", "ROLE")]
   })           
   
-  #File Downloads
+  ################################File Downloads
   output$download_d0_travelverify <- downloadHandler(
     filename = function() {"D0_AttendTravel_Verify.csv"},
     content = function(file) {
@@ -524,8 +676,107 @@ function(input,output, session){
     }
   )
   
+############################## Day 1-7 Admin Tasks #################################### 
+####################################################################################  
+  
+  ###############################File input
+  ##Generate database for input file1
+  day1.status <- reactive({
+    day1.status <- input$admin.post.file1
+    if (is.null(day1.status)) return(NULL)
+    read.csv(fill=TRUE,file=input$admin.post.file1$datapath, header=TRUE, 
+             colClasses = "factor")
+  })
+  
+  #Create dataframe of only registered students
+  day1_registered <- reactive({
+    if(is.null(day1.status)) return(NULL)
+    
+    #Read in the database
+    registered_w <- day1.status()[]
+    
+    #Start counter, and end counter as the number of rows
+    i=1
+    n=nrow(registered_w)
+    
+    #Run through each row of the table, creating a merged name field for identification
+    for (i in 1:n){
+      first <- registered_w[i,"FNAME"]
+      middle <- registered_w[i,"MNAME"]
+      last <- registered_w[i,"LNAME"]
+      
+      #Merge the first and last name
+      #If there is a middle name, add that as well
+      names <- paste(last, first, sep=", ")
+      if (!(is.null(middle))){
+        names <- paste(names,middle,sep=" ")
+      }
+      
+      #Trim any white space from the name
+      names <- trimws(names, which = c("both", "left", "right"))
+      
+      #Add names and total points column to table
+      registered_w[i,"NAME"] <- names
 
-########################################### Protocol ##################################
+      #Output a table of only registered students
+      registered_f <- subset(registered_w,STATUS=="Present")
+    }
+    registered_f
+  })
+  
+    
+  #Create dataframe of non-attending students
+  day1_nonattend <- reactive({
+    if(is.null(day1.status)) return(NULL)
+      
+    #Read in the database
+    nonattend_w <- day1.status()[]
+    
+    #Start counter, and end counter as the number of rows
+    i=1
+    n=nrow(nonattend_w)
+    
+    #Run through each row of the table, creating a merged name field for identification
+    for (i in 1:n){
+      first <- nonattend_w[i,"FNAME"]
+      middle <- nonattend_w[i,"MNAME"]
+      last <- nonattend_w[i,"LNAME"]
+        
+      #Merge the first and last name
+      #If there is a middle name, add that as well
+      names <- paste(last, first, sep=", ")
+      if (!(is.null(middle))){
+        names <- paste(names,middle,sep=" ")
+      }
+        
+      #Trim any white space from the name
+      names <- trimws(names, which = c("both", "left", "right"))
+        
+      #Add names and total points column to table
+      nonattend_w[i,"NAME"] <- names
+        
+      #Output a table of only registered students
+      nonattend_f <- subset(nonattend_w,!(STATUS=="Present"))
+    }
+    nonattend_f
+  })
+  
+  #Send file to download screen
+  output$download_post_registered <- downloadHandler(
+    filename = function() {"StudentDemo_Registered.csv"},
+    content = function(file) {
+      write.csv(day1_registered(), file, row.names = FALSE)
+    }
+  )
+  #Send file to download screen
+  output$download_post_nonattend <- downloadHandler(
+    filename = function() {"StudentDemo_Non-Attending.csv"},
+    content = function(file) {
+      write.csv(day1_nonattend(), file, row.names = FALSE)
+    }
+  )
+
+#################################### Protocol ########################################
 #####################################################################################
   
   #Input Files
@@ -670,226 +921,23 @@ function(input,output, session){
   
   #Output Files
   output$download_ftc_protocol <- downloadHandler(
-    filename = function() {"FTC_Protocol.csv"},
+    filename = function() {"Protocol_FTC.csv"},
     content = function(file) {
       write.csv(ftc_protocol(), file, row.names = FALSE)
     }
   )
   output$download_ftc_staff <- downloadHandler(
-    filename = function() {"FTC_Staff.csv"},
+    filename = function() {"Protocol_FTC_Staff.csv"},
     content = function(file) {
       write.csv(ftc_staff(), file, row.names = FALSE)
     }
   )
   
   
-######################################### Staff Database Conversion ####################################
+#################################### Merchandise ####################################
 #####################################################################################
   
-  #User Input File
-  ##Import file
-  staff_db <- reactive({
-    staff_db <- input$staff.db1
-    if(is.null(staff_db)) return(NULL)
-    read.csv(fill=TRUE,file=input$staff.db1$datapath,header=TRUE,colClasses = "factor"
-    )
-  })
-  ##Create File Summary information
-  output$staff.db.input <- renderTable({
-    if(is.null(staff_db())) return ()
-    input$staff.db1
-  })
-  ##Display confirmation of upload for user
-  output$confirm.staffdemo <- renderUI({
-    if(is.null(staff_db())) return()
-    tableOutput("staff.db.input")
-  })
-  
-  #User Dropdowns
-  ##Generate Drop Downs for user to choose
-  observe({
-    req(input$staff.db1)
-    dsnames <- names(staff_db())
-    cb_options <- list()
-    cb_options[dsnames] <- dsnames
-    output$staff_ROLE<- renderUI({
-      selectInput("staff_ROLE", "Program Role", cb_options)
-    })
-  })
-  observe({
-    req(input$staff.db1)
-    dsnames <- names(staff_db())
-    cb_options <- list()
-    cb_options[dsnames] <- dsnames
-    output$staff_FNAME<- renderUI({
-      selectInput("staff_FNAME", "First Name", cb_options)
-    })
-  })
-  observe({
-    req(input$staff.db1)
-    dsnames <- names(staff_db())
-    cb_options <- list()
-    cb_options[dsnames] <- dsnames
-    output$staff_MNAME<- renderUI({
-      selectInput("staff_MNAME", "Middle Name", cb_options)
-    })
-  })
-  observe({
-    req(input$staff.db1)
-    dsnames <- names(staff_db())
-    cb_options <- list()
-    cb_options[dsnames] <- dsnames
-    output$staff_LNAME<- renderUI({
-      selectInput("staff_LNAME", "Last Name", cb_options)
-    })
-  })
-  observe({
-    req(input$staff.db1)
-    dsnames <- names(staff_db())
-    cb_options <- list()
-    cb_options[dsnames] <- dsnames
-    output$staff_CITY<- renderUI({
-      selectInput("staff_CITY", "Home City", cb_options)
-    })
-  })
-  observe({
-    req(input$staff.db1)
-    dsnames <- names(staff_db())
-    cb_options <- list()
-    cb_options[dsnames] <- dsnames
-    output$staff_ST<- renderUI({
-      selectInput("staff_ST", "Home State", cb_options)
-    })
-  })
-  observe({
-    req(input$staff.db1)
-    dsnames <- names(staff_db())
-    cb_options <- list()
-    cb_options[dsnames] <- dsnames
-    output$staff_STAT<- renderUI({
-      selectInput("staff_STAT", "Academic Status", cb_options)
-    })
-  })
-  observe({
-    req(input$staff.db1)
-    dsnames <- names(staff_db())
-    cb_options <- list()
-    cb_options[dsnames] <- dsnames
-    output$staff_HS<- renderUI({
-      selectInput("staff_HS", "High School", cb_options)
-    })
-  })
-  observe({
-    req(input$staff.db1)
-    dsnames <- names(staff_db())
-    cb_options <- list()
-    cb_options[dsnames] <- dsnames
-    output$staff_UNIV<- renderUI({
-      selectInput("staff_UNIV", "College/Univ", cb_options)
-    })
-  })
-  observe({
-    req(input$staff.db1)
-    dsnames <- names(staff_db())
-    cb_options <- list()
-    cb_options[dsnames] <- dsnames
-    output$staff_MAJ<- renderUI({
-      selectInput("staff_MAJ", "Major", cb_options)
-    })
-  })
-  observe({
-    req(input$staff.db1)
-    dsnames <- names(staff_db())
-    cb_options <- list()
-    cb_options[dsnames] <- dsnames
-    output$staff_GD<- renderUI({
-      selectInput("staff_GD", "GD Info", cb_options)
-    })
-  })
-  observe({
-    req(input$staff.db1)
-    dsnames <- names(staff_db())
-    cb_options <- list()
-    cb_options[dsnames] <- dsnames
-    output$staff_LDZ<- renderUI({
-      selectInput("staff_LDZ", "LDZ Info", cb_options)
-    })
-  })
-  observe({
-    req(input$staff.db1)
-    dsnames <- names(staff_db())
-    cb_options <- list()
-    cb_options[dsnames] <- dsnames
-    output$staff_CWS<- renderUI({
-      selectInput("staff_CWS", "CWS Info", cb_options)
-    })
-  })
-  observe({
-    req(input$staff.db1)
-    dsnames <- names(staff_db())
-    cb_options <- list()
-    cb_options[dsnames] <- dsnames
-    output$staff_HSSTAT<- renderUI({
-      selectInput("staff_HSSTAT", "HS Level", cb_options)
-    })
-  })
-  observe({
-    req(input$staff.db1)
-    dsnames <- names(staff_db())
-    cb_options <- list()
-    cb_options[dsnames] <- dsnames
-    output$staff_COLSTAT<- renderUI({
-      selectInput("staff_COLSTAT", "College Level", cb_options)
-    })
-  })
-  
-  #Generate Student Database
-  ###Create database from user generated files, and matched column headers
-  staff_database <- reactive({
-    if(is.null(staff_db)) return(NULL)
-    
-    #Read in input table, and determine total number of rows
-    table_in <- staff_db()
-    
-    #Create an output table that matches the number of rows 
-    n<- nrow(table_in)
-    table_out <- data.frame(x=1:n)
-    
-    #Append each necessary column, based on user input to the new table
-    table_out$FNAME <- table_in[,input$staff_FNAME]
-    table_out$MNAME <- table_in[,input$staff_MNAME]
-    table_out$LNAME <- table_in[,input$staff_LNAME]
-    table_out$CITY <- table_in[,input$staff_CITY]
-    table_out$ST <- table_in[,input$staff_ST]
-    table_out$HSSTAT <- table_in[,input$staff_HSSTAT]
-    table_out$HS <- table_in[,input$staff_HS]
-    table_out$COLSTAT <- table_in[,input$staff_COLSTAT]
-    table_out$UNIV <- table_in[,input$staff_UNIV]
-    table_out$MAJ <- table_in[,input$staff_MAJ]
-    table_out$STAT <- table_in[,input$staff_STAT]
-    table_out$GD <- table_in[,input$staff_GD]
-    table_out$LDZ <- table_in[,input$staff_LDZ]
-    table_out$CWS <- table_in[,input$staff_CWS]
-    table_out$ROLE <- table_in[,input$staff_ROLE]
-    
-    #Return the full, new table after removing starting column
-    table_out <- subset(table_out, select=-c(x))
-    table_out
-  })
-  
-  ###Send file to download screen
-  output$download_staffdemo <- downloadHandler(
-    filename = function() {"Staff_Demo.csv"},
-    content = function(file) {
-      write.csv(staff_database(), file, row.names = FALSE)
-    }
-  )
-
-
-######################################### Merchandise ####################################
-#####################################################################################
-  
-  #User Input File
+  ############################### #User Input File
   ##Import inventory file
   merch.fin <- reactive({
     merch.fin <- input$merch.file1
@@ -904,7 +952,7 @@ function(input,output, session){
     )
   })
 
-  #Create drop down choices for user to select the day to be created
+  ################################Create drop down choices for user to select the day to be created
   observe({
     dsnames <- c("Inventory_Day1", "Inventory_Day2", "Inventory_Day3", "Inventory_Day4", 
                  "Inventory_Day5", "Inventory_Day6", "Inventory_Day7", "Inventory_Day8")
@@ -915,7 +963,8 @@ function(input,output, session){
     })
   })
   
-  #Perform calculations for the inventory record. This will take the starting count and subtract
+  ################################ Perform calculations for the inventory record. 
+  #This will take the starting count and subtract
   #the count sold for the day. It will reset the value of the sold value back to zero.
   merch_inv <- reactive({
     if(is.null(merch.inv)) return(NULL)
@@ -939,9 +988,10 @@ function(input,output, session){
     merch_inv_w[]
   })
   
-  #Perform calculations for the financial ledger record. This will take the data from the inventory form
-  #and calculate how much money was made throughout the day. It will also tally the total number for verification
-  #with petty cash amount
+  ################################ Perform calculations for the financial ledger record. 
+  #This will take the data from the inventory form
+  #and calculate how much money was made throughout the day. It will also tally the total 
+  #number for verification with petty cash amount
   merch_finledger <- reactive({
     if(is.null(merch.inv)) return(NULL)
     if(is.null(merch.fin)) return(NULL)
@@ -977,9 +1027,7 @@ function(input,output, session){
     merch_fin_w[]
   })
   
-  
-
-  #Send file to download screen
+  ################################ Send file to download screen
   output$download_merch_inv <- downloadHandler(
     filename = function() {
       paste(input$merch_day, ".csv", sep="")
@@ -997,10 +1045,11 @@ function(input,output, session){
     }
   )
 
-  ######################################### Points ####################################
-  #####################################################################################
-  #################Forming the Community  #################
-  ##Import expected student demo file
+######################################### Points ####################################
+#####################################################################################
+  
+  ##################################Forming the Community 
+  #Import expected student demo file
   points.ftc <- reactive({
     points.ftc <- input$points.file1
     if(is.null(points.ftc)) return(NULL)
@@ -1008,65 +1057,43 @@ function(input,output, session){
     )
   })
   
-  ##Create dataframe with users name merged, for staff to print and track points
+  #Create dataframe with users name merged, for staff to print and track points
   points_ftc <- reactive({
     if(is.null(points.ftc)) return(NULL)
     
     #Read in the database
     points_ftc_w <- points.ftc()[c("FNAME", "MNAME", "LNAME", "DOT")]
     
-    #Start counter, and end counter as the number of rows
-    i=0
-    n=nrow(points_ftc_w)
+    #Add  total points column to table
+    points_ftc_w[,"TOTAL_PTS"] <- ""
     
-    #Run through each row of the table, creating a merged name field for identification
-    for (i in 1:n){
-      first <- points_ftc_w[i,"FNAME"]
-      middle <- points_ftc_w[i,"MNAME"]
-      last <- points_ftc_w[i,"LNAME"]
-      
-      #Merge the first and last name
-      #If there is a middle name, add that as well
-      names <- paste(last, first, sep=", ")
-      if (!(is.null(middle))){
-        names <- paste(names,middle,sep=" ")
-      }
-      
-      #Trim any white space from the name
-      names <- trimws(names, which = c("both", "left", "right"))
-      
-      #Add names and total points column to table
-      points_ftc_w[i,"NAME"] <- names
-      points_ftc_w[,"TOTAL_PTS"] <- ""
-      
-      #Output a table with only name, dot group, and total points columns
-      points_ftc_f <- points_ftc_w[,c("NAME", "DOT","TOTAL_PTS")]
-    }
+    #Output a table with only name, dot group, and total points columns
+    points_ftc_f <- points_ftc_w[,c("NAME", "DOT","TOTAL_PTS")]
     
     #Output database
     points_ftc_f[]
   })
   
-  ##Send file to download screen
+  #Send file to download screen
   output$download_points_ftc <- downloadHandler(
-    filename = function() {"FormingTheCommunity_Points.csv"},
+    filename = function() {"Points_FormingTheCommunity.csv"},
     content = function(file) {
       write.csv(points_ftc(), file, row.names = FALSE)
     }
   )
 
-  #################General Convention  #################
+  ############################### General Convention - Day 2 OR 3
   ##Import expected student demo file
-  points.gc <- reactive({
-    points.gc <- input$points.file2
-    if(is.null(points.gc)) return(NULL)
+  points.gc2 <- reactive({
+    points.gc2 <- input$points.file2
+    if(is.null(points.gc2)) return(NULL)
     read.csv(fill=TRUE,file=input$points.file2$datapath,header=TRUE
     )
   })
   
   #Create drop down choices for user to select the day to be created
   observe({
-    dsnames <- c("GC_Day2", "GC_Day3")
+    dsnames <- c("Points_GC_Day2", "Points_GC_Day3")
     cb_options <- list()
     cb_options[dsnames] <- dsnames
     output$gc.day<- renderUI({
@@ -1075,42 +1102,21 @@ function(input,output, session){
   })
   
   ##Create dataframe with users name merged, for staff to print and track points
-  points_gc <- reactive({
-    if(is.null(points.gc)) return(NULL)
+  points_gc2 <- reactive({
+    if(is.null(points.gc2)) return(NULL)
     
     #Read in the database
-    points_gc_w <- points.gc()[c("FNAME", "MNAME", "LNAME", "DOT")]
+    points_gc2_w <- points.gc2()[c("FNAME", "MNAME", "LNAME", "DOT")]
     
-    #Start counter, and end counter as the number of rows
-    i=0
-    n=nrow(points_gc_w)
     
-    #Run through each row of the table, creating a merged name field for identification
-    for (i in 1:n){
-      first <- points_gc_w[i,"FNAME"]
-      middle <- points_gc_w[i,"MNAME"]
-      last <- points_gc_w[i,"LNAME"]
+    #Add names and total points column to table
+    points_gc2_w[,"TOTAL_PTS"] <- ""
       
-      #Merge the first and last name
-      #If there is a middle name, add that as well
-      names <- paste(last, first, sep=", ")
-      if (middle==""){
-        names <- paste(names,middle,sep=" ")
-      }
-      
-      #Trim any white space from the name
-      names <- trimws(names, which = c("both", "left", "right"))
-      
-      #Add names and total points column to table
-      points_gc_w[i,"NAME"] <- names
-      points_gc_w[,"TOTAL_PTS"] <- ""
-      
-      #Output a table with only name, dot group, and total points columns
-      points_gc_f <- points_gc_w[,c("NAME", "DOT","TOTAL_PTS")]
-    }
+    #Output a table with only name, dot group, and total points columns
+    points_gc2_f <- points_gc2_w[,c("NAME", "DOT","TOTAL_PTS")]
     
     #Output database
-    points_gc_f[]
+    points_gc2_f[]
   })
   
   ##Send file to download screen
@@ -1119,28 +1125,112 @@ function(input,output, session){
       paste(input$gc_day, ".csv", sep="_Points")
     },
     content = function(file) {
-      write.csv(points_gc(), file, row.names = FALSE)
+      write.csv(points_gc2(), file, row.names = FALSE)
     }
   )
   
-  #################Daily Points Summaries  #################
-  #Day1
+  ############################### Legislative Session - Day 4, 5, 6
+  ##Import expected student demo file
+  points.leg <- reactive({
+    points.leg <- input$points.file4
+    if(is.null(points.leg)) return(NULL)
+    read.csv(fill=TRUE,file=input$points.file4$datapath,header=TRUE
+    )
+  })
+  
+  #Create drop down choices for user to select the day to be created
+  observe({
+    dsnames <- c("Points_Leg_Day4", "Points_Leg_Day5", "Points_Leg_Day6")
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$leg.day<- renderUI({
+      selectInput("leg_day", "Which day to create for?", cb_options)
+    })
+  })
+  
+  ##Create dataframe with users name merged, for staff to print and track points
+  points_leg <- reactive({
+    if(is.null(points.leg)) return(NULL)
+    
+    #Read in the database
+    points_leg_w <- points.leg()[c("FNAME", "MNAME", "LNAME", "POSITION")]
+    
+    #Add names and total points column to table
+    points_leg_w[,"TOTAL_PTS"] <- ""
+      
+    #Output a table with only name, dot group, and total points columns
+    points_leg_f <- points_leg_w[,c("NAME", "POSITION","TOTAL_PTS")]
+    
+    #Subset the dataframe to include only House and Senate members
+    points_leg_f <- subset(points_leg_f, POSITION=="HOUSE" | POSITION== "SENATE")
+    points_leg_f <- points_leg_f[order(points_leg_f$POSITION, decreasing = TRUE),]
+    
+    #Output database
+    points_leg_f[]
+  })
+  
+  ##Send file to download screen
+  output$download_points_leg <- downloadHandler(
+    filename = function() {
+      paste(input$leg_day, ".csv", sep="")
+    },
+    content = function(file) {
+      write.csv(points_leg(), file, row.names = FALSE)
+    }
+  )
+
+  ############################### Voting
+  
+  ##Create dataframe with users name merged, for staff to print and track points
+  vote_out <- reactive({
+    if(is.null(vote.in)) return(NULL)
+    
+    #Read in the database
+    vote_out_w <- vote.in()[c("FNAME", "MNAME", "LNAME", "POSITION")]
+    
+    #Add total points column to table
+    points_leg_w[,"TOTAL_PTS"] <- ""
+      
+    #Output a table with only name, dot group, and total points columns
+    points_leg_f <- points_leg_w[,c("NAME", "POSITION","TOTAL_PTS")]
+    
+    #Subset the dataframe to include only House and Senate members
+    points_leg_f <- subset(points_leg_f, POSITION=="HOUSE" | POSITION== "SENATE")
+    points_leg_f <- points_leg_f[order(points_leg_f$POSITION, decreasing = TRUE),]
+    
+    #Output database
+    points_leg_f[]
+  })
+  
+  ##Send file to download screen
+  output$download_points_leg <- downloadHandler(
+    filename = function() {
+      paste(input$leg_day, ".csv", sep="")
+    },
+    content = function(file) {
+      write.csv(points_leg(), file, row.names = FALSE)
+    }
+  )  
+
+  ############################### Daily Points Summaries
+  #################Day1
   ##Import files
   points.day1 <- reactive({
-    points.day1 <- input$points.file10
+    points.day1 <- input$points.file8
     if(is.null(points.day1)) return(NULL)
-    read.csv(fill=TRUE,file=input$points.file10$datapath,header=TRUE
+    read.csv(fill=TRUE,file=input$points.file8$datapath,header=TRUE
     )
   })
 
-  ##Create Day 1 table Summary
+  ##Create Day 1 points total 
   points_day1 <- reactive({
     if(is.null(points.day1)) return(NULL)
     
     points_ftc_w <- points.day1()[c("NAME", "TOTAL_PTS")]
     
-    i = 0
-    n=nrow(points_ftc_w)
+    #Set counters at 1, and add zero to all non-points students
+    i = 1
+    n=nrow(points_gc2_w)
     
     for(i in 1:n){
       value = points_ftc_w[i,"TOTAL_PTS"]
@@ -1149,24 +1239,21 @@ function(input,output, session){
         points_ftc_w[i,"TOTAL_PTS"] =0
       }
     }
-    
-    #Remove Dot info from the table
-    points_ftc_f <- points_ftc_w[,c("NAME","TOTAL_PTS")]
-    
+    points_ftc_w
   })
   
-  #Day 2
+  #################Day 2
   ##Import Files
   points.day2.1 <- reactive({
-    points.day2.1 <- input$points.file11.1
+    points.day2.1 <- input$points.file9.1
     if(is.null(points.day2.1)) return(NULL)
-    read.csv(fill=TRUE,file=input$points.file11.1$datapath,header=TRUE
+    read.csv(fill=TRUE,file=input$points.file9.1$datapath,header=TRUE
     )
   })
   points.day2.2<- reactive({
-    points.day2.2 <- input$points.file11.2
+    points.day2.2 <- input$points.file9.2
     if(is.null(points.day2.2)) return(NULL)
-    read.csv(fill=TRUE,file=input$points.file11.2$datapath,header=TRUE
+    read.csv(fill=TRUE,file=input$points.file9.2$datapath,header=TRUE
     )
   })
   
@@ -1177,23 +1264,23 @@ function(input,output, session){
     
     #######General Convention Addition    #######
     ##Create new table
-    points_gc_w <- points.day2.1()[c("NAME", "TOTAL_PTS")]
-    
-    #Set counters at 0, and to end on the total number of rows
-    i = 0
-    n=nrow(points_gc_w)
+    points_gc2_w <- points.day2.1()[c("NAME", "TOTAL_PTS")]
+
+    #Set counters at 1, and add zero to all non-points students
+    i = 1
+    n=nrow(points_gc2_w)
     
     for(i in 1:n){
-      value = points_gc_w[i,"TOTAL_PTS"]
+      value = points_gc2_w[i,"TOTAL_PTS"]
       
       if(is.na(value)){
-        points_gc_w[i,"TOTAL_PTS"] =0
+        points_gc2_w[i,"TOTAL_PTS"] =0
       }
     }
     
     #Remove Dot info from the table, assign row names
-    points_gc_f <- points_gc_w[,c("NAME","TOTAL_PTS")]
-    row.names(points_gc_f) <- points_gc_f$NAME
+    points_gc2_f <- points_gc2_w[,c("NAME","TOTAL_PTS")]
+    row.names(points_gc2_f) <- points_gc2_f$NAME
     
     ########Nominations Points    #######
     #Read in the GC Day 2 database
@@ -1222,7 +1309,7 @@ function(input,output, session){
       points_nom_w[a,"NOM_PTS"] <- value
       
       #Sum for total points
-      points_nom_w[a,"GC_PTS"] <- points_gc_f[a,"TOTAL_PTS"]
+      points_nom_w[a,"GC_PTS"] <- points_gc2_f[a,"TOTAL_PTS"]
       points_nom_w[a,"TOTAL"] <- points_nom_w[a,"NOM_PTS"] + points_nom_w[a,"GC_PTS"]
     }
     
@@ -1231,19 +1318,301 @@ function(input,output, session){
     points_day2
   })
   
-  ##Send daily output files to download screen
+  #################Day 3
+  ##Import Files
+  points.day3.1 <- reactive({
+    points.day3.1 <- input$points.file10.1
+    if(is.null(points.day3.1)) return(NULL)
+    read.csv(fill=TRUE,file=input$points.file10.1$datapath,header=TRUE
+    )
+  })
+  points.day3.2<- reactive({
+    points.day3.2 <- input$points.file10.2
+    if(is.null(points.day3.2)) return(NULL)
+    read.csv(fill=TRUE,file=input$points.file10.2$datapath,header=TRUE
+    )
+  })
+  
+  #Create Day 3 table Summary
+  points_day3 <- reactive({
+    if(is.null(points.day3.1)) return(NULL)
+    if(is.null(points.day3.2)) return(NULL)
+    
+    #######General Convention Addition
+    ##Create new table
+    points_gc3_w <- points.day3.1()[c("NAME", "TOTAL_PTS")]
+    
+    #Set counters at 1, and add zero to all non-points students
+    i = 1
+    n=nrow(points_gc3_w)
+    
+    for(i in 1:n){
+      value = points_gc3_w[i,"TOTAL_PTS"]
+      
+      if(is.na(value)){
+        points_gc3_w[i,"TOTAL_PTS"] =0
+      }
+    }
+    
+    #Remove Dot info from the table, assign row names
+    points_gc3_f <- points_gc3_w[,c("NAME","TOTAL_PTS")]
+    row.names(points_gc3_f) <- points_gc3_f$NAME
+    
+    ########Nominations Points
+    #Read in the GC Day 3 database
+    points_nom_w <- points.day3.2()[c("NAME", "POSITION")]
+    
+    #Set student name as the row name
+    row.names(points_nom_w) <- points_nom_w$NAME
+    name_list <- points_nom_w$NAME
+    
+    #Go through each nam of the database 
+    for (a in name_list){
+      value=0
+      position <- points_nom_w[a,"POSITION"]
+      
+      if(position=="SENATE"){
+        value=5
+      } else if (position=="JUSTICE"){
+        value=15
+      } else if (position=="VICE-PRESIDENT"){
+        value=20
+      } else if (position=="PRESIDENT"){
+        value=25
+      } 
+      
+      #Send value to points
+      points_nom_w[a,"WIN_PTS"] <- value
+      
+      #Sum for total points
+      points_nom_w[a,"GC_PTS"] <- points_gc3_f[a,"TOTAL_PTS"]
+      points_nom_w[a,"TOTAL"] <- points_nom_w[a,"WIN_PTS"] + points_nom_w[a,"GC_PTS"]
+    }
+    
+    #Create final table
+    points_day3 <- points_nom_w[c("NAME","GC_PTS","WIN_PTS","TOTAL")]
+    points_day3
+  })
+  
+  #################Day 4
+  ##Import Files
+  points.day4 <- reactive({
+    points.day4 <- input$points.file13
+    if(is.null(points.day4)) return(NULL)
+    read.csv(fill=TRUE,file=input$points.file13$datapath,header=TRUE
+    )
+  })
+  
+  #Create Day 4 table Summary
+  points_day4 <- reactive({
+    if(is.null(points_day4)) return(NULL)
+
+    #######General Convention Addition
+    ##Create new table
+    points_leg4_w <- points.day4()[c("NAME", "TOTAL_PTS")]
+    
+    #Set counters at 1, and add zero to all non-points students
+    i = 1
+    n=nrow(points_leg4_w)
+    
+    for(i in 1:n){
+      value <- points_leg4_w[i,"TOTAL_PTS"]
+      
+      if(is.na(value)){
+        points_leg4_w[i,"TOTAL_PTS"] =0
+      }
+    }
+    
+    #Remove Dot info from the table, assign row names
+    points_leg4_f <- points_leg4_w[,c("NAME","TOTAL_PTS")]
+    points_leg4_f
+  })
+  
+  #################Day 5
+  ##Import Files
+  points.day5 <- reactive({
+    points.day5 <- input$points.file14
+    if(is.null(points.day5)) return(NULL)
+       read.csv(fill=TRUE,file=input$points.file14$datapath,header=TRUE
+       )
+  })
+      
+  #Create Day 5 table Summary
+  points_day5 <- reactive({
+    if(is.null(points.day5)) return(NULL)
+    
+    #######General Convention Addition
+    ##Create new table
+    points_leg5_w <- points.day5()[c("NAME", "TOTAL_PTS")]
+        
+    #Set counters at 1, and add zero to all non-points students
+    i = 1
+    n=nrow(points_leg5_w)
+        
+    for(i in 1:n){
+      value = points_leg5_w[i,"TOTAL_PTS"]
+          
+      if(is.na(value)){
+        points_leg5_w[i,"TOTAL_PTS"] =0
+        }
+      }
+        
+      #Remove Dot info from the table, assign row names
+      points_leg5_f <- points_leg5_w[,c("NAME","TOTAL_PTS")]
+      points_leg5_f
+    })
+  
+  #################Day 6
+  ##Import house voting file
+  points.day6.1 <- reactive({
+    points.day6.1 <- input$points.file15
+    if(is.null(points.day6.1)) return(NULL)
+    read.csv(fill=TRUE,file=input$points.file15$datapath,header=TRUE
+    )
+  })
+  ##Import senate voting file
+  points.day6.2 <- reactive({
+    points.day6.2 <- input$points.file16
+    if(is.null(points.day6.2)) return(NULL)
+    read.csv(fill=TRUE,file=input$points.file16$datapath,header=TRUE
+    )
+  })
+  ##Import judicial voting file
+  points.day6.3 <- reactive({
+    points.day6.3 <- input$points.file17
+    if(is.null(points.day6.3)) return(NULL)
+    read.csv(fill=TRUE,file=input$points.file17$datapath,header=TRUE
+    )
+  })
+  ##Import executive voting file
+  points.day6.4 <- reactive({
+    points.day6.4 <- input$points.file18
+    if(is.null(points.day6.4)) return(NULL)
+    read.csv(fill=TRUE,file=input$points.file18$datapath,header=TRUE
+    )
+  })
+  ##Import studentdemo registered file
+  points.day6.5 <- reactive({
+    points.day6.5 <- input$points.file19
+    if(is.null(points.day6.5)) return(NULL)
+    read.csv(fill=TRUE,file=input$points.file19$datapath,header=TRUE
+    )
+  })
+  points.day6.6 <- reactive({
+    points.day6.6 <- input$points.file20
+    if(is.null(points.day6.6)) return(NULL)
+    read.csv(fill=TRUE,file=input$points.file20$datapath,header=TRUE
+    )
+  })
+  
+  #Create Day 6 table Summary
+  points_day6 <- reactive({
+    if(is.null(points.day6.5)) return(NULL)
+    
+    #######General Convention Addition
+    ##Create new tables for each file
+    points_house_w <- points.day6.1()[]
+    points_senate_w <- points.day6.2()[]
+    points_jud_w <- points.day6.3()[]
+    points_exec_w <- points.day6.4()[]
+    points_reg_w <- points.day6.5()[c("NAME")]
+    
+    #Assign rownames to database
+    row.names(points_reg_w) <- points_reg_w$NAME
+    row.names(points_house_w) <- points_house_w$NAME
+    row.names(points_senate_w) <- points_senate_w$NAME
+    row.names(points_jud_w) <- points_jud_w$NAME
+    row.names(points_exec_w) <- points_exec_w$NAME
+    
+    #Create naming list
+    name_list <- points_reg_w$NAME
+    
+    #Most Promising female
+    for (a in name_list){
+      value_h = 0
+      value_h <- points_house_w[a,"MOST_PROM_FEM"]
+      if(is.na(value_h)){value_h=0}
+      
+      value_s = 0
+      value_s <- points_senate_w[a,"MOST_PROM_FEM"]
+      if(is.na(value_s)){value_s=0}
+      
+      value_j = 0
+      value_j <- points_jud_w[a,"MOST_PROM_FEM"]
+      if(is.na(value_j)){value_j=0}
+      
+      value_e = 0
+      value_e <- points_exec_w[a,"MOST_PROM_FEM"]
+      if(is.na(value_e)){value_e=0}
+      
+      points_reg_w[a,"MOST_PROM_FEM"] <- value_h + value_s + value_e + value_j
+    }
+    
+    #######Leg Session Addition
+    ##Create new table
+    points_leg6_w <- points.day6.6()[c("NAME", "TOTAL_PTS")]
+    row.names(points_leg6_w) <- points_leg6_w$NAME
+    name_list <- points_leg6_w$NAME
+    
+    #Most Promising female
+    for (a in name_list){
+      value = 0
+      value <- points_leg6_w[i,"TOTAL_PTS"]
+      
+      if(is.na(value)){
+        points_leg6_w[i,"TOTAL_PTS"] =0
+      }
+      points_reg_w[a,"TOTAL_PTS"] <- value
+      
+    }
+
+    #Send final document
+    points_day6_f <- points_reg_w[,c("NAME","MOST_PROM_FEM","TOTAL_PTS")]
+    points_day6_f
+  })
+  
+
+  ###############################Output files 
+  #Day1
   output$download_points_day1 <- downloadHandler(
-    filename = function() {"Day1_Points.csv"},
+    filename = function() {"Points_Day1.csv"},
     content = function(file) {
       write.csv(points_day1(), file, row.names = FALSE)
     }
   )
-  
-  ##Send daily output files to download screen
+  #Day2
   output$download_points_day2 <- downloadHandler(
-    filename = function() {"Day2_Points.csv"},
+    filename = function() {"Points_Day2.csv"},
     content = function(file) {
       write.csv(points_day2(), file, row.names = FALSE)
+    }
+  )
+  #Day3
+  output$download_points_day3 <- downloadHandler(
+    filename = function() {"Points_Day3.csv"},
+    content = function(file) {
+      write.csv(points_day3(), file, row.names = FALSE)
+    }
+  )
+  #Day4
+  output$download_points_day4 <- downloadHandler(
+    filename = function() {"Points_Day4.csv"},
+    content = function(file) {
+      write.csv(points_day4(), file, row.names = FALSE)
+    }
+  )
+  #Day5
+  output$download_points_day5 <- downloadHandler(
+    filename = function() {"Points_Day5.csv"},
+    content = function(file) {
+      write.csv(points_day5(), file, row.names = FALSE)
+    }
+  )
+  #Day6
+  output$download_points_day6 <- downloadHandler(
+    filename = function() {"Points_Day6.csv"},
+    content = function(file) {
+      write.csv(points_day6(), file, row.names = FALSE)
     }
   )
 }

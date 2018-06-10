@@ -38,15 +38,15 @@ sidebar <- dashboardSidebar(
   menuItem("Day1-7 Administrative Tasks", tabName="admin_post"),
   menuItem("Protocol", tabName="protocol"),
   menuItem("Election", tabName="elect"),
-  menuItem("Points", tabName="points"),
   menuItem("Awards", tabName="awards"),
   menuItem("Merchandise", tabName="merch"),
   menuItem("Legislative", tabName="Leg")
   )
  )
+
 ########################## MainBody Information - HQ Database Conversion###############################
-#######################################################################################
-#HQ Demographic File
+#######################################################################################################
+###############################Input
 ##File upload of HQ demographic file
 hq.input <- fluidRow(
   column(12,
@@ -54,15 +54,10 @@ hq.input <- fluidRow(
          downloadButton('download_hq', 'Download Database')
   )
 )
-##Confirm File Upload
-hq.confirm <- fluidRow(
-  column(8,
-         uiOutput("confirm.hq"))
-)
 
-#Outputs for Databae Generation
-##Generate drop downs for user to choose from to match the headers of selected file to 
-###required Expected_StudentDemo file
+################################ Outputs for Database Generation
+#Generate drop downs for user to choose from to match the headers of selected file to 
+#required Expected_StudentDemo file
 hq.out.1 <- fluidRow(
   column(4, uiOutput("hq_FNAME")),
   column(4, uiOutput("hq_MNAME")),
@@ -105,7 +100,7 @@ hq.out.8 <- fluidRow(
   column(4, uiOutput("hq_DOT"))
 )
 
-#Create one large output box
+################################ Create one large output box
 hq.combo <- fluidRow(
   column(6,
          box(title="Name", width=NULL, status="primary", collapsible = TRUE,
@@ -129,19 +124,18 @@ hq.combo <- fluidRow(
   )
 )
 
-##Create page boxes
-###Generate Boxes for text submission, confirmation, and user downloads
-box.hq.1 <- box(title = "Upload Student Database File", width=4, status="primary", 
+################################# Create page boxes
+#Generate Boxes for text submission and user downloads
+box.hq.1 <- box(title = "Upload Student Database File", width=12, status="primary", 
                 solidHeader = TRUE, hq.input)
-box.hq.2 <- box(title = "Student Database Confirmation", width=8, status="primary", 
-                solidHeader = TRUE, hq.confirm)
-box.hq.3 <- box(title = "Ouput Files", width=12, status="primary", collapsible = TRUE, 
+box.hq.2 <- box(title = "Ouput Files", width=12, status="primary", collapsible = TRUE, 
                  solidHeader = TRUE, hq.combo)
+
 
 ########################## MainBody Information - Staff Database Conversion###############################
 #######################################################################################
-#HQ Demographic File
-##File upload of HQ demographic file
+################################Staff Demographic File
+##File upload of Staff demographic file
 staff.db.input <- fluidRow(
   column(12,
          fileInput("staff.db1","Upload the Staff Info Database"),
@@ -154,9 +148,9 @@ staff.confirm <- fluidRow(
          uiOutput("confirm.staffdemo"))
 )
 
-#Outputs for Databae Generation
-##Generate drop downs for user to choose from to match the headers of selected file to 
-###required Expected_StudentDemo file
+#################################Outputs for Database Generation
+#Generate drop downs for user to choose from to match the headers of selected file to 
+#required StaffDemo file
 staff.out.1 <- fluidRow(
   column(4, uiOutput("staff_FNAME")),
   column(4, uiOutput("staff_MNAME")),
@@ -184,8 +178,7 @@ staff.out.6 <- fluidRow(
   column(4, uiOutput("staff_LDZ")),
   column(4, uiOutput("staff_CWS"))
 )
-
-#Create one large output box
+#################################Create one large output box
 staff.combo <- fluidRow(
   column(6,
          box(title="Name", width=NULL, status="primary", collapsible = TRUE,
@@ -205,83 +198,56 @@ staff.combo <- fluidRow(
   )
 )
 
-##Create page boxes
+##################################Create page boxes
 ###Generate Boxes for text submission, confirmation, and user downloads
 box.staff.1 <- box(title = "Upload Staff Database File", width=4, status="primary", 
                 solidHeader = TRUE, staff.db.input)
-box.staff.2 <- box(title = "Staff Database Confirmation", width=8, status="primary", 
-                solidHeader = TRUE, staff.confirm)
-box.staff.3 <- box(title = "Ouput Files", width=12, status="primary", collapsible = TRUE, 
+box.staff.2 <- box(title = "Ouput Files", width=12, status="primary", collapsible = TRUE, 
                 solidHeader = TRUE, staff.combo)
 
 ########################## MainBody Information - Day 0 Admin Tasks##############################
 #######################################################################################
 
-##Expected Student Demographic Database
+############################### Input File
 ###File upload of excepted demographics, created from Page1
 day0.input <- fluidRow(
-  column(12,
-      fileInput("day0.file1","Upload the Expected Student Demographic Database"),
-      fileInput("day0.file2", "Upload the Staff Demographic Database")
-      )
-  )
-day0.confirm <- fluidRow(
-  column(8,
-         uiOutput("confirm.day0"),
-         uiOutput("confirm.staff_file"))
+  column(6,fileInput("day0.file1","Upload the Expected Student Demographic Database")),
+  column(6,fileInput("day0.file2", "Upload the Staff Demographic Database"))
   )
 
-##Outputs for Registration Tasks
-###Form to verify students travel, including phone number, travel plans, and parent contact
+############################### Outputs for Registration Tasks
+#Form to verify students travel, including phone number, travel plans, and parent contact
 day0.out.1 <- fluidRow(
-  column(6, actionButton("d0_travelverify", "Create Day0 Travel Verification Docs")),
-  downloadButton('download_d0_travelverify', 'Download'),
-  hidden(verbatimTextOutput("confirm.d0_travelverify"))
-)
-###Form for students to update during registration, including parents names, high school, t-shirt
+  downloadButton('download_d0_travelverify', 'Download Travel Verification')
+  )
+#Form for students to update during registration, including parents names, high school, t-shirt
 ###size and return travel plans
 day0.out.2 <- fluidRow(
-  column(6, actionButton("studselfverify", "Create Student Self-Verification Forms")),
-  downloadButton('download_studselfverify', 'Download'),
-  hidden(verbatimTextOutput("confirm.studselfverify"))
-)
-###Generates labels files for student badges, and any envelopes
+  downloadButton('download_studselfverify', 'Download Student Self-Verification')
+  )
+#Generates labels files for student badges, and any envelopes
 day0.out.3 <- fluidRow (
-  column(6, actionButton("studlabels", "Create Student Labels")),
-  downloadButton('download_studlabels', 'Download'),
-  hidden(verbatimTextOutput("confirm.studlabels"))
-)
-###Generates a list of students with an outstanding balance and generates a list of students
-###who have not submitted medical waivers
+  downloadButton('download_studlabels', 'Download Student Badges')
+  )
+#Generates a list of students with an outstanding balance and generates a list of students
+#who have not submitted medical waivers
 day0.out.4 <- fluidRow(
-  column(6, actionButton("studbalance", "Generate Students with Balance forms")),
-  downloadButton('download_studbalance', 'Download'),
-  hidden(verbatimTextOutput("confirm.studbalance")),
-  column(6, actionButton("studforms", "Generate Students with Missing forms")),
-  downloadButton('download_studforms', 'Download'),
-  hidden(verbatimTextOutput("confirm.studforms"))
-)
-###Generates a document that can be used to create student door signs, and two lists of student
-###dorm rooms, organized by gender
+  downloadButton('download_studbalance', 'Download Student Balance Forms'),
+  downloadButton('download_studforms', 'Download Student Missing Forms')
+  )
+#Generates a document that can be used to create student door signs, and two lists of student
+#dorm rooms, organized by gender
 day0.out.5 <- fluidRow(
-  column(6, actionButton("studdoor", "Create Student Door Signs")),
-  downloadButton('download_studdoor', 'Download'),
-  hidden(verbatimTextOutput("confirm.door_sign")),
-  column(6, actionButton("d0_room_F", "Create Rooming Assignment Lists - Female")),
-  downloadButton('download_d0_room_F', 'Download'),
-  hidden(verbatimTextOutput("confirm.d0_room_F")),
-  column(6, actionButton("d0_room_M", "Create Rooming Assignment Lists - Male")),
-  downloadButton('download_d0_room_M', 'Download'),
-  hidden(verbatimTextOutput("confirm.d0_room_M"))
-)
-###Generates labels for the staff badges
+  downloadButton('download_studdoor', 'Download Student Door Signs'),
+  downloadButton('download_d0_room_F', 'Download Rooming Lists - Female'),
+  downloadButton('download_d0_room_M', 'Download Rooming Lists - Male')
+  )
+#Generates labels for the staff badges
 day0.out.6 <- fluidRow(
-  column(6, actionButton("stafflabels", "Create Staff Labels")),
-  downloadButton('download_stafflabels', 'Download'),
-  hidden(verbatimTextOutput("confirm.stafflabels"))
-)
+  downloadButton('download_stafflabels', 'Download Staff Labels')
+  )
 
-##Create one large output box
+############################### Create one large output box
 day0.out.combo <- fluidRow(
   column(6,
          box(title="Day 0 Travel Verify", width=NULL, status="primary", collapsible = TRUE,
@@ -301,51 +267,34 @@ day0.out.combo <- fluidRow(
   )
 )
 
-##Create page boxes
+############################### Create page boxes
 ###Generate Boxes for text submission, confirmation, and user downloads
-box.day0.1 <- box(title = "Upload Pre-Registration Database File", width=4, status="primary", 
+box.day0.1 <- box(title = "Upload Pre-Registration Database File", width=12, status="primary", 
               solidHeader = TRUE, day0.input)
-box.day0.2 <- box(title = "Pre-Registration Database Confirmation", width=8, status="primary", 
-              solidHeader = TRUE, day0.confirm)
-box.day0.3 <- box(title = "Ouput Files", width=12, status="primary", 
+box.day0.2 <- box(title = "Ouput Files", width=12, status="primary", 
               solidHeader = TRUE, day0.out.combo)
+
 ########################## MainBody Information - Day 1-7 Admin Tasks###############################
 #######################################################################################
 ##Create rows for file input - Post-Registration
 ##File upload of registered students demographic
 admin.post.reg <- fluidRow(
   column(12,
-         fileInput("admin.post.file1", "Upload the Completed Registration Database"),
-         actionButton("data.post.reg", "Submit Completed Registration File"),
-         hidden(verbatimTextOutput("text2"))
+         fileInput("admin.post.file1", "Upload the Completed Registration Database")
   )
-)
-admin.post.confirm <- fluidRow(
-  column(12,
-         uiOutput("post.confirm"))
 )
 
 ##Ouputs selection for user - Post Registration
 admin.post.1 <- fluidRow(
-  column(6, actionButton("roomingassign", "Create Rooming Assignment Lists"))
+  column(6, downloadButton('download_post_registered', 'Download Student Registered File')),
+  column(6, downloadButton('download_post_nonattend', 'Download Student Non-Attend File'))
 )
-admin.post.2 <- fluidRow(
-  column(6, actionButton("excurs", "Create Excursion Lists"))
-)
-admin.post.3 <- fluidRow(
-  column(6, actionButton("regcomp", "Create Attending Student Database & Non-attendance database"))
-)
+
 ###Combine all previous rows together
 admin.post.out.combo <- fluidRow(
   column(6,
-         box(title="Rooming Assignments", width=NULL, status="primary", collapsible = TRUE,
-             solidHeader = TRUE, admin.post.1),
-         box(title="Excursion Lists", width=NULL, status="primary", collapsible = TRUE,
-             solidHeader = TRUE, admin.post.2)
-  ),
-  column(6,
-         box(title="Attending/Absent Student Demographic Databases", width=NULL, status="primary", 
-             collapsible=TRUE, solidHeader = TRUE, admin.post.3)
+         box(title="Registration Status", width=NULL, status="primary", collapsible = TRUE,
+             solidHeader = TRUE, admin.post.1)
   )
 )
 
@@ -354,14 +303,12 @@ admin.post.out.combo <- fluidRow(
 
 box.post.1 <- box(title = "Upload Post Registration Database File", width=8, status="primary", 
                   solidHeader = TRUE, admin.post.reg)
-box.post.2 <- box(title = "Pre-Registration Database Confirmation", width=4, status="primary", 
-                  solidHeader = TRUE, admin.post.confirm)
-box.post.3 <- box(title = "Ouput Files", width=12, status="primary", 
+box.post.2 <- box(title = "Ouput Files", width=12, status="primary", 
                   solidHeader = TRUE, admin.post.out.combo)
 
-########################## MainBody Information - Points###############################
+########################## MainBody Information - Awards###############################
 #######################################################################################
-#Formining the Community Points
+############################### #Formining the Community Points
 points.1 <- fluidRow(
   column(6,
          fileInput("points.file1","Upload the Attending Student Demographic File")
@@ -370,7 +317,7 @@ points.1 <- fluidRow(
          downloadButton('download_points_ftc', 'Download FTC Point Sheets')
   )
 )
-#General Convention
+############################### #General Convention
 points.2 <- fluidRow(
   column(6,
          fileInput("points.file2","Upload the Registered Student Demographic File")
@@ -378,16 +325,47 @@ points.2 <- fluidRow(
   column(3,
          uiOutput("gc.day")
   ),
-  
   column(3,
          downloadButton('download_points_gc', 'Download GC Point Sheets')
   )
 )
+############################### #Legislative Session
+points.3 <- fluidRow(
+  column(6,
+         fileInput("points.file4","Upload the Position Student Demographic File")
+  ),
+  column(3,
+         uiOutput("leg.day")
+  ),
+  column(3,
+         downloadButton('download_points_leg', 'Download Leg Point Sheets')
+  )
+)
 
-#Daily Totals
+############################### #Voting
+points.4 <- fluidRow(
+  column(6,
+         fileInput("points.file5","Upload the Position Student Demographic File")
+  ),
+  column(3,
+         downloadButton('download_points_voting_house', 'Download House Voting File')
+  ),
+  column(3,
+         downloadButton('download_points_voting_senate', 'Download Senate Voting File')
+  ),
+  column(3,
+         downloadButton('download_points_voting_executive', 'Download Executive Voting File')
+  ),
+  column(3,
+         downloadButton('download_points_voting_judicial', 'Download Judicial Voting File')
+  )
+)
+
+
+############################### #Daily Totals
 points.out1 <- fluidRow(
   column(6,
-         fileInput("points.file10","Upload the Forming the Community File")
+         fileInput("points.file8","Upload the Forming the Community File")
   ),
   column(6,
          downloadButton('download_points_day1', 'Download Day 1 Totals')
@@ -395,34 +373,104 @@ points.out1 <- fluidRow(
 )
 points.out2 <- fluidRow(
   column(6,
-         fileInput("points.file11.1","Upload the GC Day 2 File")
+         fileInput("points.file9.1","Upload the GC Day 2 File")
   ),
   column(6,
-         fileInput("points.file11.2","Upload the Nomination Final File")
+         fileInput("points.file9.2","Upload the Election_Nomination File")
   ),
   column(3,
          downloadButton('download_points_day2', 'Download Day 2 Totals')
   )
 )
-
-
-###Combine all outputs together
-points.combo<- fluidRow(
-  column(12,
-         box(title="Day 1 Output", width=NULL, status="primary", collapsible = TRUE,
-             solidHeader = TRUE, points.out1)
+points.out3 <- fluidRow(
+  column(6,
+         fileInput("points.file10.1","Upload the GC Day 3 File")
+  ),
+  column(6,
+         fileInput("points.file10.2","Upload the Election_Final File")
+  ),
+  column(3,
+         downloadButton('download_points_day3', 'Download Day 3 Totals')
+  )
+)
+points.out4 <- fluidRow(
+  column(6,
+         fileInput("points.file13","Upload the Leg Day 4 File")
+  ),
+  column(6,
+         downloadButton('download_points_day4', 'Download Day 4 Totals')
+  )
+)
+points.out5 <- fluidRow(
+  column(6,
+         fileInput("points.file14","Upload the Leg Day 5 File")
+  ),
+  column(6,
+         downloadButton('download_points_day5', 'Download Day 5 Totals')
+  )
+)
+points.out6 <- fluidRow(
+  column(3,
+         fileInput("points.file15","Upload the Voting House File")
+  ),
+  column(3,
+         fileInput("points.file16","Upload the Voting Senate File")
+  ),
+  column(3,
+         fileInput("points.file17","Upload the Voting Judicial File")
+  ),
+  column(3,
+         fileInput("points.file18","Upload the Voting Executive File")
+  ),
+  column(4,
+         fileInput("points.file19","Upload the Position StudentDemo File")
+  ),
+  column(4,
+         fileInput("points.file20","Upload the Leg Session Day 6 File")
   ),
   column(12,
-         box(title="Day 2 Output", width=NULL, status="primary", collapsible = TRUE,
-             solidHeader = TRUE, points.out2)
+         downloadButton('download_points_day6', 'Download Day 6 Totals')
   )
 )
 
-#Generate Boxes for text submission, verification, and user options
+############################### Combine all outputs together
+points.combo<- fluidRow(
+  column(12,
+         box(title="Day 1 Output", width=NULL, status="primary", collapsible = TRUE,
+             solidHeader = TRUE, points.out1, collapsed = TRUE)
+  ),
+  column(12,
+         box(title="Day 2 Output", width=NULL, status="primary", collapsible = TRUE,
+             solidHeader = TRUE, points.out2, collapsed = TRUE)
+  ),
+  column(12,
+         box(title="Day 3 Output", width=NULL, status="primary", collapsible = TRUE,
+             solidHeader = TRUE, points.out3, collapsed = TRUE)
+  ),
+  column(12,
+         box(title="Day 4 Output", width=NULL, status="primary", collapsible = TRUE,
+             solidHeader = TRUE, points.out4, collapsed = TRUE)
+  ),
+  column(12,
+         box(title="Day 5 Output", width=NULL, status="primary", collapsible = TRUE,
+             solidHeader = TRUE, points.out5, collapsed = TRUE)
+  ),
+  column(12,
+         box(title="Day 6 Output", width=NULL, status="primary", collapsible = TRUE,
+             solidHeader = TRUE, points.out6)
+  )
+  
+)
+
+################################ Generate Boxes for text submission, verification, and user options
 box.points.1 <- box(title = "Forming the Community", width=12, 
               status="primary", solidHeader = TRUE, points.1)
 box.points.2 <- box(title = "General Convention", width=12, 
                     status="primary", solidHeader = TRUE, points.2)
+box.points.3 <- box(title = "Legislative Session", width=12, 
+                    status="primary", solidHeader = TRUE, points.3)
+box.points.4 <- box(title = "Legislative Session", width=12, 
+                    status="primary", solidHeader = TRUE, points.4)
 box.points.7 <- box(title = "Daily Totals", width=12, 
                     status="primary", solidHeader = TRUE, points.combo)
 
@@ -471,8 +519,8 @@ box.proto.2 <- box(title = "Ouput Files", width=12, status="primary",
 
 ########################## MainBody Information - Merchandise###############################
 #######################################################################################
-##Create rows of data
-###Upload Forming the Community Database
+################################ Input Files
+#Import Merchandise Ledger and Inventory File
 merch.inv <- fluidRow(
   column(6,
          fileInput("merch.file1","Upload the Merchandise Ledger File")
@@ -482,23 +530,16 @@ merch.inv <- fluidRow(
   )
 )
 
-##Ouputs selection for user - all pre-registration tasks
+###############################Ouputs selection for user 
 merch.out.1 <- fluidRow(
-  column(12, 
-         downloadButton('download_merch_ledger', 'Download Merch Ledger')
+  column(12, downloadButton('download_merch_ledger', 'Download Merch Ledger'))
   )
-)
 merch.out.2 <- fluidRow(
-  column(6, 
-         uiOutput("merch.day")
-  ),
-  column(6, 
-         downloadButton('download_merch_inv', 'Download Inventory')
+  column(6,uiOutput("merch.day")),
+  column(6, downloadButton('download_merch_inv', 'Download Inventory'))
   )
-  
-)
 
-###Combine all outputs together
+############################### Combine all outputs together
 merch.combo<- fluidRow(
   column(12,
          box(title="Financial Ledger", width=NULL, status="primary", collapsible = TRUE,
@@ -511,7 +552,7 @@ merch.combo<- fluidRow(
 )
 
 
-##Create boxed for Page 1
+############################### Create boxes
 ###Generate Boxes for text submission, verification, and user options
 box.merch.1 <- box(title = "Merchandise Inputs", width=12, 
                    status="primary", solidHeader = TRUE, merch.inv)
@@ -574,31 +615,29 @@ body <- dashboardBody(
  tabItems(
    tabItem(tabName="HQ",
            box.hq.1, 
-           box.hq.2,
-           box.hq.3
+           box.hq.2
    ),
    tabItem(tabName="Staff",
            box.staff.1, 
-           box.staff.2,
-           box.staff.3
+           box.staff.2
    ),
    tabItem(tabName="admin_pre",
           box.day0.1, 
-          box.day0.2,
-          box.day0.3
+          box.day0.2
           ),
   tabItem(tabName="admin_post",
           box.post.1,
-          box.post.2,
-          box.post.3
+          box.post.2
           ),
   tabItem(tabName="protocol",
           box.proto.1,
           box.proto.2
   ),
-  tabItem(tabName="points",
+  tabItem(tabName="awards",
           box.points.1,
           box.points.2,
+          box.points.3,
+          box.points.4,
           box.points.7
   ),
   tabItem(tabName="merch",

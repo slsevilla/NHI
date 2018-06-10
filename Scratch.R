@@ -24,28 +24,14 @@ fin <- read.csv("C:\\Users\\sevillas2\\Google Drive\\My Documents\\Programs & Or
 
 gc <- read.csv("C:\\Users\\sevillas2\\Google Drive\\My Documents\\Programs & Orgs\\National Hispanic Institute\\Template National LDZ\\Director Guides\\Downloaded Files\\GC_Day2_Points.csv", header=TRUE)
 nom <- read.csv("C:\\Users\\sevillas2\\Google Drive\\My Documents\\Programs & Orgs\\National Hispanic Institute\\Template National LDZ\\Director Guides\\Downloaded Files\\Nomination_final.csv", header=TRUE)
+points_leg <- read.csv("C:\\Users\\sevillas2\\Google Drive\\My Documents\\Programs & Orgs\\National Hispanic Institute\\Template National LDZ\\Director Guides\\Downloaded Files\\StudentDemo_Positions.csv", header=TRUE)
+reg <- read.csv("C:\\Users\\sevillas2\\Google Drive\\My Documents\\Programs & Orgs\\National Hispanic Institute\\Template National LDZ\\Director Guides\\Downloaded Files\\Live_StudentRegistration.csv", header=TRUE)
+voting <- read.csv("C:\\Users\\sevillas2\\Google Drive\\My Documents\\Programs & Orgs\\National Hispanic Institute\\Template National LDZ\\Director Guides\\Downloaded Files\\Points_Vote_House.csv", header=TRUE)
+voting$NAME <- as.character(voting$NAME)
 
-gc$NAME <- as.character(gc$NAME)
-nom$NAME <- as.character(nom$NAME)
+points_leg_f <- subset(points_leg, POSITION==c("HOUSE", "SENATE"))
 
-name_list <- gc$NAME
-row.names(nom) <- nom$NAME
 
-for (a in name_list){
-  value=0
-  i=1
-  print (a) 
-  
-  #print (points_gc_w[i,"NAME"])
-  nom[a,"WIN"] <- value
-  i=i+1
-  #}
-}
-for (a in name_list2){
-  value=0
-  points_gc_w[a,"OR"] <- value
-  
-  #}
-}
-
-points_gc_w
++ 
+  points_senate_w[i,"MOST_PROM_FEMALE"] + points_jud_w[i,"MOST_PROM_FEMALE"] + 
+  points_exec_w[i,"MOST_PROM_FEMALE"]
