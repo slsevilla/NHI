@@ -4,26 +4,27 @@ library(shiny)
 library("RColorBrewer")
 library(leaflet)
 library(knitr)
+library(tidyr)
 
-#####################################################################################
-#####################################################################################
-###                                      NOTES                                   ###
-###################################################################################
-####################################################################################
+#####################################################################################################
+#####################################################################################################
+###                                            NOTES                                            ###
+###################################################################################################
+####################################################################################################
+#HQ Database Conversion: Takes in the HQ file provided with student and generates a standard database
+#to use throughout the program.
 
-
-####################################################################################
-#####################################################################################
-###                                      Code                                    ###
-#####################################################################################
-####################################################################################
-
-
+####################################################################################################
+#####################################################################################################
+###                                             Code                                             ###
+#####################################################################################################
+####################################################################################################
 function(input,output, session){
-############################## HQ Database Conversion################################
-#####################################################################################
   
-  ############################## Input File
+  ##############################        HQ Database Conversion        ##############################
+  #################################################################################################
+  
+  ######################################### Input File
   ##Import file
   hq_input <- reactive({
     hq_input <- input$hq.file1
@@ -42,7 +43,7 @@ function(input,output, session){
     tableOutput("hq.input")
   })
   
-  ############################## User Dropdowns
+  ######################################### User Dropdowns
   ##Generate Drop Downs for user to choose
   observe({
     req(input$hq.file1)
@@ -158,7 +159,7 @@ function(input,output, session){
     cb_options <- list()
     cb_options[dsnames] <- dsnames
     output$hq_P1<- renderUI({
-      selectInput("hq_P1", "Parent Name", cb_options)
+      selectInput("hq_P1", "Parent Name 1", cb_options)
     })
   })
   observe({
@@ -167,7 +168,7 @@ function(input,output, session){
     cb_options <- list()
     cb_options[dsnames] <- dsnames
     output$hq_P2<- renderUI({
-      selectInput("hq_P2", "Parent Name", cb_options)
+      selectInput("hq_P2", "Parent Name 2", cb_options)
     })
   })
   observe({
@@ -176,7 +177,7 @@ function(input,output, session){
     cb_options <- list()
     cb_options[dsnames] <- dsnames
     output$hq_P1.CELL<- renderUI({
-      selectInput("hq_P1.CELL", "Parent Cell#", cb_options)
+      selectInput("hq_P1.CELL", "Parent Cell# 1", cb_options)
     })
   })
   observe({
@@ -185,7 +186,7 @@ function(input,output, session){
     cb_options <- list()
     cb_options[dsnames] <- dsnames
     output$hq_P2.CELL<- renderUI({
-      selectInput("hq_P2.CELL", "Parent Cell#", cb_options)
+      selectInput("hq_P2.CELL", "Parent Cell# 2", cb_options)
       })
     })
   observe({
@@ -270,7 +271,7 @@ function(input,output, session){
     })
   })
   
-  ############################## Generate Student Database
+  ######################################### Generate Student Database
   ###Create database from user generated files, and matched column headers
   hq_database <- reactive({
     if(is.null(hq_input)) return(NULL)
@@ -281,6 +282,7 @@ function(input,output, session){
     #Create an output table that matches the number of rows 
     n<- nrow(table_in)
     table_out <- data.frame(x=1:n)
+    table_out[,"STATUS"] <- ""
     
     #Append each necessary column, based on user input to the new table
     table_out$FNAME <- table_in[,input$hq_FNAME]
@@ -290,6 +292,7 @@ function(input,output, session){
     table_out$HS <- table_in[,input$hq_HS]
     table_out$CITY <- table_in[,input$hq_CITY]
     table_out$ST <- table_in[,input$hq_ST]
+    table_out$DOT <- table_in[,input$hq_DOT]
     table_out$HS <- table_in[,input$hq_HS]
     table_out$HOME <- table_in[,input$hq_HOME]
     table_out$CELL <- table_in[,input$hq_CELL]
@@ -315,25 +318,24 @@ function(input,output, session){
     table_out$DEPART_TIME <- table_in[,input$hq_DEPART_TIME]
     table_out$DORM <- table_in[,input$hq_DORM]
     table_out$ROOM <- table_in[,input$hq_ROOM]
-    table_out$DOT <- table_in[,input$hq_DOT]
     
     #Return the full, new table after removing starting column
     table_out <- subset(table_out, select=-c(x))
     table_out
   })
   
-  ################################Send file to download screen
+  ######################################### Send file to download screen
   output$download_hq <- downloadHandler(
-    filename = function() {"StudentDemo_Expected.csv"},
+    filename = function() {"Registrar_StudentDB_Expected.csv"},
     content = function(file) {
       write.csv(hq_database(), file, row.names = FALSE)
     }
   )
 
-############################ Staff Database Conversion ###############################
-#####################################################################################
+  #########################         Staff Database Conversion         ##############################
+  #################################################################################################
   
-  #################################User Input File
+  ######################################### User Input File
   ##Import file
   staff_db <- reactive({
     staff_db <- input$staff.db1
@@ -342,7 +344,7 @@ function(input,output, session){
     )
   })
   
-  #################################User Dropdowns
+  ######################################### User Dropdowns
   ##Generate Drop Downs for user to choose
   observe({
     req(input$staff.db1)
@@ -480,7 +482,7 @@ function(input,output, session){
     })
   })
   
-  #################################Generate Staff Database
+  ######################################### Generate Staff Database
   ###Create database from user generated files, and matched column headers
   staff_database <- reactive({
     if(is.null(staff_db)) return(NULL)
@@ -514,55 +516,36 @@ function(input,output, session){
     table_out
   })
   
-  ###################################Send file to download screen
+  ######################################### Send file to download screen
   output$download_staffdemo <- downloadHandler(
-    filename = function() {"Staff_Demo.csv"},
+    filename = function() {"Registrar_StaffDB.csv"},
     content = function(file) {
       write.csv(staff_database(), file, row.names = FALSE)
     }
   )
   
   
-############################## Day 0 Admin Tasks #################################### 
-####################################################################################  
+  ##############################       Day 0 Admin Tasks        #################################### 
+  #################################################################################################
   
-  ###############################File input
-  ##Generate database for input file1
+  ######################################### File input
+  ##Generate database for Student Demographic Database
   day0_expect <- reactive({
     admin1 <- input$day0.file1
     if (is.null(admin1)) return(NULL)
     read.csv(fill=TRUE,file=input$day0.file1$datapath, header=TRUE, 
              colClasses = "factor")
-  })  
-  #Create File Summary information for file1
-  output$day0.expect <- renderTable({
-    if(is.null(day0_expect())) return ()
-    input$day0.file1
   })
-  #Display confirmation of upload for user for file 1
-  output$confirm.day0 <- renderUI({
-    if(is.null(day0_expect())) return()
-    tableOutput("day0.expect")
-  })
-  ##Generate database for input file2
+  ##Generate database for input Staff Demographic Database
   staff_file <- reactive({
     admin2 <- input$day0.file2
     if (is.null(admin2)) return(NULL)
     read.csv(fill=TRUE,file=input$day0.file2$datapath, header=TRUE, 
              colClasses = "factor")
-  })  
-  #Create File Summary information for file2
-  output$staff.file <- renderTable({
-    if(is.null(staff_file())) return ()
-    input$day0.file2
-  })
-  #Display confirmation of upload for user for file 1
-  output$confirm.staff_file <- renderUI({
-    if(is.null(staff_file())) return()
-    tableOutput("staff.file")
   })
   
-  ################################Create sub-tables
+  ######################################### Create sub-tables
+  #Attendance and Travel Verification
   d0_travelverify <- reactive({
     if(is.null(input$day0.file1)) return()
     d0_travelverify <- day0_expect()[c("FNAME", "MNAME", "LNAME", "CELL", "P1.CELL",
@@ -570,35 +553,42 @@ function(input,output, session){
                                        "ARRIVAL_CARRIER", "ARRIVAL_FLIGHT",
                                        "DEPART_AIR", "DEPART_TIME")]
   })
+  #Student self verification
   studselfverify <- reactive({
     if(is.null(input$day0.file1)) return()
     studselfverify <- day0_expect()[c("FNAME", "MNAME", "LNAME", "CELL", "CITY",
                                       "ST", "P1", "P2", "HS", "DEPART_AIR",
                                       "DEPART_TIME")]
   })
+  #Student labels
   studlabels <- reactive({
     if(is.null(input$day0.file1)) return()
     studlabels <- day0_expect()[c("FNAME", "MNAME", "LNAME", "CITY", "ST", "HS",
                                   "DOT")]
   })
+  #Students with balance
   studbalance <- reactive({
     if(is.null(input$day0.file1)) return()
     studbalance <- subset(day0_expect(), !BALANCE=="")
     studbalance <- studbalance[c("FNAME", "MNAME", "LNAME", "CELL", "CITY", "ST",
                                  "HS", "BALANCE")]
   })
+  #Students with missing forms
   studforms <- reactive({
     if(is.null(input$day0.file1)) return()
     studforms <- subset(day0_expect(), FIN.FORM=='No' | MED.FORM=='No' )
     studforms <- studforms[c("FNAME", "MNAME", "LNAME", "CELL", "CITY", "ST",
                              "HS", "FIN.FORM", "MED.FORM")]
   })
+  #Student Doro signs
   studdoor <- reactive({
     if(is.null(input$day0.file1)) return()
-    studdoor <- day0_expect()[c("FNAME", "MNAME", "LNAME", "CITY", "ST", "MF",
+    studdoor <- day0_expect()[c("STATUS", "FNAME", "MNAME", "LNAME", "CITY", "ST", "MF",
                                 "DORM", "ROOM", "DOT")]
+    studdoor <- subset(studdoor,!(STATUS=="NON-ATTEND"))
     studdoor <- studdoor[order(studdoor$MF, studdoor$ROOM),]
   })
+  #Student Dorming Lists - Female and Male
   d0_room_F <- reactive({
     if(is.null(input$day0.file1)) return()
     
@@ -615,48 +605,57 @@ function(input,output, session){
     d0_room_M <- d0_room_M[c("FNAME", "MNAME", "LNAME", "CITY", "ST", "DOT", "DORM",
                              "ROOM")]
   })
+  #Staff labels for badges
   staff_labels <- reactive({
     if(is.null(input$day0.file2)) return()
     staff_labels <- staff_file()[c("FNAME", "MNAME", "LNAME", "HS", "UNIV", "CITY",
                                   "ST", "ROLE")]
   })           
   
-  ################################File Downloads
+  ######################################### File Downloads
+  #Attendance and Travel Verification
   output$download_d0_travelverify <- downloadHandler(
-    filename = function() {"D0_AttendTravel_Verify.csv"},
+    filename = function() {"Onsite_ArrivalTravelVerify.csv"},
     content = function(file) {
       write.csv(d0_travelverify(), file, row.names = FALSE)
     }
   )
+  #Student self verification
   output$download_studselfverify <- downloadHandler(
-    filename = function() {"StudentDemo_SelfUpdate.csv"},
+    filename = function() {"Registrar_StudentSelfVerify.csv"},
     content = function(file) {
       write.csv(studselfverify(), file, row.names = FALSE)
     }
   )
+  #Student labels
   output$download_studlabels <- downloadHandler(
-    filename = function() {"StudentLabels.csv"},
+    filename = function() {"Onsite_StudentLabels.csv"},
     content = function(file) {
       write.csv(studlabels(), file, row.names = FALSE)
     }
   )
+  #Students with balance
   output$download_studbalance <- downloadHandler(
-    filename = function() {"StudentswithBalance.csv"},
+    filename = function() {"Registrar_StudentswithBalance.csv"},
     content = function(file) {
       write.csv(studbalance(), file, row.names = FALSE)
     }
   )
+  #Students missing forms
   output$download_studforms <- downloadHandler(
-    filename = function() {"StudentsMissingForms.csv"},
+    filename = function() {"Registrar_StudentsMissingForms.csv"},
     content = function(file) {
       write.csv(studforms(), file, row.names = FALSE)
     }
   )
+  #Student Door signs
   output$download_studdoor <- downloadHandler(
-    filename = function() {"DoorSigns.csv"},
+    filename = function() {"Onsite_StudentDoorSigns.csv"},
     content = function(file) {
+      write.csv(studdoor(), file, row.names = FALSE)
     }
   )
+  #Student Dorming lists by female and male
   output$download_d0_room_F <- downloadHandler(
     filename = function() {"Day0_Rooms_F.csv"},
     content = function(file) {
@@ -669,31 +668,41 @@ function(input,output, session){
       write.csv(d0_room_M(), file, row.names = FALSE)
     }
   )
+  #Staff labels
   output$download_stafflabels <- downloadHandler(
-    filename = function() {"StaffLabels.csv"},
+    filename = function() {"Onsite_StaffLabels.csv"},
     content = function(file) {
       write.csv(staff_labels(), file, row.names = FALSE)
     }
   )
   
-############################## Day 1-7 Admin Tasks #################################### 
-####################################################################################  
+  ##############################      Day 1-7 Admin Tasks       #################################### 
+  #################################################################################################
   
-  ###############################File input
-  ##Generate database for input file1
+  ######################################### File input
+  ##Generate database for input file
   day1.status <- reactive({
     day1.status <- input$admin.post.file1
     if (is.null(day1.status)) return(NULL)
     read.csv(fill=TRUE,file=input$admin.post.file1$datapath, header=TRUE, 
              colClasses = "factor")
   })
+  day1.register <- reactive({
+    day1.register <- input$admin.post.file2
+    if (is.null(day1.register)) return(NULL)
+    read.csv(fill=TRUE,file=input$admin.post.file2$datapath, header=TRUE, 
+             colClasses = "factor")
+  })
   
-  #Create dataframe of only registered students
+  ######################################### Create dataframe 
+  #Registered students
   day1_registered <- reactive({
     if(is.null(day1.status)) return(NULL)
     
     #Read in the database
-    registered_w <- day1.status()[]
+    registered_w <- day1.status()[c("STATUS", "FNAME", "MNAME", "LNAME", "MF", "CELL", "P1.CELL",
+                                    "P2.CELL", "P1", "P2", "HS", "CITY", "ST", "DOT", "ST_NAME",
+                                    "DORM", "ROOM", "DEPART_AIR", "DEPART_TIME")]
     
     #Start counter, and end counter as the number of rows
     i=1
@@ -723,14 +732,14 @@ function(input,output, session){
     }
     registered_f
   })
-  
-    
+
   #Create dataframe of non-attending students
   day1_nonattend <- reactive({
     if(is.null(day1.status)) return(NULL)
       
     #Read in the database
-    nonattend_w <- day1.status()[]
+    nonattend_w <- day1.status()["STATUS", "FNAME", "MNAME", "LNAME", "MF", "CELL", "P1.CELL",
+                                 "P2.CELL", "P1", "P2", "HS", "CITY", "ST", "DORM", "ROOM"]
     
     #Start counter, and end counter as the number of rows
     i=1
@@ -761,25 +770,101 @@ function(input,output, session){
     nonattend_f
   })
   
-  #Send file to download screen
+  day1_demoreport <- reactive({
+    if(is.null(day1.register)) return(NULL)
+    
+    #Read in the database
+    day1_demoreport <- day1.register()[c("FNAME", "MNAME", "LNAME", "MF", 
+                                       "HS", "CITY", "ST", "ST_NAME")]
+    
+    #Create new dataframe
+    demoreport <- data.frame()
+    
+    #Gender count
+    count_M <- sum(day1_demoreport$MF=="Male")
+    demoreport[1,"Male"] <- count_M
+    count_F <- sum(day1_demoreport$MF=="Female")
+    demoreport[1,"Female"] <- count_F
+    demoreport[1,"Total"] <- count_M + count_F
+    
+    #Gender Percent
+    demoreport[1,"MalePer"] <- (count_M / (count_M + count_F))*100
+    demoreport[1,"FemalePer"] <- (count_F / (count_M + count_F))*100
+      
+    #Location Information
+    state_list <- c("Alabama", "Maryland", "Rhode Island", "Connecticut", "Montana", "Vermont",
+                    "Illinois", "New York", "District of Columbia", "Arizona", "Michigan", "South Dakota",
+                    "Florida", "Nevada", "Washington", "Iowa", "North Dakota", "Maine", "California", "Mississippi",
+                    "Texas", "Hawaii", "New Jersey", "Wisconsin", "Kentucky", "Oklahoma", "Pennsylvania", "Alaska",
+                    "Massachusetts", "South Carolina", "Delaware", "Nebraska", "Virginia", "Indiana", "North Carolina",
+                    "Louisiana", "Arkansas", "Minnesota", "Tennessee", "Georgia", "New Hampshire", "West Virginia",
+                    "Kansas", "Ohio", "Oregon", "Colorado", "Missouri", "Utah", "Idaho", "New Mexico", "Wyoming")
+
+    #Count of each state
+    i = 1
+    for (a in state_list){
+      count=0
+      count <- sum(day1_demoreport$ST_NAME==a)
+      
+      if (count>0){
+        demoreport[i,"LOC_COUNT"] <- count
+        demoreport[i,"WORD"] <- "From the state of"
+        demoreport[i,"LOC_LIST"] <- a
+        i=i+1
+      } else{next}
+    } 
+    
+    value <- i-1
+    demoreport[1,"ST_COUNT"] <- value
+    
+    #Count of each country
+    location_unique <- unique(day1_demoreport$ST_NAME)
+    country_list <- subset(location_unique,!(location_unique %in% state_list))
+    
+    for (a in country_list){
+      count=0
+      count <- sum(day1_demoreport$ST_NAME==a)
+      
+      if (count>0){
+        demoreport[i,"LOC_COUNT"] <- count
+        demoreport[i,"WORD"] <- "From the country of"
+        demoreport[i,"LOC_LIST"] <- a
+        i=i+1
+      } else{next}
+    }
+    
+    demoreport[1,"CY_COUNT"] <- i-1-value
+    
+    demoreport
+  })
+  
+  ######################################### Send file to download screen
+  #Registration file
   output$download_post_registered <- downloadHandler(
-    filename = function() {"StudentDemo_Registered.csv"},
+    filename = function() {"Registrar_StudentDB_Registered.csv"},
     content = function(file) {
       write.csv(day1_registered(), file, row.names = FALSE)
     }
   )
-  #Send file to download screen
+  #Non-registration file
   output$download_post_nonattend <- downloadHandler(
-    filename = function() {"StudentDemo_Non-Attending.csv"},
+    filename = function() {"Registrar_StudentDB_Non-Registered.csv"},
     content = function(file) {
       write.csv(day1_nonattend(), file, row.names = FALSE)
     }
   )
+  #Demographics Report
+  output$download_post_demoreport <- downloadHandler(
+    filename = function() {"Registrar_DemoReport.csv"},
+    content = function(file) {
+      write.csv(day1_demoreport(), file, row.names = FALSE)
+    }
+  )
 
-#################################### Protocol ########################################
-#####################################################################################
+  ###############################          Protocol         ########################################
+  #################################################################################################
   
-  #Input Files
+  ######################################### Input Files
   ##Takes the input file saving it to staff database
   proto_stud <- reactive({
     stud1 <- input$proto.file1
@@ -800,7 +885,7 @@ function(input,output, session){
              colClasses = "factor")
   }) 
   
-  #Database Creation
+  ######################################### Database Creation
   ftc_protocol <- reactive({
     if(is.null(input$proto.file1)) return()
     if(is.null(input$proto.file3)) return()
@@ -839,7 +924,7 @@ function(input,output, session){
       i = 1
       staff_list <- staff_ori[,"HS"]
       staff_update[,"HS"] <- as.character(staff_update[,"HS"])
-      
+  
       for (a in staff_list){
         print (a)
         if(a==""){
@@ -857,13 +942,11 @@ function(input,output, session){
       staff_update[,"UNIV"] <- as.character(staff_update[,"UNIV"])
       
       for (a in staff_list){
-        print (a)
         if(a==""){
           i=i+1
           next
         } else{
           temp <- staff_update[i,"UNIV"]
-          print (temp)
           staff_update[i,"UNIV"] <- sub("^", "from ", temp )
           i=i+1
         }
@@ -875,7 +958,6 @@ function(input,output, session){
       staff_update[,"MAJ"] <- as.character(staff_update[,"MAJ"])
       
       for (a in staff_list){
-        print (a)
         if(a==""){
           i=i+1
           next
@@ -893,7 +975,6 @@ function(input,output, session){
       staff_update[,"COLSTAT"] <- as.character(staff_update[,"COLSTAT"])
       
       for (a in staff_list){
-        print (a)
         if(a==""){
           temp <- staff_update[i,"HSSTAT"]
           staff_update[i,"HSSTAT"] <- sub("^", "a high school ", temp )
@@ -911,17 +992,54 @@ function(input,output, session){
         }
       }
       
+      #Update student status
+      i = 1
+      staff_list <- staff_ori[,"ROLE"]
+
+      for (a in staff_list){
+        if (a=="Education Director"){
+          staff_update[i,"RANK"] <- 10
+          i=i+1
+        } else if (a=="Apprentice Education Director"){
+          staff_update[i,"RANK"] <- 09
+          i=i+1
+        } else if (a=="HQ Representative"){
+          staff_update[i,"RANK"] <- 08
+          i=i+1
+        } else if (a=="On-Site Director"){
+          staff_update[i,"RANK"] <- 07
+          i=i+1
+        } else if (a=="Assistant On-Site Director"){
+          staff_update[i,"RANK"] <- 06
+          i=i+1
+        } else if (a=="Secretary of State"){
+          staff_update[i,"RANK"] <- 05
+          i=i+1
+        }else if (a == "Assistant Secretary of State"){
+          staff_update[i,"RANK"] <- 04
+          i=i+1
+        } else if (a=="Senior Counselor"){
+          staff_update[i,"RANK"] <- 03
+          i=i+1
+        } else if (a=="Junior Counselor"){
+          staff_update[i,"RANK"] <- 02
+          i=i+1
+        } else{
+          staff_update[i,"RANK"] <- 01
+          i=i+1
+        }
+      }
+      
     #Staff Final Database
     staff_final <- staff_update[,c("CITY","ST","GD","LDZ","CWS","ROLE","NAME",
-                                   "HS","UNIV", "MAJ", "COLSTAT", "HSSTAT")]
-    
-    
+                                   "HS","UNIV", "MAJ", "COLSTAT", "HSSTAT", "RANK")]
+    staff_final <- staff_final[order(staff_final$RANK),]
     
   })
   
-  #Output Files
+  ######################################### Output Files
   output$download_ftc_protocol <- downloadHandler(
-    filename = function() {"Protocol_FTC.csv"},
+    filename = function() {"Protocol_FTC_Script.csv"},
     content = function(file) {
       write.csv(ftc_protocol(), file, row.names = FALSE)
     }
@@ -934,8 +1052,8 @@ function(input,output, session){
   )
   
   
-#################################### Merchandise ####################################
-#####################################################################################
+  ####################################      Merchandise           ####################################
+  ###################################################################################################
   
   ############################### #User Input File
   ##Import inventory file
@@ -1045,8 +1163,8 @@ function(input,output, session){
     }
   )
 
-######################################### Points ####################################
-#####################################################################################
+  ####################################           Points           ###################################
+  ###################################################################################################
   
   ##################################Forming the Community 
   #Import expected student demo file
@@ -1613,6 +1731,455 @@ function(input,output, session){
     filename = function() {"Points_Day6.csv"},
     content = function(file) {
       write.csv(points_day6(), file, row.names = FALSE)
+    }
+  )
+  
+  
+  ##############################           Elections             #################################### 
+  ####################################################################################################
+  
+  ######################################### File input
+  ##Generate database for input file
+  elect.reg <- reactive({
+    elect.reg <- input$elect.file1
+    if (is.null(elect.reg)) return(NULL)
+    read.csv(fill=TRUE,file=input$elect.file1$datapath, header=TRUE, 
+             colClasses = "factor")
+  })
+  elect.fillin <- reactive({
+    elect.fillin <- input$elect.file2
+    if (is.null(elect.fillin)) return(NULL)
+    read.csv(fill=TRUE,file=input$elect.file2$datapath, header=TRUE, 
+             colClasses = "factor")
+  })
+  
+  ######################################### Create dataframe 
+  #Registered students - to create nomination fill in sheet
+  elect_reg <- reactive({
+    if(is.null(elect.reg)) return(NULL)
+    
+    #Read in the database
+    elect_reg <- elect.reg()[c("FNAME", "MNAME", "LNAME", "CITY", "ST", "ST_NAME", "NAME")]
+    
+    #Create new columns with position names
+    nom_titles <- c("SENATE", "SUPREME.JUSTICE", "VP", "ATTORNEY", "PRES")
+    
+    #For each position add a blank row
+    for(a in nom_titles){
+      b=1
+      
+      while(b < nrow(elect_reg)+1){
+        elect_reg[b,a]<-""
+        b=b+1
+      }
+      
+    }
+    elect_reg
+  })
+  #Create Nomination official roster
+  elect_nominees <- reactive({
+    if(is.null(elect.fillin)) return(NULL)
+    
+    #Read in the database
+    elect_nominees <- elect.fillin()[c("FNAME", "MNAME", "LNAME", "CITY", "ST_NAME", "NAME",
+                                       "SENATE", "SUPREME.JUSTICE", "VP", "ATTORNEY", "PRES")]
+    
+    #Create party list
+    party_list <- unique(elect_nominees$SUPREME.JUSTICE)
+    party_list <- party_list[-1]
+    
+    #Create final database
+    elect_nominees_final<-data.frame()
+    
+    #Sort by each position, crate new database interweaving party candidates
+    justices <- subset(elect_nominees, elect_nominees$SUPREME.JUSTICE %in% party_list)
+      justices <-justices[order(justices$SUPREME.JUSTICE),]
+    vp <- subset(elect_nominees, elect_nominees$VP %in% party_list)
+      vp <-vp[order(vp$VP),]
+    pres <- subset(elect_nominees, elect_nominees$PRES %in% party_list)
+      pres <-pres[order(pres$PRES),]
+    senate <- subset(elect_nominees, elect_nominees$SENATE %in% party_list)
+      senate <-senate[order(senate$SENATE),]
+    
+    #Start Counters
+    i=1
+    count=1
+    
+    #Add Justices
+    while(count<10){
+      #Party A Candidate
+      elect_nominees_final[i,"FNAME"] <- justices[count,"FNAME"]
+      elect_nominees_final[i,"MNAME"] <- justices[count,"MNAME"]
+      elect_nominees_final[i,"LNAME"] <- justices[count,"LNAME"]
+      elect_nominees_final[i,"CITY"] <- justices[count,"CITY"]
+      elect_nominees_final[i,"ST_NAME"] <- justices[count,"ST_NAME"]
+      elect_nominees_final[i,"SUPREME.JUSTICE"] <- justices[count,"SUPREME.JUSTICE"]
+      
+      #Party B Candidate
+      elect_nominees_final[i+1,"FNAME"] <- justices[count+9,"FNAME"]
+      elect_nominees_final[i+1,"MNAME"] <- justices[count+9,"MNAME"]
+      elect_nominees_final[i+1,"LNAME"] <- justices[count+9,"LNAME"]
+      elect_nominees_final[i+1,"CITY"] <- justices[count+9,"CITY"]
+      elect_nominees_final[i+1,"ST_NAME"] <- justices[count+9,"ST_NAME"]
+      elect_nominees_final[i+1,"SUPREME.JUSTICE"] <- justices[count+9,"SUPREME.JUSTICE"]
+      
+      #Increase Counters
+      i=i+2
+      count = count+1
+    }
+
+    
+    #Add VP
+    ##Start Counters
+    count=1
+    
+    while(count<2){
+      #Party A Candidate
+      elect_nominees_final[i,"FNAME"] <- vp[count,"FNAME"]
+      elect_nominees_final[i,"MNAME"] <- vp[count,"MNAME"]
+      elect_nominees_final[i,"LNAME"] <- vp[count,"LNAME"]
+      elect_nominees_final[i,"CITY"] <- vp[count,"CITY"]
+      elect_nominees_final[i,"ST_NAME"] <- vp[count,"ST_NAME"]
+      elect_nominees_final[i,"VP"] <- vp[count,"VP"]
+      
+      #Party B Candidate
+      elect_nominees_final[i+1,"FNAME"] <- vp[count+1,"FNAME"]
+      elect_nominees_final[i+1,"MNAME"] <- vp[count+1,"MNAME"]
+      elect_nominees_final[i+1,"LNAME"] <- vp[count+1,"LNAME"]
+      elect_nominees_final[i+1,"CITY"] <- vp[count+1,"CITY"]
+      elect_nominees_final[i+1,"ST_NAME"] <- vp[count+1,"ST_NAME"]
+      elect_nominees_final[i+1,"VP"] <- vp[count+1,"VP"]
+      
+      #Increase Counters
+      i=i+2
+      count = count+1
+    }
+    
+    #Add Pres
+    ###Start Counters
+    count=1
+    
+    while(count<2){
+      #Party A Candidate
+      elect_nominees_final[i,"FNAME"] <- pres[count,"FNAME"]
+      elect_nominees_final[i,"MNAME"] <- pres[count,"MNAME"]
+      elect_nominees_final[i,"LNAME"] <- pres[count,"LNAME"]
+      elect_nominees_final[i,"CITY"] <- pres[count,"CITY"]
+      elect_nominees_final[i,"ST_NAME"] <- pres[count,"ST_NAME"]
+      elect_nominees_final[i,"PRES"] <- pres[count,"PRES"]
+      
+      #Party B Candidate
+      elect_nominees_final[i+1,"FNAME"] <- pres[count+1,"FNAME"]
+      elect_nominees_final[i+1,"MNAME"] <- pres[count+1,"MNAME"]
+      elect_nominees_final[i+1,"LNAME"] <- pres[count+1,"LNAME"]
+      elect_nominees_final[i+1,"CITY"] <- pres[count+1,"CITY"]
+      elect_nominees_final[i+1,"ST_NAME"] <- pres[count+1,"ST_NAME"]
+      elect_nominees_final[i+1,"PRES"] <- pres[count+1,"PRES"]
+      
+      #Increase Counters
+      i=i+2
+      count = count+1
+    }
+    
+    #Add Senate
+    ###Start Counters
+    count=1
+    
+    while(count<26){
+      #Party A Candidate
+      elect_nominees_final[i,"FNAME"] <- senate[count,"FNAME"]
+      elect_nominees_final[i,"MNAME"] <- senate[count,"MNAME"]
+      elect_nominees_final[i,"LNAME"] <- senate[count,"LNAME"]
+      elect_nominees_final[i,"CITY"] <- senate[count,"CITY"]
+      elect_nominees_final[i,"ST_NAME"] <- senate[count,"ST_NAME"]
+      elect_nominees_final[i,"SENATE"] <- senate[count,"SENATE"]
+      
+      #Party B Candidate
+      elect_nominees_final[i+1,"FNAME"] <- senate[count+25,"FNAME"]
+      elect_nominees_final[i+1,"MNAME"] <- senate[count+25,"MNAME"]
+      elect_nominees_final[i+1,"LNAME"] <- senate[count+25,"LNAME"]
+      elect_nominees_final[i+1,"CITY"] <- senate[count+25,"CITY"]
+      elect_nominees_final[i+1,"ST_NAME"] <- senate[count+25,"ST_NAME"]
+      elect_nominees_final[i+1,"SENATE"] <- senate[count+25,"SENATE"]
+      
+      #Increase Counters
+      i=i+2
+      count=count+1
+    }
+    
+    elect_nominees_final
+
+  })
+  #Create Nomination official roster
+  elect_judballot <- reactive({
+    if(is.null(elect.fillin)) return(NULL)
+    
+    #Read in the database
+    elect_nominees <- elect.fillin()[c("FNAME", "MNAME", "LNAME", "CITY", "ST_NAME", "NAME",
+                                       "SENATE", "SUPREME.JUSTICE", "VP", "ATTORNEY", "PRES")]
+    
+    #Create party list
+    party_list <- unique(elect_nominees$SUPREME.JUSTICE)
+    party_list <- party_list[-1]
+    
+    #Create final database
+    elect_nominees_final<-data.frame()
+    
+    #Sort by each position, crate new database interweaving party candidates
+    justices <- subset(elect_nominees, elect_nominees$SUPREME.JUSTICE %in% party_list)
+    justices <-justices[order(justices$SUPREME.JUSTICE),]
+    
+    #Start Counters
+    i=1
+    count=1
+    
+    #Add Justices
+    while(count<10){
+      #Party A Candidate
+      elect_nominees_final[i,"FNAME"] <- justices[count,"FNAME"]
+      elect_nominees_final[i,"MNAME"] <- justices[count,"MNAME"]
+      elect_nominees_final[i,"LNAME"] <- justices[count,"LNAME"]
+      elect_nominees_final[i,"CITY"] <- justices[count,"CITY"]
+      elect_nominees_final[i,"ST_NAME"] <- justices[count,"ST_NAME"]
+      elect_nominees_final[i,"SUPREME.JUSTICE"] <- justices[count,"SUPREME.JUSTICE"]
+      
+      #Party B Candidate
+      elect_nominees_final[i+1,"FNAME"] <- justices[count+9,"FNAME"]
+      elect_nominees_final[i+1,"MNAME"] <- justices[count+9,"MNAME"]
+      elect_nominees_final[i+1,"LNAME"] <- justices[count+9,"LNAME"]
+      elect_nominees_final[i+1,"CITY"] <- justices[count+9,"CITY"]
+      elect_nominees_final[i+1,"ST_NAME"] <- justices[count+9,"ST_NAME"]
+      elect_nominees_final[i+1,"SUPREME.JUSTICE"] <- justices[count+9,"SUPREME.JUSTICE"]
+      
+      #Increase Counters
+      i=i+2
+      count = count+1
+    }
+    count=1
+    
+    #Add Justices
+    while(count<10){
+      #Party A Candidate
+      elect_nominees_final[i,"FNAME"] <- justices[count,"FNAME"]
+      elect_nominees_final[i,"MNAME"] <- justices[count,"MNAME"]
+      elect_nominees_final[i,"LNAME"] <- justices[count,"LNAME"]
+      elect_nominees_final[i,"CITY"] <- justices[count,"CITY"]
+      elect_nominees_final[i,"ST_NAME"] <- justices[count,"ST_NAME"]
+      elect_nominees_final[i,"SUPREME.JUSTICE"] <- justices[count,"SUPREME.JUSTICE"]
+      
+      #Party B Candidate
+      elect_nominees_final[i+1,"FNAME"] <- justices[count+9,"FNAME"]
+      elect_nominees_final[i+1,"MNAME"] <- justices[count+9,"MNAME"]
+      elect_nominees_final[i+1,"LNAME"] <- justices[count+9,"LNAME"]
+      elect_nominees_final[i+1,"CITY"] <- justices[count+9,"CITY"]
+      elect_nominees_final[i+1,"ST_NAME"] <- justices[count+9,"ST_NAME"]
+      elect_nominees_final[i+1,"SUPREME.JUSTICE"] <- justices[count+9,"SUPREME.JUSTICE"]
+      
+      #Increase Counters
+      i=i+2
+      count = count+1
+    }
+    
+    elect_nominees_final
+
+  })
+  #Create Nomination official roster
+  elect_winfill <- reactive({
+    if(is.null(elect.fillin)) return(NULL)
+    
+    #Read in the database
+    elect_nominees <- elect.fillin()[c("FNAME", "MNAME", "LNAME", "CITY", "ST_NAME", "NAME",
+                                       "SENATE", "SUPREME.JUSTICE", "VP", "ATTORNEY", "PRES")]
+    
+    #Create party list
+    party_list <- unique(elect_nominees$SUPREME.JUSTICE)
+    party_list <- party_list[-1]
+    
+    #Create final database
+    elect_nominees_final<-data.frame()
+    
+    #Sort by each position, crate new database interweaving party candidates
+    justices <- subset(elect_nominees, elect_nominees$SUPREME.JUSTICE %in% party_list)
+    justices <-justices[order(justices$SUPREME.JUSTICE),]
+    vp <- subset(elect_nominees, elect_nominees$VP %in% party_list)
+    vp <-vp[order(vp$VP),]
+    pres <- subset(elect_nominees, elect_nominees$PRES %in% party_list)
+    pres <-pres[order(pres$PRES),]
+    senate <- subset(elect_nominees, elect_nominees$SENATE %in% party_list)
+    senate <-senate[order(senate$SENATE),]
+    attorney <- subset(elect_nominees, elect_nominees$ATTORNEY %in% party_list)
+    attorney <-attorney[order(attorney$ATTORNEY),]
+    
+    #Start Counters
+    i=1
+    count=1
+    
+    #Add Justices
+    while(count<10){
+      #Party A Candidate
+      elect_nominees_final[i,"FNAME"] <- justices[count,"FNAME"]
+      elect_nominees_final[i,"MNAME"] <- justices[count,"MNAME"]
+      elect_nominees_final[i,"LNAME"] <- justices[count,"LNAME"]
+      elect_nominees_final[i,"CITY"] <- justices[count,"CITY"]
+      elect_nominees_final[i,"ST_NAME"] <- justices[count,"ST_NAME"]
+      elect_nominees_final[i,"SUPREME.JUSTICE"] <-justices[count,"SUPREME.JUSTICE"]
+      elect_nominees_final[i,"SUPREME.JUSTICE_WIN"] <- ""
+      
+      
+      #Party B Candidate
+      elect_nominees_final[i+1,"FNAME"] <- justices[count+9,"FNAME"]
+      elect_nominees_final[i+1,"MNAME"] <- justices[count+9,"MNAME"]
+      elect_nominees_final[i+1,"LNAME"] <- justices[count+9,"LNAME"]
+      elect_nominees_final[i+1,"CITY"] <- justices[count+9,"CITY"]
+      elect_nominees_final[i+1,"ST_NAME"] <- justices[count+9,"ST_NAME"]
+      elect_nominees_final[i+1,"SUPREME.JUSTICE"] <- justices[count+9,"SUPREME.JUSTICE"]
+      elect_nominees_final[i+1,"SUPREME.JUSTICE_WIN"] <- ""
+      
+      #Increase Counters
+      i=i+2
+      count = count+1
+    }
+    
+    #Add Attorneys
+    count=1
+    while(count<13){
+      #Party A Candidate
+      elect_nominees_final[i,"FNAME"] <- attorney[count,"FNAME"]
+      elect_nominees_final[i,"MNAME"] <- attorney[count,"MNAME"]
+      elect_nominees_final[i,"LNAME"] <- attorney[count,"LNAME"]
+      elect_nominees_final[i,"CITY"] <- attorney[count,"CITY"]
+      elect_nominees_final[i,"ST_NAME"] <- attorney[count,"ST_NAME"]
+      elect_nominees_final[i,"ATTORNEY"] <- attorney[count,"ATTORNEY"]
+
+      #Party B Candidate
+      elect_nominees_final[i+1,"FNAME"] <- attorney[count+12,"FNAME"]
+      elect_nominees_final[i+1,"MNAME"] <- attorney[count+12,"MNAME"]
+      elect_nominees_final[i+1,"LNAME"] <- attorney[count+12,"LNAME"]
+      elect_nominees_final[i+1,"CITY"] <- attorney[count+12,"CITY"]
+      elect_nominees_final[i+1,"ST_NAME"] <- attorney[count+12,"ST_NAME"]
+      elect_nominees_final[i+1,"ATTORNEY"] <- attorney[count+12,"ATTORNEY"]
+      
+      #Increase Counters
+      i=i+2
+      count = count+1
+    }
+    
+    #Add VP
+    ##Start Counters
+    count=1
+    
+    while(count<2){
+      #Party A Candidate
+      elect_nominees_final[i,"FNAME"] <- vp[count,"FNAME"]
+      elect_nominees_final[i,"MNAME"] <- vp[count,"MNAME"]
+      elect_nominees_final[i,"LNAME"] <- vp[count,"LNAME"]
+      elect_nominees_final[i,"CITY"] <- vp[count,"CITY"]
+      elect_nominees_final[i,"ST_NAME"] <- vp[count,"ST_NAME"]
+      elect_nominees_final[i,"VP"] <- vp[count,"VP"]
+      elect_nominees_final[i,"VP_WIN"] <- ""
+      
+      #Party B Candidate
+      elect_nominees_final[i+1,"FNAME"] <- vp[count+1,"FNAME"]
+      elect_nominees_final[i+1,"MNAME"] <- vp[count+1,"MNAME"]
+      elect_nominees_final[i+1,"LNAME"] <- vp[count+1,"LNAME"]
+      elect_nominees_final[i+1,"CITY"] <- vp[count+1,"CITY"]
+      elect_nominees_final[i+1,"ST_NAME"] <- vp[count+1,"ST_NAME"]
+      elect_nominees_final[i+1,"VP"] <- vp[count+1,"VP"]
+      elect_nominees_final[i+1,"VP_WIN"] <- ""
+      
+      #Increase Counters
+      i=i+2
+      count = count+1
+    }
+    
+    #Add Pres
+    ###Start Counters
+    count=1
+    
+    while(count<2){
+      #Party A Candidate
+      elect_nominees_final[i,"FNAME"] <- pres[count,"FNAME"]
+      elect_nominees_final[i,"MNAME"] <- pres[count,"MNAME"]
+      elect_nominees_final[i,"LNAME"] <- pres[count,"LNAME"]
+      elect_nominees_final[i,"CITY"] <- pres[count,"CITY"]
+      elect_nominees_final[i,"ST_NAME"] <- pres[count,"ST_NAME"]
+      elect_nominees_final[i,"PRES"] <- pres[count,"PRES"]
+      elect_nominees_final[i,"PRES_WIN"] <- ""
+      
+      #Party B Candidate
+      elect_nominees_final[i+1,"FNAME"] <- pres[count+1,"FNAME"]
+      elect_nominees_final[i+1,"MNAME"] <- pres[count+1,"MNAME"]
+      elect_nominees_final[i+1,"LNAME"] <- pres[count+1,"LNAME"]
+      elect_nominees_final[i+1,"CITY"] <- pres[count+1,"CITY"]
+      elect_nominees_final[i+1,"ST_NAME"] <- pres[count+1,"ST_NAME"]
+      elect_nominees_final[i+1,"PRES"] <- pres[count+1,"PRES"]
+      elect_nominees_final[i+1,"PRES_WIN"] <- ""
+      
+      #Increase Counters
+      i=i+2
+      count = count+1
+    }
+    
+    #Add Senate
+    ###Start Counters
+    count=1
+    
+    while(count<26){
+      #Party A Candidate
+      elect_nominees_final[i,"FNAME"] <- senate[count,"FNAME"]
+      elect_nominees_final[i,"MNAME"] <- senate[count,"MNAME"]
+      elect_nominees_final[i,"LNAME"] <- senate[count,"LNAME"]
+      elect_nominees_final[i,"CITY"] <- senate[count,"CITY"]
+      elect_nominees_final[i,"ST_NAME"] <- senate[count,"ST_NAME"]
+      elect_nominees_final[i,"SENATE"] <- senate[count,"SENATE"]
+      elect_nominees_final[i,"SENATE_WIN"] <- ""
+      
+      #Party B Candidate
+      elect_nominees_final[i+1,"FNAME"] <- senate[count+25,"FNAME"]
+      elect_nominees_final[i+1,"MNAME"] <- senate[count+25,"MNAME"]
+      elect_nominees_final[i+1,"LNAME"] <- senate[count+25,"LNAME"]
+      elect_nominees_final[i+1,"CITY"] <- senate[count+25,"CITY"]
+      elect_nominees_final[i+1,"ST_NAME"] <- senate[count+25,"ST_NAME"]
+      elect_nominees_final[i+1,"SENATE"] <- senate[count+25,"SENATE"]
+      elect_nominees_final[i+1,"SENATE_WIN"] <- ""
+      
+      #Increase Counters
+      i=i+2
+      count=count+1
+    }
+    
+    elect_nominees_final
+    
+  })
+  
+  
+  ######################################### Send file to download screen
+  #Nomination File to fill in
+  output$download_elect_nomineefillin <- downloadHandler(
+    filename = function() {"Elections_NomineeFillIn.csv"},
+    content = function(file) {
+      write.csv(elect_reg(), file, row.names = FALSE)
+    }
+  )
+  #Nomination Roster for MM
+  output$download_elect_nomineeroster <- downloadHandler(
+    filename = function() {"Election_NomineeRoster.csv"},
+    content = function(file) {
+      write.csv(elect_nominees(), file, row.names = FALSE)
+    }
+  )
+  #Judicial Ballot
+  output$download_elect_judballots <- downloadHandler(
+  filename = function() {"Election_JudicialBallot.csv"},
+  content = function(file) {
+    write.csv(elect_judballot(), file, row.names = FALSE)
+    }
+  )
+  #Election Winners
+  output$download_elect_winnersfillin <- downloadHandler(
+    filename = function() {"Election_WinnerFillIn.csv"},
+    content = function(file) {
+      write.csv(elect_winfill(), file, row.names = FALSE)
     }
   )
 }
