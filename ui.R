@@ -576,13 +576,16 @@ box.merch.2 <- box(title = "Ouput Files", width=12, status="primary",
 ##########################              MainBody - Elections             ###############################
 ########################################################################################################
 ##Create rows of data
-###Upload Forming the Community Database
+###Upload registration database, nominee database, winner database
 elect.input <- fluidRow(
   column(6,
          fileInput("elect.file1","Upload the Registrar_StudentDB_Registered File")
   ),
   column(6,
-         fileInput("elect.file2","Upload the Elections_Nominations updated File")
+         fileInput("elect.file2","Upload the Elections_NomineeFillin (Updated with info!) File")
+  ),
+  column(6,
+         fileInput("elect.file3","Upload the Elections_WinnerFillin (Updated with info!) File")
   )
 )
 
@@ -601,8 +604,10 @@ elect.out.1 <- fluidRow(
 elect.out.2 <- fluidRow(
   column(6, 
          downloadButton('download_elect_winnersfillin', 'Download Election Winner Fill-in')
-  )
-  
+  ),
+  column(6,
+         downloadButton('download_election_commish','Download Commisioners Report')
+         )
 )
 
 ###Combine all outputs together

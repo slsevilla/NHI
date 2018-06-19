@@ -1752,14 +1752,19 @@ function(input,output, session){
     read.csv(fill=TRUE,file=input$elect.file2$datapath, header=TRUE, 
              colClasses = "factor")
   })
-  
+  elect.win <- reactive({
+    elect.win <- input$elect.file3
+    if (is.null(elect.win)) return(NULL)
+    read.csv(fill=TRUE,file=input$elect.file3$datapath, header=TRUE, 
+             colClasses = "factor")
+  })
   ######################################### Create dataframe 
   #Registered students - to create nomination fill in sheet
   elect_reg <- reactive({
     if(is.null(elect.reg)) return(NULL)
     
     #Read in the database
-    elect_reg <- elect.reg()[c("FNAME", "MNAME", "LNAME", "CITY", "ST", "ST_NAME", "NAME")]
+    elect_reg <- elect.reg()[c("FNAME", "MNAME", "LNAME", "CITY", "ST", "ST_NAME", "NAME","DORM", "ROOM")]
     
     #Create new columns with position names
     nom_titles <- c("SENATE", "SUPREME.JUSTICE", "VP", "ATTORNEY", "PRES")
@@ -1781,7 +1786,7 @@ function(input,output, session){
     if(is.null(elect.fillin)) return(NULL)
     
     #Read in the database
-    elect_nominees <- elect.fillin()[c("FNAME", "MNAME", "LNAME", "CITY", "ST_NAME", "NAME",
+    elect_nominees <- elect.fillin()[c("FNAME", "MNAME", "LNAME", "CITY", "ST_NAME", "NAME","DORM", "ROOM",
                                        "SENATE", "SUPREME.JUSTICE", "VP", "ATTORNEY", "PRES")]
     
     #Create party list
@@ -1812,6 +1817,8 @@ function(input,output, session){
       elect_nominees_final[i,"MNAME"] <- justices[count,"MNAME"]
       elect_nominees_final[i,"LNAME"] <- justices[count,"LNAME"]
       elect_nominees_final[i,"CITY"] <- justices[count,"CITY"]
+      elect_nominees_final[i,"DORM"] <- justices[count,"DORM"]
+      elect_nominees_final[i,"ROOM"] <- justices[count,"ROOM"]
       elect_nominees_final[i,"ST_NAME"] <- justices[count,"ST_NAME"]
       elect_nominees_final[i,"SUPREME.JUSTICE"] <- justices[count,"SUPREME.JUSTICE"]
       
@@ -1820,6 +1827,8 @@ function(input,output, session){
       elect_nominees_final[i+1,"MNAME"] <- justices[count+9,"MNAME"]
       elect_nominees_final[i+1,"LNAME"] <- justices[count+9,"LNAME"]
       elect_nominees_final[i+1,"CITY"] <- justices[count+9,"CITY"]
+      elect_nominees_final[i+1,"DORM"] <- justices[count+9,"DORM"]
+      elect_nominees_final[i+1,"ROOM"] <- justices[count+9,"ROOM"]
       elect_nominees_final[i+1,"ST_NAME"] <- justices[count+9,"ST_NAME"]
       elect_nominees_final[i+1,"SUPREME.JUSTICE"] <- justices[count+9,"SUPREME.JUSTICE"]
       
@@ -1839,6 +1848,8 @@ function(input,output, session){
       elect_nominees_final[i,"MNAME"] <- vp[count,"MNAME"]
       elect_nominees_final[i,"LNAME"] <- vp[count,"LNAME"]
       elect_nominees_final[i,"CITY"] <- vp[count,"CITY"]
+      elect_nominees_final[i,"DORM"] <- vp[count,"DORM"]
+      elect_nominees_final[i,"ROOM"] <- vp[count,"ROOM"]
       elect_nominees_final[i,"ST_NAME"] <- vp[count,"ST_NAME"]
       elect_nominees_final[i,"VP"] <- vp[count,"VP"]
       
@@ -1847,6 +1858,8 @@ function(input,output, session){
       elect_nominees_final[i+1,"MNAME"] <- vp[count+1,"MNAME"]
       elect_nominees_final[i+1,"LNAME"] <- vp[count+1,"LNAME"]
       elect_nominees_final[i+1,"CITY"] <- vp[count+1,"CITY"]
+      elect_nominees_final[i+1,"DORM"] <- vp[count+1,"DORM"]
+      elect_nominees_final[i+1,"ROOM"] <- vp[count+1,"ROOM"]
       elect_nominees_final[i+1,"ST_NAME"] <- vp[count+1,"ST_NAME"]
       elect_nominees_final[i+1,"VP"] <- vp[count+1,"VP"]
       
@@ -1865,6 +1878,8 @@ function(input,output, session){
       elect_nominees_final[i,"MNAME"] <- pres[count,"MNAME"]
       elect_nominees_final[i,"LNAME"] <- pres[count,"LNAME"]
       elect_nominees_final[i,"CITY"] <- pres[count,"CITY"]
+      elect_nominees_final[i,"DORM"] <- pres[count,"DORM"]
+      elect_nominees_final[i,"ROOM"] <- pres[count,"ROOM"]
       elect_nominees_final[i,"ST_NAME"] <- pres[count,"ST_NAME"]
       elect_nominees_final[i,"PRES"] <- pres[count,"PRES"]
       
@@ -1873,6 +1888,8 @@ function(input,output, session){
       elect_nominees_final[i+1,"MNAME"] <- pres[count+1,"MNAME"]
       elect_nominees_final[i+1,"LNAME"] <- pres[count+1,"LNAME"]
       elect_nominees_final[i+1,"CITY"] <- pres[count+1,"CITY"]
+      elect_nominees_final[i+1,"DORM"] <- pres[count+1,"DORM"]
+      elect_nominees_final[i+1,"ROOM"] <- pres[count+1,"ROOM"]
       elect_nominees_final[i+1,"ST_NAME"] <- pres[count+1,"ST_NAME"]
       elect_nominees_final[i+1,"PRES"] <- pres[count+1,"PRES"]
       
@@ -1891,6 +1908,8 @@ function(input,output, session){
       elect_nominees_final[i,"MNAME"] <- senate[count,"MNAME"]
       elect_nominees_final[i,"LNAME"] <- senate[count,"LNAME"]
       elect_nominees_final[i,"CITY"] <- senate[count,"CITY"]
+      elect_nominees_final[i,"DORM"] <- senate[count,"DORM"]
+      elect_nominees_final[i,"ROOM"] <- senate[count,"ROOM"]
       elect_nominees_final[i,"ST_NAME"] <- senate[count,"ST_NAME"]
       elect_nominees_final[i,"SENATE"] <- senate[count,"SENATE"]
       
@@ -1899,6 +1918,8 @@ function(input,output, session){
       elect_nominees_final[i+1,"MNAME"] <- senate[count+25,"MNAME"]
       elect_nominees_final[i+1,"LNAME"] <- senate[count+25,"LNAME"]
       elect_nominees_final[i+1,"CITY"] <- senate[count+25,"CITY"]
+      elect_nominees_final[i+1,"DORM"] <- senate[count+25,"DORM"]
+      elect_nominees_final[i+1,"ROOM"] <- senate[count+25,"ROOM"]
       elect_nominees_final[i+1,"ST_NAME"] <- senate[count+25,"ST_NAME"]
       elect_nominees_final[i+1,"SENATE"] <- senate[count+25,"SENATE"]
       
@@ -1915,7 +1936,7 @@ function(input,output, session){
     if(is.null(elect.fillin)) return(NULL)
     
     #Read in the database
-    elect_nominees <- elect.fillin()[c("FNAME", "MNAME", "LNAME", "CITY", "ST_NAME", "NAME",
+    elect_nominees <- elect.fillin()[c("FNAME", "MNAME", "LNAME", "CITY", "ST_NAME", "NAME","DORM", "ROOM",
                                        "SENATE", "SUPREME.JUSTICE", "VP", "ATTORNEY", "PRES")]
     
     #Create party list
@@ -1988,7 +2009,7 @@ function(input,output, session){
     if(is.null(elect.fillin)) return(NULL)
     
     #Read in the database
-    elect_nominees <- elect.fillin()[c("FNAME", "MNAME", "LNAME", "CITY", "ST_NAME", "NAME",
+    elect_nominees <- elect.fillin()[c("FNAME", "MNAME", "LNAME", "CITY", "ST_NAME", "NAME","DORM", "ROOM",
                                        "SENATE", "SUPREME.JUSTICE", "VP", "ATTORNEY", "PRES")]
     
     #Create party list
@@ -2020,7 +2041,10 @@ function(input,output, session){
       elect_nominees_final[i,"FNAME"] <- justices[count,"FNAME"]
       elect_nominees_final[i,"MNAME"] <- justices[count,"MNAME"]
       elect_nominees_final[i,"LNAME"] <- justices[count,"LNAME"]
+      elect_nominees_final[i,"NAME"] <- justices[count,"NAME"]
       elect_nominees_final[i,"CITY"] <- justices[count,"CITY"]
+      elect_nominees_final[i,"DORM"] <- justices[count,"DORM"]
+      elect_nominees_final[i,"ROOM"] <- justices[count,"ROOM"]
       elect_nominees_final[i,"ST_NAME"] <- justices[count,"ST_NAME"]
       elect_nominees_final[i,"SUPREME.JUSTICE"] <-justices[count,"SUPREME.JUSTICE"]
       elect_nominees_final[i,"SUPREME.JUSTICE_WIN"] <- ""
@@ -2030,7 +2054,10 @@ function(input,output, session){
       elect_nominees_final[i+1,"FNAME"] <- justices[count+9,"FNAME"]
       elect_nominees_final[i+1,"MNAME"] <- justices[count+9,"MNAME"]
       elect_nominees_final[i+1,"LNAME"] <- justices[count+9,"LNAME"]
+      elect_nominees_final[i+1,"NAME"] <- justices[count+9,"NAME"]
       elect_nominees_final[i+1,"CITY"] <- justices[count+9,"CITY"]
+      elect_nominees_final[i+1,"DORM"] <- justices[count+9,"DORM"]
+      elect_nominees_final[i+1,"ROOM"] <- justices[count+9,"ROOM"]
       elect_nominees_final[i+1,"ST_NAME"] <- justices[count+9,"ST_NAME"]
       elect_nominees_final[i+1,"SUPREME.JUSTICE"] <- justices[count+9,"SUPREME.JUSTICE"]
       elect_nominees_final[i+1,"SUPREME.JUSTICE_WIN"] <- ""
@@ -2047,7 +2074,10 @@ function(input,output, session){
       elect_nominees_final[i,"FNAME"] <- attorney[count,"FNAME"]
       elect_nominees_final[i,"MNAME"] <- attorney[count,"MNAME"]
       elect_nominees_final[i,"LNAME"] <- attorney[count,"LNAME"]
+      elect_nominees_final[i,"NAME"] <- attorney[count,"NAME"]
       elect_nominees_final[i,"CITY"] <- attorney[count,"CITY"]
+      elect_nominees_final[i,"DORM"] <- attorney[count,"DORM"]
+      elect_nominees_final[i,"ROOM"] <- attorney[count,"ROOM"]
       elect_nominees_final[i,"ST_NAME"] <- attorney[count,"ST_NAME"]
       elect_nominees_final[i,"ATTORNEY"] <- attorney[count,"ATTORNEY"]
 
@@ -2055,7 +2085,10 @@ function(input,output, session){
       elect_nominees_final[i+1,"FNAME"] <- attorney[count+12,"FNAME"]
       elect_nominees_final[i+1,"MNAME"] <- attorney[count+12,"MNAME"]
       elect_nominees_final[i+1,"LNAME"] <- attorney[count+12,"LNAME"]
+      elect_nominees_final[i+1,"NAME"] <- attorney[count+12,"NAME"]
       elect_nominees_final[i+1,"CITY"] <- attorney[count+12,"CITY"]
+      elect_nominees_final[i+1,"DORM"] <- attorney[count+12,"DORM"]
+      elect_nominees_final[i+1,"ROOM"] <- attorney[count+12,"ROOM"]
       elect_nominees_final[i+1,"ST_NAME"] <- attorney[count+12,"ST_NAME"]
       elect_nominees_final[i+1,"ATTORNEY"] <- attorney[count+12,"ATTORNEY"]
       
@@ -2073,7 +2106,10 @@ function(input,output, session){
       elect_nominees_final[i,"FNAME"] <- vp[count,"FNAME"]
       elect_nominees_final[i,"MNAME"] <- vp[count,"MNAME"]
       elect_nominees_final[i,"LNAME"] <- vp[count,"LNAME"]
+      elect_nominees_final[i,"NAME"] <- vp[count,"NAME"]
       elect_nominees_final[i,"CITY"] <- vp[count,"CITY"]
+      elect_nominees_final[i,"DORM"] <- vp[count,"DORM"]
+      elect_nominees_final[i,"ROOM"] <- vp[count,"ROOM"]
       elect_nominees_final[i,"ST_NAME"] <- vp[count,"ST_NAME"]
       elect_nominees_final[i,"VP"] <- vp[count,"VP"]
       elect_nominees_final[i,"VP_WIN"] <- ""
@@ -2082,7 +2118,10 @@ function(input,output, session){
       elect_nominees_final[i+1,"FNAME"] <- vp[count+1,"FNAME"]
       elect_nominees_final[i+1,"MNAME"] <- vp[count+1,"MNAME"]
       elect_nominees_final[i+1,"LNAME"] <- vp[count+1,"LNAME"]
+      elect_nominees_final[i+1,"NAME"] <- vp[count+1,"NAME"]
       elect_nominees_final[i+1,"CITY"] <- vp[count+1,"CITY"]
+      elect_nominees_final[i+1,"DORM"] <- vp[count+1,"DORM"]
+      elect_nominees_final[i+1,"ROOM"] <- vp[count+1,"ROOM"]
       elect_nominees_final[i+1,"ST_NAME"] <- vp[count+1,"ST_NAME"]
       elect_nominees_final[i+1,"VP"] <- vp[count+1,"VP"]
       elect_nominees_final[i+1,"VP_WIN"] <- ""
@@ -2101,7 +2140,10 @@ function(input,output, session){
       elect_nominees_final[i,"FNAME"] <- pres[count,"FNAME"]
       elect_nominees_final[i,"MNAME"] <- pres[count,"MNAME"]
       elect_nominees_final[i,"LNAME"] <- pres[count,"LNAME"]
+      elect_nominees_final[i,"NAME"] <- pres[count,"NAME"]
       elect_nominees_final[i,"CITY"] <- pres[count,"CITY"]
+      elect_nominees_final[i,"DORM"] <- pres[count,"DORM"]
+      elect_nominees_final[i,"ROOM"] <- pres[count,"ROOM"]
       elect_nominees_final[i,"ST_NAME"] <- pres[count,"ST_NAME"]
       elect_nominees_final[i,"PRES"] <- pres[count,"PRES"]
       elect_nominees_final[i,"PRES_WIN"] <- ""
@@ -2110,7 +2152,10 @@ function(input,output, session){
       elect_nominees_final[i+1,"FNAME"] <- pres[count+1,"FNAME"]
       elect_nominees_final[i+1,"MNAME"] <- pres[count+1,"MNAME"]
       elect_nominees_final[i+1,"LNAME"] <- pres[count+1,"LNAME"]
+      elect_nominees_final[i+1,"NAME"] <- pres[count+1,"NAME"]
       elect_nominees_final[i+1,"CITY"] <- pres[count+1,"CITY"]
+      elect_nominees_final[i+1,"DORM"] <- pres[count+1,"DORM"]
+      elect_nominees_final[i+1,"ROOM"] <- pres[count+1,"ROOM"]
       elect_nominees_final[i+1,"ST_NAME"] <- pres[count+1,"ST_NAME"]
       elect_nominees_final[i+1,"PRES"] <- pres[count+1,"PRES"]
       elect_nominees_final[i+1,"PRES_WIN"] <- ""
@@ -2129,7 +2174,10 @@ function(input,output, session){
       elect_nominees_final[i,"FNAME"] <- senate[count,"FNAME"]
       elect_nominees_final[i,"MNAME"] <- senate[count,"MNAME"]
       elect_nominees_final[i,"LNAME"] <- senate[count,"LNAME"]
+      elect_nominees_final[i,"NAME"] <- senate[count,"NAME"]
       elect_nominees_final[i,"CITY"] <- senate[count,"CITY"]
+      elect_nominees_final[i,"DORM"] <- senate[count,"DORM"]
+      elect_nominees_final[i,"ROOM"] <- senate[count,"ROOM"]
       elect_nominees_final[i,"ST_NAME"] <- senate[count,"ST_NAME"]
       elect_nominees_final[i,"SENATE"] <- senate[count,"SENATE"]
       elect_nominees_final[i,"SENATE_WIN"] <- ""
@@ -2138,7 +2186,10 @@ function(input,output, session){
       elect_nominees_final[i+1,"FNAME"] <- senate[count+25,"FNAME"]
       elect_nominees_final[i+1,"MNAME"] <- senate[count+25,"MNAME"]
       elect_nominees_final[i+1,"LNAME"] <- senate[count+25,"LNAME"]
+      elect_nominees_final[i+1,"NAME"] <- senate[count+25,"NAME"]
       elect_nominees_final[i+1,"CITY"] <- senate[count+25,"CITY"]
+      elect_nominees_final[i+1,"DORM"] <- senate[count+25,"DORM"]
+      elect_nominees_final[i+1,"ROOM"] <- senate[count+25,"ROOM"]
       elect_nominees_final[i+1,"ST_NAME"] <- senate[count+25,"ST_NAME"]
       elect_nominees_final[i+1,"SENATE"] <- senate[count+25,"SENATE"]
       elect_nominees_final[i+1,"SENATE_WIN"] <- ""
@@ -2151,12 +2202,48 @@ function(input,output, session){
     elect_nominees_final
     
   })
-  
+  #Creation Commissioners Report
+  elect_commish <- reactive({
+    if(is.null(elect.win)) return(NULL)
+    
+    #Read in the database
+    elect_winners <- elect.win()[c("FNAME", "MNAME", "LNAME", "CITY", "ST_NAME", "NAME","DORM", "ROOM",
+                                       "SENATE", "SENATE_WIN","SUPREME.JUSTICE", "SUPREME.JUSTICE_WIN",
+                                   "VP", "VP_WIN", "ATTORNEY","PRES","PRES_WIN")]
+    
+    #Run for Announcement 1
+    election_final <- subset(elect_winners, elect_winners$SUPREME.JUSTICE_WIN=="WINNER" | 
+                               !(elect_winners$ATTORNEY=="NA") | (elect_winners$VP_WIN=="WINNER") |
+                               (elect_winners$PRES_WIN=="WINNER")| (elect_winners$SENATE_WIN=="WINNER")
+                             )
+    #Order the database
+    election_final[order(election_final$SUPREME.JUSTICE_WIN, election_final$ATTORNEY, 
+                        election_final$VP_WIN,election_final$PRES_WIN, election_final$SENATE_WIN),]
+    
+    #Add position column
+    for (i in 1:9){
+        election_final[i,"POSITION"] <- "Supreme Court Justice"
+    }
+    for (i in 10:33){
+      election_final[i,"POSITION"] <- "Attorney"
+    }
+    for (i in 34:34){
+      election_final[i,"POSITION"] <- "Vice-President"
+    }
+    for (i in 35:35){
+      election_final[i,"POSITION"] <- "President"
+    }   
+    for (i in 36:60){
+      election_final[i,"POSITION"] <- "Senator"
+    }
+    election_final
+    
+  })
   
   ######################################### Send file to download screen
   #Nomination File to fill in
   output$download_elect_nomineefillin <- downloadHandler(
-    filename = function() {"Elections_NomineeFillIn.csv"},
+    filename = function() {"Election_NomineeFillIn.csv"},
     content = function(file) {
       write.csv(elect_reg(), file, row.names = FALSE)
     }
@@ -2180,6 +2267,14 @@ function(input,output, session){
     filename = function() {"Election_WinnerFillIn.csv"},
     content = function(file) {
       write.csv(elect_winfill(), file, row.names = FALSE)
+    }
+  )
+  
+  #Election Winners for Commish Report
+  output$download_election_commish <- downloadHandler(
+    filename = function() {"Election_CommishReport.csv"},
+    content = function(file) {
+      write.csv(elect_commish(), file, row.names = FALSE)
     }
   )
 }

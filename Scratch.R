@@ -25,29 +25,8 @@ fin <- read.csv("C:\\Users\\sevillas2\\Google Drive\\My Documents\\Programs & Or
 test <- read.csv("C:\\Users\\sevillas2\\Google Drive\\My Documents\\Programs & Orgs\\National Hispanic Institute\\Template National LDZ\\Director Guides\\Downloaded Files\\test.csv", header=TRUE)
 nom <- read.csv("C:\\Users\\sevillas2\\Google Drive\\My Documents\\Programs & Orgs\\National Hispanic Institute\\Template National LDZ\\Director Guides\\Downloaded Files\\Nomination_final.csv", header=TRUE)
 reg <- read.csv("C:\\Users\\sevillas2\\Google Drive\\My Documents\\Programs & Orgs\\National Hispanic Institute\\Template National LDZ\\Director Guides\\Downloaded Files\\Registrar_StudentDB_Registered.csv", header=TRUE)
-elect <- read.csv("C:\\Users\\sevillas2\\Google Drive\\My Documents\\Programs & Orgs\\National Hispanic Institute\\Template National LDZ\\Director Guides\\Downloaded Files\\Elections_NomineeFillIn.csv", header=TRUE)
+elect <- read.csv("C:\\Users\\sevillas2\\Google Drive\\My Documents\\Programs & Orgs\\National Hispanic Institute\\Template National LDZ\\Director Guides\\Downloaded Files\\Election_WinnerFillIn.csv", header=TRUE)
 voting$NAME <- as.character(voting$NAME)
 
 ftc <- read.csv("C:\\Users\\sevillas2\\Google Drive\\My Documents\\Programs & Orgs\\National Hispanic Institute\\Template National LDZ\\Director Guides\\Downloaded Files\\Protocol_FormingTheCommunityTemplate.csv", header=TRUE)
 
-
-
-#Create party list
-party_list <- unique(elect_nominees$SUPREME.JUSTICE)
-party_list <- party_list[-1]
-
-for (a in party_list){
-  value <- elect_nominees
-  if(value==a){
-    elect_nominees_final[i,"JUSTICEA"] <- 
-  }
-}
-
-#Create database for each position
-justices <- subset(elect_nominees, elect_nominees$SUPREME.JUSTICE %in% party_list)
-
-
-
-elect_nominees_final <- merge(justices,vp, all=TRUE)
-elect_nominees_final <- merge(elect_nominees_final,pres, all=TRUE)
-elect_nominees_final <- merge(elect_nominees_final,senate, all=TRUE)
