@@ -586,10 +586,13 @@ elect.input <- fluidRow(
   ),
   column(6,
          fileInput("elect.file3","Upload the Elections_WinnerFillin (Updated with info!) File")
+  ),
+  column(6,
+         fileInput("elect.file4","Upload the Elections_CommishReport File")
   )
 )
 
-##Ouputs selection for user - all pre-registration tasks
+##Ouputs selection for user - Nominees and winners
 elect.out.1 <- fluidRow(
   column(6, 
          downloadButton('download_elect_nomineefillin', 'Download Nominee Fill-in')
@@ -607,7 +610,10 @@ elect.out.2 <- fluidRow(
   ),
   column(6,
          downloadButton('download_election_commish','Download Commisioners Report')
-         )
+  ),
+  column(6,
+         downloadButton('download_election_registrar','Download Registrar_StudentDB_Elections ')
+  )
 )
 
 ###Combine all outputs together

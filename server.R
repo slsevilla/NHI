@@ -1166,30 +1166,29 @@ function(input,output, session){
   ####################################           Points           ###################################
   ###################################################################################################
   
-  ##################################Forming the Community 
-  #Import expected student demo file
-  points.ftc <- reactive({
-    points.ftc <- input$points.file1
-    if(is.null(points.ftc)) return(NULL)
+  ##################################Input data files
+  #Import election databases
+  points.elect <- reactive({
+    points.elect <- input$points.file1
+    if(is.null(points.elect)) return(NULL)
     read.csv(fill=TRUE,file=input$points.file1$datapath,header=TRUE
     )
   })
+
   
-  #Create dataframe with users name merged, for staff to print and track points
-  points_ftc <- reactive({
-    if(is.null(points.ftc)) return(NULL)
+  #Create dataframe of the election points
+  points_elect <- reactive({
+    if(is.null(points.elect)) return(NULL)
     
     #Read in the database
-    points_ftc_w <- points.ftc()[c("FNAME", "MNAME", "LNAME", "DOT")]
+    points_elect <- points.elect()[c("NAME", "SUPREME.WIN", "PRES.WIN", "VP.WIN", "SENATE.WIN")]
+    points_final <- points_elect[,"NAME"]
     
-    #Add  total points column to table
-    points_ftc_w[,"TOTAL_PTS"] <- ""
-    
-    #Output a table with only name, dot group, and total points columns
-    points_ftc_f <- points_ftc_w[,c("NAME", "DOT","TOTAL_PTS")]
-    
-    #Output database
-    points_ftc_f[]
+    for (i in nrow(points_elect)){
+      if (points_elect[i,"SUPREME.WIN"]==""){
+        points_temp[i,]
+      }
+    }
   })
   
   #Send file to download screen
@@ -1758,6 +1757,12 @@ function(input,output, session){
     read.csv(fill=TRUE,file=input$elect.file3$datapath, header=TRUE, 
              colClasses = "factor")
   })
+  elect.commish<- reactive({
+    elect.commish <- input$elect.file4
+    if (is.null(elect.commish)) return(NULL)
+    read.csv(fill=TRUE,file=input$elect.file4$datapath, header=TRUE, 
+             colClasses = "factor")
+  })
   ######################################### Create dataframe 
   #Registered students - to create nomination fill in sheet
   elect_reg <- reactive({
@@ -1837,7 +1842,6 @@ function(input,output, session){
       count = count+1
     }
 
-    
     #Add VP
     ##Start Counters
     count=1
@@ -2239,7 +2243,14 @@ function(input,output, session){
     election_final
     
   })
-  
+  #Create new student database with elected positions
+  elect_reg <- reactive({
+    if(is.null(elect.commish)) return(NULL)
+    elect_reg <- elect.commish()[c("NAME","POSITION")]
+    student_reg <- elect.reg()[]
+    
+    elect_final <- merge(student_reg,elect_reg,all.x=TRUE)
+  })
   ######################################### Send file to download screen
   #Nomination File to fill in
   output$download_elect_nomineefillin <- downloadHandler(
@@ -2269,12 +2280,18 @@ function(input,output, session){
       write.csv(elect_winfill(), file, row.names = FALSE)
     }
   )
-  
   #Election Winners for Commish Report
   output$download_election_commish <- downloadHandler(
     filename = function() {"Election_CommishReport.csv"},
     content = function(file) {
       write.csv(elect_commish(), file, row.names = FALSE)
+    }
+  )
+  #New Student database with position information
+  output$download_election_registrar <- downloadHandler(
+    filename = function() {"Registrar_StudentDB_Elections.csv"},
+    content = function(file) {
+      write.csv(elect_reg(), file, row.names = FALSE)
     }
   )
 }
