@@ -608,8 +608,9 @@ function(input,output, session){
   #Staff labels for badges
   staff_labels <- reactive({
     if(is.null(input$day0.file2)) return()
-    staff_labels <- staff_file()[c("FNAME", "MNAME", "LNAME", "HS", "UNIV", "CITY",
-                                  "ST", "ROLE")]
+    staff_labels <- staff_file()[c("First.Name", "Middle.Name", "Last.Name",
+                                   "High.School.Name", "College.Univ", "City", 
+                                   "State", "Role.at.Program")]
   })           
   
   ######################################### File Downloads
@@ -2292,6 +2293,48 @@ function(input,output, session){
     filename = function() {"Registrar_StudentDB_Elections.csv"},
     content = function(file) {
       write.csv(elect_reg(), file, row.names = FALSE)
+    }
+  )
+  
+  ##############################           Judicial             #################################### 
+  ####################################################################################################
+  
+  ######################################### File input
+  ##Generate database for input file
+  jud.track <- reactive({
+    jud.track <- input$judicial_file1
+    if (is.null(jud.track)) return(NULL)
+    read.csv(fill=TRUE,file=input$judicial_file1$datapath, header=TRUE, 
+             colClasses = "factor")
+  })
+  ######################################### Create dataframe 
+  #Registered students - to create nomination fill in sheet
+  jud_track <- reactive({
+    if(is.null(jud.track)) return(NULL)
+    
+    #Read in the database and subset the positions
+    jud_track <- jud.track()[c("NAME","POSITION")]
+    jud_track <- subset(jud_track, POSITION=="Attorney" | POSITION=="Supreme Court Justice")
+    
+    #Create new columns with position names
+    jud_names <- c("CHEIF_JUSTICE_NOM", "TOP_6TEAMS", "TOP_4TEAMS", "TOP_2TEAMS")
+    
+    #Add the new columns headers into the dataframe
+    for (i in 1:nrow(jud_track)){
+      for(a in jud_names){
+        jud_track[i,a] <- ""
+      }
+    }
+    
+    jud_track
+  })
+  
+  ######################################### Send file to download screen
+  #Judical Tracking file
+  output$download_judicialtracking <- downloadHandler(
+    filename = function() {"Judicial_Tracking.csv"},
+    content = function(file) {
+      write.csv(jud_track(), file, row.names = FALSE)
     }
   )
 }

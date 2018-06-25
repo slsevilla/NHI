@@ -41,7 +41,8 @@ sidebar <- dashboardSidebar(
   menuItem("Election", tabName="elect"),
   menuItem("Awards", tabName="awards"),
   menuItem("Merchandise", tabName="merch"),
-  menuItem("Legislative", tabName="Leg")
+  menuItem("Legislative", tabName="leg"),
+  menuItem("Judicial", tabName="jud")
   )
  )
 
@@ -705,6 +706,35 @@ box.day0.1 <- box(title = "Upload Pre-Registration Database File", width=12, sta
 box.day0.2 <- box(title = "Ouput Files", width=12, status="primary", 
                   solidHeader = TRUE, day0.out.combo)
 
+############################         MainBody - Judicial         ##############################
+########################################################################################################
+
+######################################### Input File
+###File upload of the registrar
+jud.input <- fluidRow(
+  column(6,fileInput("judicial_file1","Upload the Registrar Student DB Elections file"))
+)
+
+######################################### Outputs for Registration Tasks
+#Form to verify students travel, including phone number, travel plans, and parent contact
+jud.out.1 <- fluidRow(
+  downloadButton('download_judicialtracking', 'Download the Judicial Tracking Form')
+)
+
+############################### Create one large output box
+jud.out.combo <- fluidRow(
+  column(6,
+         box(title="Judicial Tracking", width=NULL, status="primary", collapsible = TRUE,
+             solidHeader = TRUE, jud.out.1)
+  )
+)
+
+############################### Create page boxes
+###Generate Boxes for text submission, confirmation, and user downloads
+box.jud.1 <- box(title = "Upload Pre-Registration Database File", width=12, status="primary", 
+                  solidHeader = TRUE, jud.input)
+box.jud.2 <- box(title = "Ouput Files", width=12, status="primary", 
+                  solidHeader = TRUE, jud.out.combo)
 
 ########################## Output Main Body Information ###############################
 #######################################################################################
@@ -745,6 +775,10 @@ body <- dashboardBody(
   tabItem(tabName="elect",
           box.elect.1,
           box.elect.2
+  ),
+  tabItem(tabName="jud",
+          box.jud.1,
+          box.jud.2
   )
  )
 )
