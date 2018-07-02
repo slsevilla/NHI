@@ -323,171 +323,109 @@ box.post.2 <- box(title = "Output Files", width=12, status="primary",
 
 ##########################             MainBody - Awards                 ###############################
 #######################################################################################################
-############################### #Formining the Community Points
+############################### #Voting
 points.1 <- fluidRow(
   column(6,
-         fileInput("points.file1","Upload the Attending Student Demographic File")
+         fileInput("points.file1","Registrar_StudentDB_Elections")
   ),
   column(6,
-         downloadButton('download_points_ftc', 'Download FTC Point Sheets')
+         fileInput("points.file2","Upload the Election_PrimaryNomineeFillIn File")
+  ),
+  column(6,
+         fileInput("points.file3","Upload the Election_WinnerFillIn File")
+  ),
+  column(6,
+         fileInput("points.file4","Upload the Points_LegFillIn File")
+  ),
+  column(6,
+         fileInput("points.file5","Upload the Points_ExecFillIn File")
+  ),
+  column(6,
+         fileInput("points.file13","Upload the Proposal_FillIn File")
+  ),
+  column(6,
+         fileInput("points.file14","Upload the Points_JudFillin File")
   )
 )
-############################### #General Convention
 points.2 <- fluidRow(
   column(6,
-         fileInput("points.file2","Upload the Registered Student Demographic File")
+         downloadButton('download_points_chambers', 'Download Points_Chambers File')
   ),
-  column(3,
-         uiOutput("gc.day")
-  ),
-  column(3,
-         downloadButton('download_points_gc', 'Download GC Point Sheets')
-  )
-)
-############################### #Legislative Session
-points.3 <- fluidRow(
   column(6,
-         fileInput("points.file4","Upload the Position Student Demographic File")
+         downloadButton('download_points_legfill', 'Download Points_LegFillIn File')
   ),
-  column(3,
-         uiOutput("leg.day")
+  column(6,
+         downloadButton('download_points_judfill', 'Download Points_JudFillIn File')
   ),
-  column(3,
-         downloadButton('download_points_leg', 'Download Leg Point Sheets')
+  column(6,
+         downloadButton('download_points_execfill', 'Download Points_ExecFillIn File')
   )
 )
-
-############################### #Voting
+points.3 <- fluidRow(
+  column(6, 
+         downloadButton('download_points_prim', 'Download Points_Election_Primary File')
+  ),
+  column(6, 
+         downloadButton('download_points_gen', 'Download Points_Election_General File')
+  ),
+  column(6, 
+         downloadButton('download_points_jud', 'Download Points_Judicial File')
+  ),
+  column(6, 
+         downloadButton('download_points_leg', 'Download Points_Legislative File')
+  ),
+  column(6, 
+         downloadButton('download_points_exec', 'Download Points_Exec File')
+  ),
+  column(6, 
+         downloadButton('download_points_jud', 'Download Points_jud File')
+  ),
+  column(6, 
+         downloadButton('download_points_prop', 'Download Points_Proposal File')
+  )
+)
 points.4 <- fluidRow(
   column(6,
-         fileInput("points.file5","Upload the Position Student Demographic File")
+         fileInput("points.file6","Upload the Registrar_StudentDB_Elections File")
   ),
-  column(3,
-         downloadButton('download_points_voting_house', 'Download House Voting File')
+  column(6,
+         fileInput("points.file7","Upload the Points_Election_Primary File")
   ),
-  column(3,
-         downloadButton('download_points_voting_senate', 'Download Senate Voting File')
+  column(6,
+         fileInput("points.file8","Upload the Points_Election_General File")
   ),
-  column(3,
-         downloadButton('download_points_voting_executive', 'Download Executive Voting File')
+  column(6,
+         fileInput("points.file9","Upload the Points_Judicial File")
   ),
-  column(3,
-         downloadButton('download_points_voting_judicial', 'Download Judicial Voting File')
+  column(6,
+         fileInput("points.file10","Upload the Points_Legislative File")
+  ),
+  column(6,
+         fileInput("points.file11","Upload the Points_Exec File")
+  ),
+  column(6,
+         fileInput("points.file12","Upload the Proposal Document File")
   )
 )
-
-
-############################### #Daily Totals
-points.out1 <- fluidRow(
-  column(6,
-         fileInput("points.file8","Upload the Forming the Community File")
-  ),
-  column(6,
-         downloadButton('download_points_day1', 'Download Day 1 Totals')
+points.5 <- fluidRow(
+  column(6, 
+         downloadButton('download_points_win', 'Download Points_Winners File')
   )
-)
-points.out2 <- fluidRow(
-  column(6,
-         fileInput("points.file9.1","Upload the GC Day 2 File")
-  ),
-  column(6,
-         fileInput("points.file9.2","Upload the Election_Nomination File")
-  ),
-  column(3,
-         downloadButton('download_points_day2', 'Download Day 2 Totals')
-  )
-)
-points.out3 <- fluidRow(
-  column(6,
-         fileInput("points.file10.1","Upload the GC Day 3 File")
-  ),
-  column(6,
-         fileInput("points.file10.2","Upload the Election_Final File")
-  ),
-  column(3,
-         downloadButton('download_points_day3', 'Download Day 3 Totals')
-  )
-)
-points.out4 <- fluidRow(
-  column(6,
-         fileInput("points.file13","Upload the Leg Day 4 File")
-  ),
-  column(6,
-         downloadButton('download_points_day4', 'Download Day 4 Totals')
-  )
-)
-points.out5 <- fluidRow(
-  column(6,
-         fileInput("points.file14","Upload the Leg Day 5 File")
-  ),
-  column(6,
-         downloadButton('download_points_day5', 'Download Day 5 Totals')
-  )
-)
-points.out6 <- fluidRow(
-  column(3,
-         fileInput("points.file15","Upload the Voting House File")
-  ),
-  column(3,
-         fileInput("points.file16","Upload the Voting Senate File")
-  ),
-  column(3,
-         fileInput("points.file17","Upload the Voting Judicial File")
-  ),
-  column(3,
-         fileInput("points.file18","Upload the Voting Executive File")
-  ),
-  column(4,
-         fileInput("points.file19","Upload the Position StudentDemo File")
-  ),
-  column(4,
-         fileInput("points.file20","Upload the Leg Session Day 6 File")
-  ),
-  column(12,
-         downloadButton('download_points_day6', 'Download Day 6 Totals')
-  )
-)
-
-############################### Combine all outputs together
-points.combo<- fluidRow(
-  column(12,
-         box(title="Day 1 Output", width=NULL, status="primary", collapsible = TRUE,
-             solidHeader = TRUE, points.out1, collapsed = TRUE)
-  ),
-  column(12,
-         box(title="Day 2 Output", width=NULL, status="primary", collapsible = TRUE,
-             solidHeader = TRUE, points.out2, collapsed = TRUE)
-  ),
-  column(12,
-         box(title="Day 3 Output", width=NULL, status="primary", collapsible = TRUE,
-             solidHeader = TRUE, points.out3, collapsed = TRUE)
-  ),
-  column(12,
-         box(title="Day 4 Output", width=NULL, status="primary", collapsible = TRUE,
-             solidHeader = TRUE, points.out4, collapsed = TRUE)
-  ),
-  column(12,
-         box(title="Day 5 Output", width=NULL, status="primary", collapsible = TRUE,
-             solidHeader = TRUE, points.out5, collapsed = TRUE)
-  ),
-  column(12,
-         box(title="Day 6 Output", width=NULL, status="primary", collapsible = TRUE,
-             solidHeader = TRUE, points.out6)
-  )
-  
 )
 
 ################################ Generate Boxes for text submission, verification, and user options
-box.points.1 <- box(title = "Forming the Community", width=12, 
-              status="primary", solidHeader = TRUE, points.1)
-box.points.2 <- box(title = "General Convention", width=12, 
-                    status="primary", solidHeader = TRUE, points.2)
-box.points.3 <- box(title = "Legislative Session", width=12, 
-                    status="primary", solidHeader = TRUE, points.3)
-box.points.4 <- box(title = "Legislative Session", width=12, 
-                    status="primary", solidHeader = TRUE, points.4)
-box.points.7 <- box(title = "Daily Totals", width=12, 
-                    status="primary", solidHeader = TRUE, points.combo)
+box.points.1 <- box(title = "Upload Initial", width=12, 
+              status="primary", solidHeader = TRUE, collapsible = TRUE, collapsed = TRUE, points.1 )
+box.points.2 <- box(title = "Fill in Files", width=12, 
+                    status="primary", solidHeader = TRUE, collapsible = TRUE, 
+                    collapsed = TRUE, points.2)
+box.points.3 <- box(title = "Points Files", width=12, 
+                    status="primary", solidHeader = TRUE, collapsible = TRUE,
+                    collapsed = TRUE, points.3)
+box.points.4 <- box(title = "Upload Points", width=12, 
+                    status="primary", solidHeader = TRUE, collapsible = TRUE,collapsed = TRUE, points.4)
+box.points.5 <- box(title = "Awards", width=12, 
+                    status="primary", solidHeader = TRUE, collapsible = TRUE,collapsed = TRUE, points.5)
 
 ##########################             MainBody - Protocol             ################################
 #######################################################################################################
@@ -596,13 +534,19 @@ elect.input <- fluidRow(
 ##Ouputs selection for user - Nominees and winners
 elect.out.1 <- fluidRow(
   column(6, 
-         downloadButton('download_elect_nomineefillin', 'Download Nominee Fill-in')
+         downloadButton('download_elect_primarynomineefillin', 'Download Election Primary Fill-in')
   ),
   column(6, 
-         downloadButton('download_elect_nomineeroster', 'Download Nominee Roster')
+         downloadButton('download_elect_generalnomineefillin', 'Download Election General Fill-in')
+  ),
+  column(6, 
+         downloadButton('download_elect_nomineeroster', 'Download General Election Nominee Roster')
   ),
   column(6, 
          downloadButton('download_elect_judballots', 'Download Judicial Ballots')
+  ),
+  column(6, 
+         downloadButton('download_election_nomfillin', 'Download Election_Party Fill-in File')
   )
 )
 elect.out.2 <- fluidRow(
@@ -628,7 +572,6 @@ elect.combo<- fluidRow(
              solidHeader = TRUE, elect.out.2)
   )
 )
-
 
 ##Create boxed for Page 1
 ###Generate Boxes for text submission, verification, and user options
@@ -766,7 +709,7 @@ body <- dashboardBody(
           box.points.2,
           box.points.3,
           box.points.4,
-          box.points.7
+          box.points.5
   ),
   tabItem(tabName="merch",
           box.merch.1,

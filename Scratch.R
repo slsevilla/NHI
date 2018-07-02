@@ -24,10 +24,12 @@ fin <- read.csv("C:\\Users\\sevillas2\\Google Drive\\My Documents\\Programs & Or
 
 test <- read.csv("C:\\Users\\sevillas2\\Google Drive\\My Documents\\Programs & Orgs\\National Hispanic Institute\\Template National LDZ\\Director Guides\\Downloaded Files\\test.csv", header=TRUE)
 nom <- read.csv("C:\\Users\\sevillas2\\Google Drive\\My Documents\\Programs & Orgs\\National Hispanic Institute\\Template National LDZ\\Director Guides\\Downloaded Files\\Nomination_final.csv", header=TRUE)
-reg <- read.csv("C:\\Users\\sevillas2\\Google Drive\\My Documents\\Programs & Orgs\\National Hispanic Institute\\Template National LDZ\\Director Guides\\Downloaded Files\\Registrar_StudentDB_Elections.csv", header=TRUE)
 elect <- read.csv("C:\\Users\\sevillas2\\Google Drive\\My Documents\\Programs & Orgs\\National Hispanic Institute\\Template National LDZ\\Director Guides\\Downloaded Files\\Election_CommishReport.csv", header=TRUE)
-elect2 <- read.csv("C:\\Users\\sevillas2\\Google Drive\\My Documents\\Programs & Orgs\\National Hispanic Institute\\Template National LDZ\\Director Guides\\Downloaded Files\\Election_WinnerFillIn.csv", header=TRUE)
+elect2 <- read.csv("C:\\Users\\slsevilla\\Google Drive\\My Documents\\Programs & Orgs\\National Hispanic Institute\\Template National LDZ\\Director Guides\\Downloaded Files\\Election_PartyNomFillIn.csv", header=TRUE)
 voting$NAME <- as.character(voting$NAME)
 
 ftc <- read.csv("C:\\Users\\sevillas2\\Google Drive\\My Documents\\Programs & Orgs\\National Hispanic Institute\\Template National LDZ\\Director Guides\\Downloaded Files\\Protocol_FormingTheCommunityTemplate.csv", header=TRUE)
+
+reg <- read.csv("C:\\Users\\slsevilla\\Google Drive\\My Documents\\Programs & Orgs\\National Hispanic Institute\\2018 National LDZ\\Director Guides\\Downloaded Files\\Registrar_StudentDB_Elections.csv", header=TRUE)
+points <- read.csv("C:\\Users\\slsevilla\\Google Drive\\My Documents\\Programs & Orgs\\National Hispanic Institute\\2018 National LDZ\\Director Guides\\Downloaded Files\\2018_LiveProposal - House Proposal Log (1).csv", header=TRUE)
 

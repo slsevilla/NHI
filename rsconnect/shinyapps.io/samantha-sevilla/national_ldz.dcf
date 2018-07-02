@@ -5,8 +5,8 @@ account: samantha-sevilla
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 346455
-bundleId: 1445138
+bundleId: 1449952
 url: https://samantha-sevilla.shinyapps.io/national_ldz/
-when: 1529790711.32795
+when: 1530022405.70224
 asMultiple: FALSE
 asStatic: FALSE

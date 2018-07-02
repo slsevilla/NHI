@@ -1164,577 +1164,657 @@ function(input,output, session){
     }
   )
 
-  ####################################           Points           ###################################
+  ####################################           Awards           ###################################
   ###################################################################################################
-  
   ##################################Input data files
-  #Import election databases
-  points.elect <- reactive({
-    points.elect <- input$points.file1
-    if(is.null(points.elect)) return(NULL)
+  #Read in dataframes
+  points.reg <- reactive({
+    points.reg <- input$points.file1
+    if(is.null(points.reg)) return(NULL)
     read.csv(fill=TRUE,file=input$points.file1$datapath,header=TRUE
     )
   })
-
-  
-  #Create dataframe of the election points
-  points_elect <- reactive({
-    if(is.null(points.elect)) return(NULL)
-    
-    #Read in the database
-    points_elect <- points.elect()[c("NAME", "SUPREME.WIN", "PRES.WIN", "VP.WIN", "SENATE.WIN")]
-    points_final <- points_elect[,"NAME"]
-    
-    for (i in nrow(points_elect)){
-      if (points_elect[i,"SUPREME.WIN"]==""){
-        points_temp[i,]
-      }
-    }
-  })
-  
-  #Send file to download screen
-  output$download_points_ftc <- downloadHandler(
-    filename = function() {"Points_FormingTheCommunity.csv"},
-    content = function(file) {
-      write.csv(points_ftc(), file, row.names = FALSE)
-    }
-  )
-
-  ############################### General Convention - Day 2 OR 3
-  ##Import expected student demo file
-  points.gc2 <- reactive({
-    points.gc2 <- input$points.file2
-    if(is.null(points.gc2)) return(NULL)
+  points.prim <- reactive({
+    points.prim <- input$points.file2
+    if(is.null(points.prim)) return(NULL)
     read.csv(fill=TRUE,file=input$points.file2$datapath,header=TRUE
     )
   })
-  
-  #Create drop down choices for user to select the day to be created
-  observe({
-    dsnames <- c("Points_GC_Day2", "Points_GC_Day3")
-    cb_options <- list()
-    cb_options[dsnames] <- dsnames
-    output$gc.day<- renderUI({
-      selectInput("gc_day", "Which day to create for?", cb_options)
-    })
+  points.gen <- reactive({
+    points.gen <- input$points.file3
+    if(is.null(points.gen)) return(NULL)
+    read.csv(fill=TRUE,file=input$points.file3$datapath,header=TRUE
+    )
   })
-  
-  ##Create dataframe with users name merged, for staff to print and track points
-  points_gc2 <- reactive({
-    if(is.null(points.gc2)) return(NULL)
-    
-    #Read in the database
-    points_gc2_w <- points.gc2()[c("FNAME", "MNAME", "LNAME", "DOT")]
-    
-    
-    #Add names and total points column to table
-    points_gc2_w[,"TOTAL_PTS"] <- ""
-      
-    #Output a table with only name, dot group, and total points columns
-    points_gc2_f <- points_gc2_w[,c("NAME", "DOT","TOTAL_PTS")]
-    
-    #Output database
-    points_gc2_f[]
+  points.exec <- reactive({
+    points.exec <- input$points.file5
+    if(is.null(points.exec)) return(NULL)
+    read.csv(fill=TRUE,file=input$points.file5$datapath,header=TRUE
+    )
   })
-  
-  ##Send file to download screen
-  output$download_points_gc <- downloadHandler(
-    filename = function() {
-      paste(input$gc_day, ".csv", sep="_Points")
-    },
-    content = function(file) {
-      write.csv(points_gc2(), file, row.names = FALSE)
-    }
-  )
-  
-  ############################### Legislative Session - Day 4, 5, 6
-  ##Import expected student demo file
+  points.prop <- reactive({
+    points.prop <- input$points.file13
+    if(is.null(points.prop)) return(NULL)
+    read.csv(fill=TRUE,file=input$points.file13$datapath,header=TRUE
+    )
+  })
+  points.genpoints <- reactive({
+    points.genpoints <- input$points.file8
+    if(is.null(points.genpoints)) return(NULL)
+    read.csv(fill=TRUE,file=input$points.file8$datapath,header=TRUE
+    )
+  })
+  points.reg2 <- reactive({
+    points.reg2 <- input$points.file6
+    if(is.null(points.reg2)) return(NULL)
+    read.csv(fill=TRUE,file=input$points.file6$datapath,header=TRUE
+    )
+  })
   points.leg <- reactive({
     points.leg <- input$points.file4
     if(is.null(points.leg)) return(NULL)
     read.csv(fill=TRUE,file=input$points.file4$datapath,header=TRUE
     )
   })
-  
-  #Create drop down choices for user to select the day to be created
-  observe({
-    dsnames <- c("Points_Leg_Day4", "Points_Leg_Day5", "Points_Leg_Day6")
-    cb_options <- list()
-    cb_options[dsnames] <- dsnames
-    output$leg.day<- renderUI({
-      selectInput("leg_day", "Which day to create for?", cb_options)
-    })
+  points.jud <- reactive({
+    points.jud <- input$points.file14
+    if(is.null(points.jud)) return(NULL)
+    read.csv(fill=TRUE,file=input$points.file14$datapath,header=TRUE
+    )
   })
   
-  ##Create dataframe with users name merged, for staff to print and track points
+  #Create dataframe for nomination forms by chambers
+  points_reg <- reactive({
+    if(is.null(points.reg)) return(NULL)
+    
+    #Read in the database
+    points_reg <- points.reg()[]
+    points_reg <- points_reg[,c("NAME","POSITION")]
+    
+    position_list <- c("Supreme Court Justice","Attorney","Cabinet","Senator","Cabinet","House")
+    
+    points_final <- data.frame()
+    b=1
+    for (a in position_list){
+      
+      for(i in 1:nrow(points_reg)){
+        value=points_reg[i,"POSITION"]
+        if(a==value){
+          points_final[b,"NAME"] <- points_reg[i,"NAME"]
+          points_final[b,"POSITION"] <- points_reg[i,"POSITION"]
+          b=b+1
+        } else{next}
+      }
+    }
+    points_final
+    
+  })
+  #Create datframe for judicial fill in file
+  points_judfill <- reactive({
+    if(is.null(points.reg)) return(NULL)
+    
+    #Read in the database
+    points_reg <- points.reg()[]
+    points_reg <- points_reg[,c("NAME","POSITION")]
+    
+    b=1
+    
+    points_final <- data.frame()
+    
+    for(i in 1:nrow(points_reg)){
+      value=points_reg[i,"POSITION"]
+      if(value == "Attorney" | value=="Supreme Court Justice"){
+          points_final[b,"NAME"] <- points_reg[i,"NAME"]
+          points_final[b,"POSITION"] <- points_reg[i,"POSITION"]
+          b=b+1
+        } else{next}
+      }
+    
+    #Create new columns 
+    for (i in 1:nrow(points_final)){
+      points_final[i,"Round1.Won"] <- ""
+      points_final[i,"Round2.Won"] <- ""
+      points_final[i,"Round3.Won"] <- ""
+      points_final[i,"Round4.Won"] <- ""
+      points_final[i,"Chief.Nom"] <- ""
+    }
+    points_final
+  })
+  #Create dataframe for leg fill in 
+  points_legfill <- reactive({
+    if(is.null(points.reg)) return(NULL)
+    
+    #Read in the database
+    points_reg <- points.reg()[]
+    points_reg <- points_reg[,c("NAME","POSITION")]
+    
+    b=1
+    
+    points_final <- data.frame()
+    
+    for(i in 1:nrow(points_reg)){
+      value=points_reg[i,"POSITION"]
+      if(value == "Cabinet" | value=="House" | value=="Senator"){
+        points_final[b,"NAME"] <- points_reg[i,"NAME"]
+        points_final[b,"POSITION"] <- points_reg[i,"POSITION"]
+        b=b+1
+      } else{next}
+    }
+    
+    #Create new columns 
+    for (i in 1:nrow(points_final)){
+      points_final[i,"Speaker.House.Nom"] <- ""
+      points_final[i,"House.Srgt.Arms.WIN"] <- ""
+      points_final[i,"House.Clerk.WIN"] <- ""
+      points_final[i,"House.Prop.Coord.WIN"] <- ""
+      points_final[i,"House.Committee"] <- ""
+      points_final[i,"House.Majority"] <- ""
+      points_final[i,"House.Minority"] <- ""
+      points_final[i,"Speaker.Pro.Temp.Nom"] <- ""
+      points_final[i,"Speaker.Pro.Tep.WIN"] <- ""
+      points_final[i,"Senate.Srgt.Arms.WIN"] <- ""
+      points_final[i,"Senate.Clerk.WIN"] <- ""
+      points_final[i,"Senate.Prop.Coord.WIN"] <- ""
+      points_final[i,"Senate.Committee"] <- ""
+      points_final[i,"Senate.Majority"] <- ""
+      points_final[i,"Senate.Minority"] <- ""
+      
+    }
+    points_final
+  })
+  #Create dataframe for exec fill in 
+  points_execfill <- reactive({
+    if(is.null(points.reg)) return(NULL)
+    
+    #Read in the database
+    points_reg <- points.reg()[]
+    points_reg <- points_reg[,c("NAME","POSITION")]
+    
+    b=1
+    
+    points_final <- data.frame()
+    
+    for(i in 1:nrow(points_reg)){
+      value=points_reg[i,"POSITION"]
+      if(value == "Cabinet"){
+        points_final[b,"NAME"] <- points_reg[i,"NAME"]
+        points_final[b,"POSITION"] <- points_reg[i,"POSITION"]
+        b=b+1
+      } else{next}
+    }
+    
+    #Create new columns 
+    for (i in 1:nrow(points_final)){
+      points_final[i,"CAB.NOM"] <- "YES"
+    }
+    points_final
+  })
+  #Create dataframe of Primary results
+  points_prim <- reactive({
+    if(is.null(points.prim)) return(NULL)
+    
+    #Read in the database
+    points_elect <- points.prim()[]
+    points_final <- points_elect[]
+    
+    for (i in 1:nrow(points_final)){
+      points=0
+      
+      #SENATE
+      if (points_elect[i,"SENATE"]=="YES"){
+        points = points + 5
+      } else{points = 0 + points}
+      
+      #SUPREME COURT
+      if (points_elect[i,"SUPREME.JUSTICE"]=="YES"){
+        points = points + 10
+      } else{points = 0 + points}
+      
+      #VP
+      if (points_elect[i,"VP"]=="YES"){
+        points = points + 10
+      } else{points = 0 + points}
+      
+      #PRESIDENT
+      if (points_elect[i,"PRES"]=="YES"){
+        points = points + 10
+      } else{points = 0 + points}
+      
+      #PARTY CHAIR
+      if (points_elect[i,"PARTY.CHAIR.NOM"]=="YES"){
+        points = points + 5
+      } else{points = 0 + points}
+      
+      #PARTY CHAIR
+      if (points_elect[i,"PARTY.CHAIR.WIN"]=="YES"){
+        points = points + 10
+      } else{points = 0 + points}
+      
+      #PARTY SEC
+      if (points_elect[i,"PARTY.SEC.NOM"]=="YES"){
+        points = points + 5
+      } else{points = 0 + points}
+      
+      #PARTY SEC
+      if (points_elect[i,"PARTY.SEC.WIN"]=="YES"){
+        points = points + 10
+      } else{points = 0 + points}
+      
+      #COMMITTEE CHAIR
+      if (points_elect[i,"COMMITTEE.NOM"]=="YES"){
+        points = points + 5
+      } else{points = 0 + points}
+      
+      #COMMITTEE CHAIR
+      if (points_elect[i,"COMMITTEE.WIN"]=="YES"){
+        points = points + 10
+      } else{points = 0 + points}
+      
+      points_final[i,"POINTS"] <- points
+      
+    }
+    
+    points_final
+  })
+  #Create dataframe of the election points - general election
+  points_gen <- reactive({
+    if(is.null(points.gen)) return(NULL)
+    
+    #Read in the database
+    points_elect <- points.gen()[]
+    points_final <- points_elect[,"NAME"]
+    
+    
+    for (i in 1:nrow(points_elect)){
+      points=0
+      
+      #Supreme Court
+      if (is.na(points_elect[i,"SUPREME.JUSTICE_WIN"])){
+        points = points + 0
+      }
+      else if (points_elect[i,"SUPREME.JUSTICE_WIN"]=="" |
+               points_elect[i,"SUPREME.JUSTICE_WIN"]=="WINNER"){
+        points = points + 10
+      }
+      
+      #President
+      if (is.na(points_elect[i,"PRES_WIN"])){
+        points = points + 0
+      }
+      else if (points_elect[i,"PRES_WIN"]==""){
+        points = points + 10
+      }
+      
+      #VP
+      if (is.na(points_elect[i,"VP_WIN"])){
+        points = points + 0
+      }
+      else if (points_elect[i,"VP_WIN"]==""){
+        points = points + 10
+      }
+      
+      #Senate
+      if (is.na(points_elect[i,"SENATE_WIN"])){
+        points = points + 0
+      }
+      else if (points_elect[i,"SENATE_WIN"]==""){
+        points = points + 5
+      }
+      else if (points_elect[i,"SENATE_WIN"]=="WINNER"){
+        points = points + 10
+      }
+      points_elect[i,"POINTS"] <- points
+      
+    }
+    points_elect
+  })
+  #Create dataframe of the election points - general election
+  points_exec <- reactive({
+    if(is.null(points.exec)) return(NULL)
+    
+    #Read in the database
+    points_elect <- points.exec()[]
+    points_final <- points_elect[,"NAME"]
+    
+    
+    for (i in 1:nrow(points_elect)){
+      points=0
+      
+      #Cabinet
+      if (is.na(points_elect[i,"CAB.NOM"])){
+        points = points + 0
+      }
+      else if (points_elect[i,"CAB.NOM"]=="YES"){
+        points = points + 10
+      }
+      
+      points_elect[i,"POINTS"] <- points
+      
+    }
+    points_elect
+  })
+  #Create dataframe of the election points - general election
   points_leg <- reactive({
     if(is.null(points.leg)) return(NULL)
     
     #Read in the database
-    points_leg_w <- points.leg()[c("FNAME", "MNAME", "LNAME", "POSITION")]
+    points_elect <- points.leg()[]
+    points_final <- points_elect[,"NAME"]
     
-    #Add names and total points column to table
-    points_leg_w[,"TOTAL_PTS"] <- ""
+    														
+    
+    for (i in 1:nrow(points_elect)){
+      points=0
       
-    #Output a table with only name, dot group, and total points columns
-    points_leg_f <- points_leg_w[,c("NAME", "POSITION","TOTAL_PTS")]
-    
-    #Subset the dataframe to include only House and Senate members
-    points_leg_f <- subset(points_leg_f, POSITION=="HOUSE" | POSITION== "SENATE")
-    points_leg_f <- points_leg_f[order(points_leg_f$POSITION, decreasing = TRUE),]
-    
-    #Output database
-    points_leg_f[]
-  })
-  
-  ##Send file to download screen
-  output$download_points_leg <- downloadHandler(
-    filename = function() {
-      paste(input$leg_day, ".csv", sep="")
-    },
-    content = function(file) {
-      write.csv(points_leg(), file, row.names = FALSE)
+      #Cabinet
+      if (is.na(points_elect[i,"Senate.Committee"])){
+        points = points + 0
+      }
+      else if (points_elect[i,"Senate.Committee"]=="YES"){
+        points = points + 5
+      }
+      #Cabinet
+      if (is.na(points_elect[i,"House.Committee"])){
+        points = points + 0
+      }
+      else if (points_elect[i,"House.Committee"]=="YES"){
+        points = points + 5
+      }
+      #Cabinet
+      if (is.na(points_elect[i,"Senate.Minority"])){
+        points = points + 0
+      }
+      else if (points_elect[i,"Senate.Minority"]=="YES"){
+        points = points + 10
+      }
+      #Cabinet
+      if (is.na(points_elect[i,"Senate.Majority"])){
+        points = points + 0
+      }
+      else if (points_elect[i,"Senate.Majority"]=="YES"){
+        points = points + 10
+      }
+      #Cabinet
+      if (is.na(points_elect[i,"House.Minority"])){
+        points = points + 0
+      }
+      else if (points_elect[i,"House.Minority"]=="YES"){
+        points = points + 10
+      }
+      #Cabinet
+      if (is.na(points_elect[i,"House.Majority"])){
+        points = points + 0
+      }
+      else if (points_elect[i,"House.Majority"]=="YES"){
+        points = points + 10
+      }
+      #Cabinet
+      if (is.na(points_elect[i,"Senate.Prop.Coord.WIN"])){
+        points = points + 0
+      }
+      else if (points_elect[i,"Senate.Prop.Coord.WIN"]=="YES"){
+        points = points + 10
+      }
+      #Cabinet
+      if (is.na(points_elect[i,"Senate.Clerk.WIN"])){
+        points = points + 0
+      }
+      else if (points_elect[i,"Senate.Clerk.WIN"]=="YES"){
+        points = points + 10
+      }
+      #Cabinet
+      if (is.na(points_elect[i,"Senate.Srgt.Arms.WIN"])){
+        points = points + 0
+      }
+      else if (points_elect[i,"Senate.Srgt.Arms.WIN"]=="YES"){
+        points = points + 10
+      }
+      #Cabinet
+      if (is.na(points_elect[i,"Speaker.Pro.Tep.WIN"])){
+        points = points + 0
+      }
+      else if (points_elect[i,"Speaker.Pro.Tep.WIN"]=="YES"){
+        points = points + 10
+      }
+      #Cabinet
+      if (is.na(points_elect[i,"Speaker.Pro.Temp.Nom"])){
+        points = points + 0
+      }
+      else if (points_elect[i,"Speaker.Pro.Temp.Nom"]=="YES"){
+        points = points + 5
+      }
+      #Cabinet
+      if (is.na(points_elect[i,"House.Prop.Coord.WIN"])){
+        points = points + 0
+      }
+      else if (points_elect[i,"House.Prop.Coord.WIN"]=="YES"){
+        points = points + 10
+      }
+      #Cabinet
+      if (is.na(points_elect[i,"Speaker.House.Nom"])){
+        points = points + 0
+      }
+      else if (points_elect[i,"Speaker.House.Nom"]=="YES"){
+        points = points + 5
+      }
+      #Cabinet
+      if (is.na(points_elect[i,"House.Srgt.Arms.WIN"])){
+        points = points + 0
+      }
+      else if (points_elect[i,"House.Srgt.Arms.WIN"]=="YES"){
+        points = points + 10
+      }
+      #Cabinet
+      if (is.na(points_elect[i,"House.Clerk.WIN"])){
+        points = points + 0
+      }
+      else if (points_elect[i,"House.Clerk.WIN"]=="YES"){
+        points = points + 10
+      }
+      
+      points_elect[i,"POINTS"] <- points
+      
     }
-  )
-
-  ############################### Voting
-  
-  ##Create dataframe with users name merged, for staff to print and track points
-  vote_out <- reactive({
-    if(is.null(vote.in)) return(NULL)
+    points_elect
+  })
+  #Create dataframe of the election points - general election
+  points_jud <- reactive({
+    if(is.null(points.jud)) return(NULL)
     
     #Read in the database
-    vote_out_w <- vote.in()[c("FNAME", "MNAME", "LNAME", "POSITION")]
-    
-    #Add total points column to table
-    points_leg_w[,"TOTAL_PTS"] <- ""
+    points_elect <- points.jud()[]
+    points_final <- points_elect[,"NAME"]
+    				
+    for (i in 1:nrow(points_elect)){
+      points=0
       
-    #Output a table with only name, dot group, and total points columns
-    points_leg_f <- points_leg_w[,c("NAME", "POSITION","TOTAL_PTS")]
-    
-    #Subset the dataframe to include only House and Senate members
-    points_leg_f <- subset(points_leg_f, POSITION=="HOUSE" | POSITION== "SENATE")
-    points_leg_f <- points_leg_f[order(points_leg_f$POSITION, decreasing = TRUE),]
-    
-    #Output database
-    points_leg_f[]
+      #Cabinet
+      if (is.na(points_elect[i,"Round1.Won"])){
+        points = points + 0
+      }
+      else if (points_elect[i,"Round1.Won"]=="YES"){
+        points = points + 2
+      }
+      #Cabinet
+      if (is.na(points_elect[i,"Round2.Won"])){
+        points = points + 0
+      }
+      else if (points_elect[i,"Round2.Won"]=="YES"){
+        points = points + 2
+      }
+      #Cabinet
+      if (is.na(points_elect[i,"Round3.Won"])){
+        points = points + 0
+      }
+      else if (points_elect[i,"Round3.Won"]=="YES"){
+        points = points + 2
+      }
+      #Cabinet
+      if (is.na(points_elect[i,"Round4.Won"])){
+        points = points + 0
+      }
+      else if (points_elect[i,"Round4.Won"]=="YES"){
+        points = points + 10
+      }
+      #Cabinet
+      if (is.na(points_elect[i,"Chief.Nom"])){
+        points = points + 0
+      }
+      else if (points_elect[i,"Chief.Nom"]=="YES"){
+        points = points + 20
+      }
+      
+      
+      points_elect[i,"POINTS"] <- points
+      
+    }
+    points_elect
   })
-  
-  ##Send file to download screen
+  #Create dataframe of the election points - general election
+  points_prop <- reactive({
+    if(is.null(points.prop)) return(NULL)
+    
+    #Read in the database
+    points_elect <- points.prop()[]
+    points_final <- points_elect[,"NAME"]
+
+    for (i in 1:nrow(points_elect)){
+      points=0
+      #Cabinet
+      if (is.na(points_elect[i,"President"])){
+        points = points + 0
+      }
+      else if (points_elect[i,"President"]=="Signed"){
+        points = points + 25
+      }  
+      #Cabinet
+      if (is.na(points_elect[i,"X3rd.Reading2"])){
+        points = points + 0
+      }
+      else if (points_elect[i,"X3rd.Reading2"]=="Pass"){
+        points = points + 20
+      }  
+      #Cabinet
+      if (is.na(points_elect[i,"X3rd.Reading"])){
+        points = points + 0
+      }
+      else if (points_elect[i,"X3rd.Reading"]=="Pass"){
+        points = points + 20
+      }  
+      #Cabinet
+      if (is.na(points_elect[i,"X2nd.Reading"])){
+        points = points + 0
+      }
+      else if (points_elect[i,"X2nd.Reading"]=="Pass"){
+        points = points + 10
+      }      
+      
+      points_elect[i,"POINTS"] <- points
+      
+    }
+    points_elect
+  })
+  #Create dataframe for the final points for the winners
+  points_final <- reactive({
+    if(is.null(points.reg2)) return(NULL)
+    if(is.null(points.genpoints)) return(NULL)
+    
+    #Read in the database
+    points_data <- points.reg2()[]
+    
+    points_gen <- points.genpoints()[,c("NAME","POINTS")]
+
+    points_final <- points_data[,c("NAME","CITY","ST","P1","P2","HS","MF")]
+    row.names(points_final) <- points_final$NAME
+    
+    for (i in 1:nrow(points_final)){
+      points_final[i,"GEN"] <- ""
+    }
+    
+    for (i in 1:nrow(points_gen)){
+      name <- points_gen[i,"NAME"]
+      points_final[name,"GEN"] <- points_gen[i,"POINTS"]
+    }
+    
+    points_final
+  })
+  ###############################Output files 
+  #Points - Chamber File
+  output$download_points_chambers <- downloadHandler(
+    filename = function() {"Awards_Voting_Chambers.csv"},
+    content = function(file) {
+      write.csv(points_reg(), file, row.names = FALSE)
+    }
+  )  #Election - Nominations for Party
+  output$download_points_prim <- downloadHandler(
+    filename = function() {"Points_Election_Party.csv"},
+    content = function(file) {
+      write.csv(points_prim(), file, row.names = FALSE)
+    }
+  )
+  #Election - General Election
+  output$download_points_gen <- downloadHandler(
+    filename = function() {"Points_Election_General.csv"},
+    content = function(file) {
+      write.csv(points_gen(), file, row.names = FALSE)
+    }
+  )
+  #Jud Fill in
+  output$download_points_judfill <- downloadHandler(
+    filename = function() {"Points_JudicialFillin.csv"},
+    content = function(file) {
+      write.csv(points_judfill(), file, row.names = FALSE)
+    }
+  )
+  #Leg Fillin
+  output$download_points_legfill <- downloadHandler(
+    filename = function() {"Points_LegislativeFillin.csv"},
+    content = function(file) {
+      write.csv(points_legfill(), file, row.names = FALSE)
+    }
+  )
+  #Exec Fillin
+  output$download_points_execfill <- downloadHandler(
+    filename = function() {"Points_ExecutiveFillin.csv"},
+    content = function(file) {
+      write.csv(points_execfill(), file, row.names = FALSE)
+    }
+  )
+  #Exec Points
+  output$download_points_exec <- downloadHandler(
+    filename = function() {"Points_Executive.csv"},
+    content = function(file) {
+      write.csv(points_exec(), file, row.names = FALSE)
+    }
+  )
+  #Jud Points
+  output$download_points_jud <- downloadHandler(
+    filename = function() {"Points_Executive.csv"},
+    content = function(file) {
+      write.csv(points_jud(), file, row.names = FALSE)
+    }
+  )
+  #Leg Points
   output$download_points_leg <- downloadHandler(
-    filename = function() {
-      paste(input$leg_day, ".csv", sep="")
-    },
+    filename = function() {"Points_Legislative.csv"},
     content = function(file) {
       write.csv(points_leg(), file, row.names = FALSE)
     }
-  )  
-
-  ############################### Daily Points Summaries
-  #################Day1
-  ##Import files
-  points.day1 <- reactive({
-    points.day1 <- input$points.file8
-    if(is.null(points.day1)) return(NULL)
-    read.csv(fill=TRUE,file=input$points.file8$datapath,header=TRUE
-    )
-  })
-
-  ##Create Day 1 points total 
-  points_day1 <- reactive({
-    if(is.null(points.day1)) return(NULL)
-    
-    points_ftc_w <- points.day1()[c("NAME", "TOTAL_PTS")]
-    
-    #Set counters at 1, and add zero to all non-points students
-    i = 1
-    n=nrow(points_gc2_w)
-    
-    for(i in 1:n){
-      value = points_ftc_w[i,"TOTAL_PTS"]
-      
-      if(is.na(value)){
-        points_ftc_w[i,"TOTAL_PTS"] =0
-      }
-    }
-    points_ftc_w
-  })
-  
-  #################Day 2
-  ##Import Files
-  points.day2.1 <- reactive({
-    points.day2.1 <- input$points.file9.1
-    if(is.null(points.day2.1)) return(NULL)
-    read.csv(fill=TRUE,file=input$points.file9.1$datapath,header=TRUE
-    )
-  })
-  points.day2.2<- reactive({
-    points.day2.2 <- input$points.file9.2
-    if(is.null(points.day2.2)) return(NULL)
-    read.csv(fill=TRUE,file=input$points.file9.2$datapath,header=TRUE
-    )
-  })
-  
-  #Create Day 2 table Summary
-  points_day2 <- reactive({
-    if(is.null(points.day2.1)) return(NULL)
-    if(is.null(points.day2.1)) return(NULL)
-    
-    #######General Convention Addition    #######
-    ##Create new table
-    points_gc2_w <- points.day2.1()[c("NAME", "TOTAL_PTS")]
-
-    #Set counters at 1, and add zero to all non-points students
-    i = 1
-    n=nrow(points_gc2_w)
-    
-    for(i in 1:n){
-      value = points_gc2_w[i,"TOTAL_PTS"]
-      
-      if(is.na(value)){
-        points_gc2_w[i,"TOTAL_PTS"] =0
-      }
-    }
-    
-    #Remove Dot info from the table, assign row names
-    points_gc2_f <- points_gc2_w[,c("NAME","TOTAL_PTS")]
-    row.names(points_gc2_f) <- points_gc2_f$NAME
-    
-    ########Nominations Points    #######
-    #Read in the GC Day 2 database
-    points_nom_w <- points.day2.2()[c("NAME", "POSITION")]
-    
-    #Set student name as the row name
-    row.names(points_nom_w) <- points_nom_w$NAME
-    name_list <- points_nom_w$NAME
-    
-    #Go through each nam of the database 
-    for (a in name_list){
-      value=0
-      position <- points_nom_w[a,"POSITION"]
-      
-      if(position=="SENATE"){
-        value=5
-      } else if (position=="JUSTICE"){
-        value=15
-      } else if (position=="VICE-PRESIDENT"){
-        value=20
-      } else if (position=="PRESIDENT"){
-        value=25
-      } 
-      
-      #Send value to points
-      points_nom_w[a,"NOM_PTS"] <- value
-      
-      #Sum for total points
-      points_nom_w[a,"GC_PTS"] <- points_gc2_f[a,"TOTAL_PTS"]
-      points_nom_w[a,"TOTAL"] <- points_nom_w[a,"NOM_PTS"] + points_nom_w[a,"GC_PTS"]
-    }
-    
-    #Create final table
-    points_day2 <- points_nom_w[c("NAME","GC_PTS","NOM_PTS","TOTAL")]
-    points_day2
-  })
-  
-  #################Day 3
-  ##Import Files
-  points.day3.1 <- reactive({
-    points.day3.1 <- input$points.file10.1
-    if(is.null(points.day3.1)) return(NULL)
-    read.csv(fill=TRUE,file=input$points.file10.1$datapath,header=TRUE
-    )
-  })
-  points.day3.2<- reactive({
-    points.day3.2 <- input$points.file10.2
-    if(is.null(points.day3.2)) return(NULL)
-    read.csv(fill=TRUE,file=input$points.file10.2$datapath,header=TRUE
-    )
-  })
-  
-  #Create Day 3 table Summary
-  points_day3 <- reactive({
-    if(is.null(points.day3.1)) return(NULL)
-    if(is.null(points.day3.2)) return(NULL)
-    
-    #######General Convention Addition
-    ##Create new table
-    points_gc3_w <- points.day3.1()[c("NAME", "TOTAL_PTS")]
-    
-    #Set counters at 1, and add zero to all non-points students
-    i = 1
-    n=nrow(points_gc3_w)
-    
-    for(i in 1:n){
-      value = points_gc3_w[i,"TOTAL_PTS"]
-      
-      if(is.na(value)){
-        points_gc3_w[i,"TOTAL_PTS"] =0
-      }
-    }
-    
-    #Remove Dot info from the table, assign row names
-    points_gc3_f <- points_gc3_w[,c("NAME","TOTAL_PTS")]
-    row.names(points_gc3_f) <- points_gc3_f$NAME
-    
-    ########Nominations Points
-    #Read in the GC Day 3 database
-    points_nom_w <- points.day3.2()[c("NAME", "POSITION")]
-    
-    #Set student name as the row name
-    row.names(points_nom_w) <- points_nom_w$NAME
-    name_list <- points_nom_w$NAME
-    
-    #Go through each nam of the database 
-    for (a in name_list){
-      value=0
-      position <- points_nom_w[a,"POSITION"]
-      
-      if(position=="SENATE"){
-        value=5
-      } else if (position=="JUSTICE"){
-        value=15
-      } else if (position=="VICE-PRESIDENT"){
-        value=20
-      } else if (position=="PRESIDENT"){
-        value=25
-      } 
-      
-      #Send value to points
-      points_nom_w[a,"WIN_PTS"] <- value
-      
-      #Sum for total points
-      points_nom_w[a,"GC_PTS"] <- points_gc3_f[a,"TOTAL_PTS"]
-      points_nom_w[a,"TOTAL"] <- points_nom_w[a,"WIN_PTS"] + points_nom_w[a,"GC_PTS"]
-    }
-    
-    #Create final table
-    points_day3 <- points_nom_w[c("NAME","GC_PTS","WIN_PTS","TOTAL")]
-    points_day3
-  })
-  
-  #################Day 4
-  ##Import Files
-  points.day4 <- reactive({
-    points.day4 <- input$points.file13
-    if(is.null(points.day4)) return(NULL)
-    read.csv(fill=TRUE,file=input$points.file13$datapath,header=TRUE
-    )
-  })
-  
-  #Create Day 4 table Summary
-  points_day4 <- reactive({
-    if(is.null(points_day4)) return(NULL)
-
-    #######General Convention Addition
-    ##Create new table
-    points_leg4_w <- points.day4()[c("NAME", "TOTAL_PTS")]
-    
-    #Set counters at 1, and add zero to all non-points students
-    i = 1
-    n=nrow(points_leg4_w)
-    
-    for(i in 1:n){
-      value <- points_leg4_w[i,"TOTAL_PTS"]
-      
-      if(is.na(value)){
-        points_leg4_w[i,"TOTAL_PTS"] =0
-      }
-    }
-    
-    #Remove Dot info from the table, assign row names
-    points_leg4_f <- points_leg4_w[,c("NAME","TOTAL_PTS")]
-    points_leg4_f
-  })
-  
-  #################Day 5
-  ##Import Files
-  points.day5 <- reactive({
-    points.day5 <- input$points.file14
-    if(is.null(points.day5)) return(NULL)
-       read.csv(fill=TRUE,file=input$points.file14$datapath,header=TRUE
-       )
-  })
-      
-  #Create Day 5 table Summary
-  points_day5 <- reactive({
-    if(is.null(points.day5)) return(NULL)
-    
-    #######General Convention Addition
-    ##Create new table
-    points_leg5_w <- points.day5()[c("NAME", "TOTAL_PTS")]
-        
-    #Set counters at 1, and add zero to all non-points students
-    i = 1
-    n=nrow(points_leg5_w)
-        
-    for(i in 1:n){
-      value = points_leg5_w[i,"TOTAL_PTS"]
-          
-      if(is.na(value)){
-        points_leg5_w[i,"TOTAL_PTS"] =0
-        }
-      }
-        
-      #Remove Dot info from the table, assign row names
-      points_leg5_f <- points_leg5_w[,c("NAME","TOTAL_PTS")]
-      points_leg5_f
-    })
-  
-  #################Day 6
-  ##Import house voting file
-  points.day6.1 <- reactive({
-    points.day6.1 <- input$points.file15
-    if(is.null(points.day6.1)) return(NULL)
-    read.csv(fill=TRUE,file=input$points.file15$datapath,header=TRUE
-    )
-  })
-  ##Import senate voting file
-  points.day6.2 <- reactive({
-    points.day6.2 <- input$points.file16
-    if(is.null(points.day6.2)) return(NULL)
-    read.csv(fill=TRUE,file=input$points.file16$datapath,header=TRUE
-    )
-  })
-  ##Import judicial voting file
-  points.day6.3 <- reactive({
-    points.day6.3 <- input$points.file17
-    if(is.null(points.day6.3)) return(NULL)
-    read.csv(fill=TRUE,file=input$points.file17$datapath,header=TRUE
-    )
-  })
-  ##Import executive voting file
-  points.day6.4 <- reactive({
-    points.day6.4 <- input$points.file18
-    if(is.null(points.day6.4)) return(NULL)
-    read.csv(fill=TRUE,file=input$points.file18$datapath,header=TRUE
-    )
-  })
-  ##Import studentdemo registered file
-  points.day6.5 <- reactive({
-    points.day6.5 <- input$points.file19
-    if(is.null(points.day6.5)) return(NULL)
-    read.csv(fill=TRUE,file=input$points.file19$datapath,header=TRUE
-    )
-  })
-  points.day6.6 <- reactive({
-    points.day6.6 <- input$points.file20
-    if(is.null(points.day6.6)) return(NULL)
-    read.csv(fill=TRUE,file=input$points.file20$datapath,header=TRUE
-    )
-  })
-  
-  #Create Day 6 table Summary
-  points_day6 <- reactive({
-    if(is.null(points.day6.5)) return(NULL)
-    
-    #######General Convention Addition
-    ##Create new tables for each file
-    points_house_w <- points.day6.1()[]
-    points_senate_w <- points.day6.2()[]
-    points_jud_w <- points.day6.3()[]
-    points_exec_w <- points.day6.4()[]
-    points_reg_w <- points.day6.5()[c("NAME")]
-    
-    #Assign rownames to database
-    row.names(points_reg_w) <- points_reg_w$NAME
-    row.names(points_house_w) <- points_house_w$NAME
-    row.names(points_senate_w) <- points_senate_w$NAME
-    row.names(points_jud_w) <- points_jud_w$NAME
-    row.names(points_exec_w) <- points_exec_w$NAME
-    
-    #Create naming list
-    name_list <- points_reg_w$NAME
-    
-    #Most Promising female
-    for (a in name_list){
-      value_h = 0
-      value_h <- points_house_w[a,"MOST_PROM_FEM"]
-      if(is.na(value_h)){value_h=0}
-      
-      value_s = 0
-      value_s <- points_senate_w[a,"MOST_PROM_FEM"]
-      if(is.na(value_s)){value_s=0}
-      
-      value_j = 0
-      value_j <- points_jud_w[a,"MOST_PROM_FEM"]
-      if(is.na(value_j)){value_j=0}
-      
-      value_e = 0
-      value_e <- points_exec_w[a,"MOST_PROM_FEM"]
-      if(is.na(value_e)){value_e=0}
-      
-      points_reg_w[a,"MOST_PROM_FEM"] <- value_h + value_s + value_e + value_j
-    }
-    
-    #######Leg Session Addition
-    ##Create new table
-    points_leg6_w <- points.day6.6()[c("NAME", "TOTAL_PTS")]
-    row.names(points_leg6_w) <- points_leg6_w$NAME
-    name_list <- points_leg6_w$NAME
-    
-    #Most Promising female
-    for (a in name_list){
-      value = 0
-      value <- points_leg6_w[i,"TOTAL_PTS"]
-      
-      if(is.na(value)){
-        points_leg6_w[i,"TOTAL_PTS"] =0
-      }
-      points_reg_w[a,"TOTAL_PTS"] <- value
-      
-    }
-
-    #Send final document
-    points_day6_f <- points_reg_w[,c("NAME","MOST_PROM_FEM","TOTAL_PTS")]
-    points_day6_f
-  })
-  
-
-  ###############################Output files 
-  #Day1
-  output$download_points_day1 <- downloadHandler(
-    filename = function() {"Points_Day1.csv"},
+  )
+  #Prop Points
+  output$download_points_prop <- downloadHandler(
+    filename = function() {"Points_Proposal.csv"},
     content = function(file) {
-      write.csv(points_day1(), file, row.names = FALSE)
+      write.csv(points_prop(), file, row.names = FALSE)
     }
   )
-  #Day2
-  output$download_points_day2 <- downloadHandler(
-    filename = function() {"Points_Day2.csv"},
+  #Awards Points
+  output$download_points_win <- downloadHandler(
+    filename = function() {"Points_Awards.csv"},
     content = function(file) {
-      write.csv(points_day2(), file, row.names = FALSE)
+      write.csv(points_final(), file, row.names = FALSE)
     }
   )
-  #Day3
-  output$download_points_day3 <- downloadHandler(
-    filename = function() {"Points_Day3.csv"},
-    content = function(file) {
-      write.csv(points_day3(), file, row.names = FALSE)
-    }
-  )
-  #Day4
-  output$download_points_day4 <- downloadHandler(
-    filename = function() {"Points_Day4.csv"},
-    content = function(file) {
-      write.csv(points_day4(), file, row.names = FALSE)
-    }
-  )
-  #Day5
-  output$download_points_day5 <- downloadHandler(
-    filename = function() {"Points_Day5.csv"},
-    content = function(file) {
-      write.csv(points_day5(), file, row.names = FALSE)
-    }
-  )
-  #Day6
-  output$download_points_day6 <- downloadHandler(
-    filename = function() {"Points_Day6.csv"},
-    content = function(file) {
-      write.csv(points_day6(), file, row.names = FALSE)
-    }
-  )
-  
-  
   ##############################           Elections             #################################### 
   ####################################################################################################
   
@@ -1765,8 +1845,32 @@ function(input,output, session){
              colClasses = "factor")
   })
   ######################################### Create dataframe 
-  #Registered students - to create nomination fill in sheet
-  elect_reg <- reactive({
+  #Registered students - to create general nomination fill in sheet
+  elect_reg_primary <- reactive({
+    if(is.null(elect.reg)) return(NULL)
+    
+    #Read in the database
+    elect_reg <- elect.reg()[c("FNAME", "MNAME", "LNAME", "CITY", "ST", "NAME")]
+    
+    #Create new columns with position names
+    nom_titles <- c("SENATE", "SUPREME.JUSTICE", "VP", "PRES", "PARTY.CHAIR.NOM", 
+                    "PARTY.CHAIR.WIN", "PARTY.SEC.NOM", "PARTY.SEC.WIN", "COMMITTEE.NOM",
+                    "COMMITTEE.WIN")
+    
+    #For each position add a blank row
+    for(a in nom_titles){
+      b=1
+      
+      while(b < nrow(elect_reg)+1){
+        elect_reg[b,a]<-""
+        b=b+1
+      }
+      
+    }
+    elect_reg
+  })
+  #Registered students - to create general nomination fill in sheet
+  elect_reg_general <- reactive({
     if(is.null(elect.reg)) return(NULL)
     
     #Read in the database
@@ -1907,7 +2011,7 @@ function(input,output, session){
     ###Start Counters
     count=1
     
-    while(count<26){
+    while(count<41){
       #Party A Candidate
       elect_nominees_final[i,"FNAME"] <- senate[count,"FNAME"]
       elect_nominees_final[i,"MNAME"] <- senate[count,"MNAME"]
@@ -1919,14 +2023,14 @@ function(input,output, session){
       elect_nominees_final[i,"SENATE"] <- senate[count,"SENATE"]
       
       #Party B Candidate
-      elect_nominees_final[i+1,"FNAME"] <- senate[count+25,"FNAME"]
-      elect_nominees_final[i+1,"MNAME"] <- senate[count+25,"MNAME"]
-      elect_nominees_final[i+1,"LNAME"] <- senate[count+25,"LNAME"]
-      elect_nominees_final[i+1,"CITY"] <- senate[count+25,"CITY"]
-      elect_nominees_final[i+1,"DORM"] <- senate[count+25,"DORM"]
-      elect_nominees_final[i+1,"ROOM"] <- senate[count+25,"ROOM"]
-      elect_nominees_final[i+1,"ST_NAME"] <- senate[count+25,"ST_NAME"]
-      elect_nominees_final[i+1,"SENATE"] <- senate[count+25,"SENATE"]
+      elect_nominees_final[i+1,"FNAME"] <- senate[count+40,"FNAME"]
+      elect_nominees_final[i+1,"MNAME"] <- senate[count+40,"MNAME"]
+      elect_nominees_final[i+1,"LNAME"] <- senate[count+40,"LNAME"]
+      elect_nominees_final[i+1,"CITY"] <- senate[count+40,"CITY"]
+      elect_nominees_final[i+1,"DORM"] <- senate[count+40,"DORM"]
+      elect_nominees_final[i+1,"ROOM"] <- senate[count+40,"ROOM"]
+      elect_nominees_final[i+1,"ST_NAME"] <- senate[count+40,"ST_NAME"]
+      elect_nominees_final[i+1,"SENATE"] <- senate[count+40,"SENATE"]
       
       #Increase Counters
       i=i+2
@@ -2009,7 +2113,7 @@ function(input,output, session){
     elect_nominees_final
 
   })
-  #Create Nomination official roster
+  #Create Winners Document
   elect_winfill <- reactive({
     if(is.null(elect.fillin)) return(NULL)
     
@@ -2174,7 +2278,7 @@ function(input,output, session){
     ###Start Counters
     count=1
     
-    while(count<26){
+    while(count<41){
       #Party A Candidate
       elect_nominees_final[i,"FNAME"] <- senate[count,"FNAME"]
       elect_nominees_final[i,"MNAME"] <- senate[count,"MNAME"]
@@ -2188,15 +2292,15 @@ function(input,output, session){
       elect_nominees_final[i,"SENATE_WIN"] <- ""
       
       #Party B Candidate
-      elect_nominees_final[i+1,"FNAME"] <- senate[count+25,"FNAME"]
-      elect_nominees_final[i+1,"MNAME"] <- senate[count+25,"MNAME"]
-      elect_nominees_final[i+1,"LNAME"] <- senate[count+25,"LNAME"]
-      elect_nominees_final[i+1,"NAME"] <- senate[count+25,"NAME"]
-      elect_nominees_final[i+1,"CITY"] <- senate[count+25,"CITY"]
-      elect_nominees_final[i+1,"DORM"] <- senate[count+25,"DORM"]
-      elect_nominees_final[i+1,"ROOM"] <- senate[count+25,"ROOM"]
-      elect_nominees_final[i+1,"ST_NAME"] <- senate[count+25,"ST_NAME"]
-      elect_nominees_final[i+1,"SENATE"] <- senate[count+25,"SENATE"]
+      elect_nominees_final[i+1,"FNAME"] <- senate[count+40,"FNAME"]
+      elect_nominees_final[i+1,"MNAME"] <- senate[count+40,"MNAME"]
+      elect_nominees_final[i+1,"LNAME"] <- senate[count+40,"LNAME"]
+      elect_nominees_final[i+1,"NAME"] <- senate[count+40,"NAME"]
+      elect_nominees_final[i+1,"CITY"] <- senate[count+40,"CITY"]
+      elect_nominees_final[i+1,"DORM"] <- senate[count+40,"DORM"]
+      elect_nominees_final[i+1,"ROOM"] <- senate[count+40,"ROOM"]
+      elect_nominees_final[i+1,"ST_NAME"] <- senate[count+40,"ST_NAME"]
+      elect_nominees_final[i+1,"SENATE"] <- senate[count+40,"SENATE"]
       elect_nominees_final[i+1,"SENATE_WIN"] <- ""
       
       #Increase Counters
@@ -2212,14 +2316,17 @@ function(input,output, session){
     if(is.null(elect.win)) return(NULL)
     
     #Read in the database
-    elect_winners <- elect.win()[c("FNAME", "MNAME", "LNAME", "CITY", "ST_NAME", "NAME","DORM", "ROOM",
-                                       "SENATE", "SENATE_WIN","SUPREME.JUSTICE", "SUPREME.JUSTICE_WIN",
-                                   "VP", "VP_WIN", "ATTORNEY","PRES","PRES_WIN")]
+    elect_winners <- elect.win()[c("FNAME", "MNAME", "LNAME", "CITY", "ST_NAME", "NAME","DORM", 
+                                   "ROOM","SENATE", "SENATE_WIN","SUPREME.JUSTICE", 
+                                   "SUPREME.JUSTICE_WIN", "VP", "VP_WIN", "ATTORNEY",
+                                   "PRES","PRES_WIN")]
     
     #Run for Announcement 1
     election_final <- subset(elect_winners, elect_winners$SUPREME.JUSTICE_WIN=="WINNER" | 
-                               !(elect_winners$ATTORNEY=="NA") | (elect_winners$VP_WIN=="WINNER") |
-                               (elect_winners$PRES_WIN=="WINNER")| (elect_winners$SENATE_WIN=="WINNER")
+                               !(elect_winners$ATTORNEY=="NA") |
+                               (elect_winners$VP_WIN=="WINNER") |
+                               (elect_winners$PRES_WIN=="WINNER")|
+                               (elect_winners$SENATE_WIN=="WINNER")
                              )
     #Order the database
     election_final[order(election_final$SUPREME.JUSTICE_WIN, election_final$ATTORNEY, 
@@ -2238,26 +2345,53 @@ function(input,output, session){
     for (i in 35:35){
       election_final[i,"POSITION"] <- "President"
     }   
-    for (i in 36:60){
+    for (i in 36:75){
       election_final[i,"POSITION"] <- "Senator"
     }
     election_final
     
   })
   #Create new student database with elected positions
-  elect_reg <- reactive({
+  elect_reg2 <- reactive({
     if(is.null(elect.commish)) return(NULL)
-    elect_reg <- elect.commish()[c("NAME","POSITION")]
+    elect_reg2 <- elect.commish()[,c("NAME","POSITION")]
     student_reg <- elect.reg()[]
     
-    elect_final <- merge(student_reg,elect_reg,all.x=TRUE)
+    elect_final <- merge(student_reg,elect_reg2,all.x=TRUE)
+  })
+  #Create dataframe of the election points - party nomination form
+  elect_nomfill <- reactive({
+    if(is.null(elect.reg)) return(NULL)
+    
+    #Read in the database
+    elect_nomfill <- elect.reg()[]
+    points_final <- elect_nomfill[,c("NAME","CITY","ST")]
+    
+    for (i in 1:nrow(points_final)){
+      points_final[i,"CHAIR_NOM"] <- ""
+      points_final[i,"SEC_NOM"] <- ""
+      points_final[i,"CHAIR_WIN"] <- ""
+      points_final[i,"SEC_WIN"] <- ""
+      points_final[i,"PRES_NOM"] <- ""
+      points_final[i,"VP_NOM"] <- ""
+      points_final[i,"SENATE_NOM"] <- ""
+      points_final[i,"JUD_NOM"] <- ""
+    }
+    
+    points_final
   })
   ######################################### Send file to download screen
-  #Nomination File to fill in
-  output$download_elect_nomineefillin <- downloadHandler(
-    filename = function() {"Election_NomineeFillIn.csv"},
+  #Primary Nomination File to fill in
+  output$download_elect_primarynomineefillin <- downloadHandler(
+    filename = function() {"Election_PrimaryNomineeFillIn.csv"},
     content = function(file) {
-      write.csv(elect_reg(), file, row.names = FALSE)
+      write.csv(elect_reg_primary(), file, row.names = FALSE)
+    }
+  )  #General Nomination File to fill in
+  output$download_elect_generalnomineefillin <- downloadHandler(
+    filename = function() {"Election_GeneralNomineeFillIn.csv"},
+    content = function(file) {
+      write.csv(elect_reg_general(), file, row.names = FALSE)
     }
   )
   #Nomination Roster for MM
@@ -2292,7 +2426,14 @@ function(input,output, session){
   output$download_election_registrar <- downloadHandler(
     filename = function() {"Registrar_StudentDB_Elections.csv"},
     content = function(file) {
-      write.csv(elect_reg(), file, row.names = FALSE)
+      write.csv(elect_reg2(), file, row.names = FALSE)
+    }
+  )
+  #Election - Nominations Fill-In
+  output$download_election_nomfillin <- downloadHandler(
+    filename = function() {"Election_PartyNomFillin.csv"},
+    content = function(file) {
+      write.csv(elect_nomfill(), file, row.names = FALSE)
     }
   )
   
