@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1556400264040.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1877576642",
+    "id" : "590DC054",
+    "lastKnownWriteTime" : 1557678683,
+    "last_content_update" : 1557678683619,
+    "path" : "C:/Program Files/Git/Coding/NHI/cws/ui.R",
+    "project_path" : "ui.R",
+    "properties" : {
+        "cursorPosition" : "53,30",
+        "scrollLine" : "42"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
