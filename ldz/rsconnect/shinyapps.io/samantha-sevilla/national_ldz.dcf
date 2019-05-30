@@ -1,0 +1,12 @@
+name: national_ldz
+title: national_ldz
+username:
+account: samantha-sevilla
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 346455
+bundleId: 2119130
+url: https://samantha-sevilla.shinyapps.io/national_ldz/
+when: 1559248959.23221
+asMultiple: FALSE
+asStatic: FALSE
