@@ -544,162 +544,102 @@ function(input,output, session){
   ##Generate database for Student Demographic Database
   
   ##Generate database for input Student Demographic Database
+  outputDir <- file.path("national_ldz/registrar")
   observeEvent(input$upload_day0_studentdb, {
     day0_expect<- drop_read_csv("national_ldz/registrar/Registrar_StudentDB_Expected.csv")
     toggle('text_div')
     output$confirm_day0studentdemo <- renderText({"Downloaded from: https://www.dropbox.com/home/national_ldz"})
     
-    #Generate database for staff labels, and upload to DropBox
+    ###Attendance and Travel Verification
     d0_travelverify <- day0_expect[c("FNAME", "MNAME", "LNAME", "CELL", "P1.CELL",
                                        "P2.CELL", "ARRIVAL_AIR", "ARRIVAL_TIME",
                                        "ARRIVAL_CARRIER", "ARRIVAL_FLIGHT",
                                        "DEPART_AIR", "DEPART_TIME")]
-    fileName="download_d0_travelverify.csv"
+    fileName="Onsite_ArrivalTravelVerify.csv"
     filePath <- file.path(tempdir(), fileName)
     write.csv(d0_travelverify, filePath, row.names = FALSE)
     drop_upload(filePath, path = outputDir)
     
+    ####Student Self Verification forms
+    d0_studselfverify <- day0_expect[c("FNAME", "MNAME", "LNAME", "CELL", "CITY",
+                                        "ST", "P1", "P2", "HS", "DEPART_AIR",
+                                        "DEPART_TIME")]
+    fileName="Registrar_StudentSelfVerify.csv"
+    filePath <- file.path(tempdir(), fileName)
+    write.csv(d0_studselfverify, filePath, row.names = FALSE)
+    drop_upload(filePath, path = outputDir)
+    
+    ###Student labels
+    studlabels <- day0_expect[c("FNAME", "MNAME", "LNAME", "CITY", "ST", "HS",
+                                    "DOT")]
+    
+    fileName="Onsite_StudentLabels.csv"
+    filePath <- file.path(tempdir(), fileName)
+    write.csv(studlabels, filePath, row.names = FALSE)
+    drop_upload(filePath, path = outputDir)
+    
+    ###Students with balance
+    studbalance <- subset(day0_expect, !BALANCE=="")
+    studbalance <- studbalance[c("FNAME", "MNAME", "LNAME", "CELL", "CITY", "ST",
+                                   "HS", "BALANCE")]
+    fileName="Registrar_StudentswithBalance.csv"
+    filePath <- file.path(tempdir(), fileName)
+    write.csv(studbalance, filePath, row.names = FALSE)
+    drop_upload(filePath, path = outputDir)
+
+    ##Students with missing forms
+    studforms <- subset(day0_expect, FIN.FORM=='No' | MED.FORM=='No' )
+    studforms <- studforms[c("FNAME", "MNAME", "LNAME", "CELL", "CITY", "ST",
+                               "HS", "FIN.FORM", "MED.FORM")]
+    fileName="Registrar_StudentsMissingForms.csv"
+    filePath <- file.path(tempdir(), fileName)
+    write.csv(studforms, filePath, row.names = FALSE)
+    drop_upload(filePath, path = outputDir)
+    
+    ###Student Door signs
+    studdoor <- day0_expect[c("STATUS", "FNAME", "MNAME", "LNAME", "CITY", "ST", "MF",
+                                  "DORM", "ROOM", "DOT")]
+    studdoor <- subset(studdoor,!(STATUS=="NON-ATTEND"))
+    studdoor <- studdoor[order(studdoor$MF, studdoor$ROOM),]
+    fileName="Onsite_StudentDoorSigns.csv"
+    filePath <- file.path(tempdir(), fileName)
+    write.csv(studdoor, filePath, row.names = FALSE)
+    drop_upload(filePath, path = outputDir)
+    
+    ###Student Dorming Lists - Female and Male
+    d0_room_F <- subset(day0_expect,MF=="Female")
+    d0_room_F <- d0_room_F[c("FNAME", "MNAME", "LNAME", "CITY", "ST","DOT", "DORM",
+                               "ROOM")]
+    fileName="Day0_Rooms_F.csv"
+    filePath <- file.path(tempdir(), fileName)
+    write.csv(d0_room_F, filePath, row.names = FALSE)
+    drop_upload(filePath, path = outputDir)
+    
+    d0_room_M <- subset(day0_expect,MF=="Male")
+    d0_room_M <- d0_room_M[c("FNAME", "MNAME", "LNAME", "CITY", "ST", "DOT", "DORM",
+                               "ROOM")]
+    fileName="Day0_Rooms_M.csv"
+    filePath <- file.path(tempdir(), fileName)
+    write.csv(d0_room_M, filePath, row.names = FALSE)
+    drop_upload(filePath, path = outputDir)
   })
   
-  
   ##Generate database for input Staff Demographic Database
+  outputDir <- file.path("national_ldz/registrar")
   observeEvent(input$upload_day0_staffdb, {
     staff_file<- drop_read_csv("national_ldz/registrar/Registrar_StaffDB.csv")
     toggle('text_div')
-    output$confirm_day0staffdemo <- renderText({"Downloaded from: https://www.dropbox.com/home/national_ldz"})
+    output$confirm_day0staffdemo <- renderText({"Files sent to: https://www.dropbox.com/home/national_ldz"})
   
     #Generate database for staff labels, and upload to DropBox
     staff_labels <- staff_file[c("FNAME", "MNAME", "LNAME","CITY", "ST", "HSSTAT", "HS",
                                  "COLSTAT","UNIV","MAJ","ROLE")]
-    fileName="download_stafflabels.csv"
+    fileName="Onsite_StaffLabels.csv"
     filePath <- file.path(tempdir(), fileName)
     write.csv(staff_labels, filePath, row.names = FALSE)
     drop_upload(filePath, path = outputDir)
-    })    
+  })    
     
-  
-  
-  ######################################### Create sub-tables
-
-  #Student self verification
-  studselfverify <- reactive({
-    if(is.null(input$day0.file1)) return()
-    studselfverify <- day0_expect()[c("FNAME", "MNAME", "LNAME", "CELL", "CITY",
-                                      "ST", "P1", "P2", "HS", "DEPART_AIR",
-                                      "DEPART_TIME")]
-  })
-  #Student labels
-  studlabels <- reactive({
-    if(is.null(input$day0.file1)) return()
-    studlabels <- day0_expect()[c("FNAME", "MNAME", "LNAME", "CITY", "ST", "HS",
-                                  "DOT")]
-  })
-  #Students with balance
-  studbalance <- reactive({
-    if(is.null(input$day0.file1)) return()
-    studbalance <- subset(day0_expect(), !BALANCE=="")
-    studbalance <- studbalance[c("FNAME", "MNAME", "LNAME", "CELL", "CITY", "ST",
-                                 "HS", "BALANCE")]
-  })
-  #Students with missing forms
-  studforms <- reactive({
-    if(is.null(input$day0.file1)) return()
-    studforms <- subset(day0_expect(), FIN.FORM=='No' | MED.FORM=='No' )
-    studforms <- studforms[c("FNAME", "MNAME", "LNAME", "CELL", "CITY", "ST",
-                             "HS", "FIN.FORM", "MED.FORM")]
-  })
-  #Student Doro signs
-  studdoor <- reactive({
-    if(is.null(input$day0.file1)) return()
-    studdoor <- day0_expect()[c("STATUS", "FNAME", "MNAME", "LNAME", "CITY", "ST", "MF",
-                                "DORM", "ROOM", "DOT")]
-    studdoor <- subset(studdoor,!(STATUS=="NON-ATTEND"))
-    studdoor <- studdoor[order(studdoor$MF, studdoor$ROOM),]
-  })
-  #Student Dorming Lists - Female and Male
-  d0_room_F <- reactive({
-    if(is.null(input$day0.file1)) return()
-    
-    ##Create list of dorm names for female students
-    d0_room_F <- subset(day0_expect(),MF=="Female")
-    d0_room_F <- d0_room_F[c("FNAME", "MNAME", "LNAME", "CITY", "ST","DOT", "DORM",
-                             "ROOM")]
-  })
-  d0_room_M <- reactive({
-    if(is.null(input$day0.file1)) return()
-    
-    ##Create list of dorm names for Male students
-    d0_room_M <- subset(day0_expect(),MF=="Male")
-    d0_room_M <- d0_room_M[c("FNAME", "MNAME", "LNAME", "CITY", "ST", "DOT", "DORM",
-                             "ROOM")]
-  })
-       
-  
-  
-  ######################################### File Downloads
-  #Attendance and Travel Verification
-  output$download_d0_travelverify <- downloadHandler(
-    filename = function() {"Onsite_ArrivalTravelVerify.csv"},
-    content = function(file) {
-      write.csv(d0_travelverify(), file, row.names = FALSE)
-    }
-  )
-  #Student self verification
-  output$download_studselfverify <- downloadHandler(
-    filename = function() {"Registrar_StudentSelfVerify.csv"},
-    content = function(file) {
-      write.csv(studselfverify(), file, row.names = FALSE)
-    }
-  )
-  #Student labels
-  output$download_studlabels <- downloadHandler(
-    filename = function() {"Onsite_StudentLabels.csv"},
-    content = function(file) {
-      write.csv(studlabels(), file, row.names = FALSE)
-    }
-  )
-  #Students with balance
-  output$download_studbalance <- downloadHandler(
-    filename = function() {"Registrar_StudentswithBalance.csv"},
-    content = function(file) {
-      write.csv(studbalance(), file, row.names = FALSE)
-    }
-  )
-  #Students missing forms
-  output$download_studforms <- downloadHandler(
-    filename = function() {"Registrar_StudentsMissingForms.csv"},
-    content = function(file) {
-      write.csv(studforms(), file, row.names = FALSE)
-    }
-  )
-  #Student Door signs
-  output$download_studdoor <- downloadHandler(
-    filename = function() {"Onsite_StudentDoorSigns.csv"},
-    content = function(file) {
-      write.csv(studdoor(), file, row.names = FALSE)
-    }
-  )
-  #Student Dorming lists by female and male
-  output$download_d0_room_F <- downloadHandler(
-    filename = function() {"Day0_Rooms_F.csv"},
-    content = function(file) {
-      write.csv(d0_room_F(), file, row.names = FALSE)
-    }
-  ) 
-  output$download_d0_room_M <- downloadHandler(
-    filename = function() {"Day0_Rooms_M.csv"},
-    content = function(file) {
-      write.csv(d0_room_M(), file, row.names = FALSE)
-    }
-  )
-  #Staff labels
-  output$download_stafflabels <- downloadHandler(
-    filename = function() {"Onsite_StaffLabels.csv"},
-    content = function(file) {
-      write.csv(staff_labels(), file, row.names = FALSE)
-    }
-  )
-  
   ##############################      Day 1-7 Admin Tasks       #################################### 
   #################################################################################################
   
@@ -888,192 +828,184 @@ function(input,output, session){
   ###############################          Protocol         ########################################
   #################################################################################################
   
-  ######################################### Input Files
   ##Takes the input file saving it to staff database
-  proto_stud <- reactive({
-    stud1 <- input$proto.file1
-    if (is.null(stud1)) return(NULL)
-    read.csv(fill=TRUE,file=input$proto.file1$datapath, header=TRUE, 
-             colClasses = "factor")
-  })
-  proto_staff <- reactive({
-    staff1 <- input$proto.file2
-    if (is.null(staff1)) return(NULL)
-    read.csv(fill=TRUE,file=input$proto.file2$datapath, header=TRUE, 
-             colClasses = "factor")
-  })
-  proto_form <- reactive({
-    form1 <- input$proto.file3
-    if (is.null(form1)) return(NULL)
-    read.csv(fill=TRUE,file=input$proto.file3$datapath, header=TRUE, 
-             colClasses = "factor")
-  }) 
+  ##Generate database for input Student Demographic Database
+  outputDir <- file.path("national_ldz/protocol")
   
-  ######################################### Database Creation
-  ftc_protocol <- reactive({
-    if(is.null(input$proto.file1)) return()
-    if(is.null(input$proto.file3)) return()
+  observeEvent(input$proto.file1, {
+    proto_stud<- drop_read_csv("national_ldz/registrar/Registrar_StudentDB_Expected.csv")
+    proto_staff<- drop_read_csv("national_ldz/registrar/Registrar_StaffDB.csv")
+    proto_form <- read.csv("C:\\Users\\sevillas2\\Google Drive\\MyDocuments_Current\\Programs & Orgs\\National Hispanic Institute\\2019_NationalLDZ\\Director Guides\\Director of Protocol\\Day0\\Protocol_FormingTheCommunityTemplate.csv", header=TRUE)
+    
+    proto_form <- read.csv(fill=TRUE,file=input$proto.file1$datapath, header=TRUE, 
+               colClasses = "factor")
     
     #Create dataframe of states, then a list
-    states_col <- unique(proto_stud()["ST"])
+    states_col <- unique(proto_stud["ST"])
     states_col <- states_col[,1]
     
-    #Create a new list
     states_list <- c()
     for (a in states_col){
       states_list <- c(states_list, a)
     }
-    #Past list together with a comma between
-    states_list <- paste(states_list, collapse=" -- ")
-
-    #Protocol Database
-    ftc_protocol<- proto_form()[c("Year", "Program", "MC", "ED.Welcoming", "Staff.Speaker.1",
+    states_list <- paste(states_list, collapse=" -- ") #Past list together with a - between
+    
+    #Create Protocol Database, and send to dropbox
+    ###############
+    ftc_protocol<- proto_form[c("Year", "Program", "MC", "ED.Welcoming", "Staff.Speaker.1",
                                   "Staff.Speaker.2", "Highest.Staff", "ED.Opening")]
-    #Add states list
     ftc_protocol <- merge(ftc_protocol, states_list)
-
-  })
-  ftc_staff <- reactive({
-    if(is.null(input$proto.file2)) return()
-
-    #Create dataframe of states, then a list
-    staff_ori <- proto_staff()[c("FNAME","MNAME","LNAME","CITY","ST","HSSTAT","HS","COLSTAT","UNIV","MAJ",
-                                 "STAT","GD","LDZ","CWS","ROLE")]
+    colnames(ftc_protocol)[colnames(ftc_protocol)=="y"] <- "States"
     
-    #Merge Names
+    output$download_ftc_protocol <- downloadHandler(
+      filename = function() {"Protocol_FTC_Script.csv"},
+      content = function(file) {
+        write.csv(ftc_protocol, file, row.names = FALSE)
+      }
+    )
+    
+    fileName="Protocol_FTC_Script.csv"
+    filePath <- file.path(tempdir(), fileName)
+    write.csv(ftc_protocol, filePath, row.names = FALSE)
+    drop_upload(filePath, path = outputDir)
+    
+    #Create Staff listing, and send to dropbox
+    ###############
+    staff_ori <- proto_staff[c("FNAME","MNAME","LNAME","CITY","ST","HSSTAT","HS","COLSTAT","UNIV","MAJ",
+                                   "STAT","GD","LDZ","CWS","ROLE")]
     staff_update <- unite(staff_ori, NAME, c(FNAME,MNAME,LNAME), sep = " ", remove = FALSE)
-    
-    #Update HS/Univ
+      
     ##HS
-      i = 1
-      staff_list <- staff_ori[,"HS"]
-      staff_update[,"HS"] <- as.character(staff_update[,"HS"])
-  
-      for (a in staff_list){
-        print (a)
-        if(a==""){
-          i=i+1
-          next
-        } else{
-          temp <- staff_update[i,"HS"]
-          staff_update[i,"HS"] <- sub("^", "from ", temp )
-          i=i+1
-        }
-      }
-      ##Univ
-      i = 1
-      staff_list <- staff_ori[,"UNIV"]
-      staff_update[,"UNIV"] <- as.character(staff_update[,"UNIV"])
-      
-      for (a in staff_list){
-        if(a==""){
-          i=i+1
-          next
-        } else{
-          temp <- staff_update[i,"UNIV"]
-          staff_update[i,"UNIV"] <- sub("^", "from ", temp )
-          i=i+1
-        }
-      }
+    i = 1
+    staff_list <- staff_ori[,"HS"]
+    staff_update[,"HS"] <- as.character(staff_update[,"HS"])
     
-      #Update Major
-      i = 1
-      staff_list <- staff_ori[,"MAJ"]
-      staff_update[,"MAJ"] <- as.character(staff_update[,"MAJ"])
-      
-      for (a in staff_list){
-        if(a==""){
-          i=i+1
-          next
-        } else{
-          temp <- staff_update[i,"MAJ"]
-          staff_update[i,"MAJ"] <- sub("^", "majoring in ", temp )
-          i=i+1
-        }
+    for (a in staff_list){
+      if(a==""){
+        i=i+1
+        next
+      } else{
+        temp <- staff_update[i,"HS"]
+        staff_update[i,"HS"] <- sub("^", "from ", temp )
+        i=i+1
       }
-      
-      #Update student status
-      i = 1
-      staff_list <- staff_ori[,"COLSTAT"]
-      staff_update[,"HSSTAT"] <- as.character(staff_update[,"HSSTAT"])
-      staff_update[,"COLSTAT"] <- as.character(staff_update[,"COLSTAT"])
-      
-      for (a in staff_list){
-        if(a==""){
-          temp <- staff_update[i,"HSSTAT"]
-          staff_update[i,"HSSTAT"] <- sub("^", "a high school ", temp )
-          i=i+1
-        } else if (a=="Graduated"){
-          staff_update[i,"COLSTAT"] <- "a professional, having graduated"
-          i=i+1
-        } else if (a=="Graduate"){
-          staff_update[i,"COLSTAT"] <- "a graduate student "
-          i=i+1
-        } else{
-          temp <- staff_update[i,"COLSTAT"]
-          staff_update[i,"COLSTAT"] <- sub("^", "a college ", temp )
-          i=i+1
-        }
+    }
+    ##Univ
+    i = 1
+    staff_list <- staff_ori[,"UNIV"]
+    staff_update[,"UNIV"] <- as.character(staff_update[,"UNIV"])
+    
+    for (a in staff_list){
+      if(a==""){
+        i=i+1
+        next
+      } else{
+        temp <- staff_update[i,"UNIV"]
+        staff_update[i,"UNIV"] <- sub("^", "from ", temp )
+        i=i+1
       }
-      
-      #Update student status
-      i = 1
-      staff_list <- staff_ori[,"ROLE"]
-
-      for (a in staff_list){
-        if (a=="Education Director"){
-          staff_update[i,"RANK"] <- 10
-          i=i+1
-        } else if (a=="Apprentice Education Director"){
-          staff_update[i,"RANK"] <- 09
-          i=i+1
-        } else if (a=="HQ Representative"){
-          staff_update[i,"RANK"] <- 08
-          i=i+1
-        } else if (a=="On-Site Director"){
-          staff_update[i,"RANK"] <- 07
-          i=i+1
-        } else if (a=="Assistant On-Site Director"){
-          staff_update[i,"RANK"] <- 06
-          i=i+1
-        } else if (a=="Secretary of State"){
-          staff_update[i,"RANK"] <- 05
-          i=i+1
-        }else if (a == "Assistant Secretary of State"){
-          staff_update[i,"RANK"] <- 04
-          i=i+1
-        } else if (a=="Senior Counselor"){
-          staff_update[i,"RANK"] <- 03
-          i=i+1
-        } else if (a=="Junior Counselor"){
-          staff_update[i,"RANK"] <- 02
-          i=i+1
-        } else{
-          staff_update[i,"RANK"] <- 01
-          i=i+1
-        }
+    }
+    
+    #Update Major
+    i = 1
+    staff_list <- staff_ori[,"MAJ"]
+    staff_update[,"MAJ"] <- as.character(staff_update[,"MAJ"])
+    
+    for (a in staff_list){
+      if(a==""){
+        i=i+1
+        next
+      } else{
+        temp <- staff_update[i,"MAJ"]
+        staff_update[i,"MAJ"] <- sub("^", "majoring in ", temp )
+        i=i+1
       }
-      
+    }
+    
+    #Update student status
+    i = 1
+    staff_list <- staff_ori[,"COLSTAT"]
+    staff_update[,"HSSTAT"] <- as.character(staff_update[,"HSSTAT"])
+    staff_update[,"COLSTAT"] <- as.character(staff_update[,"COLSTAT"])
+    
+    for (a in staff_list){
+      if(a==""){
+        temp <- staff_update[i,"HSSTAT"]
+        staff_update[i,"HSSTAT"] <- sub("^", "a high school ", temp )
+        i=i+1
+      } else if (a=="Graduated"){
+        staff_update[i,"COLSTAT"] <- "a professional, having graduated"
+        i=i+1
+      } else if (a=="Graduate"){
+        staff_update[i,"COLSTAT"] <- "a graduate student "
+        i=i+1
+      } else{
+        temp <- staff_update[i,"COLSTAT"]
+        staff_update[i,"COLSTAT"] <- sub("^", "a college ", temp )
+        i=i+1
+      }
+    }
+    
+    #Update student status
+    i = 1
+    staff_list <- staff_ori[,"ROLE"]
+    
+    for (a in staff_list){
+      if (a=="Education Director"){
+        staff_update[i,"RANK"] <- 10
+        i=i+1
+      } else if (a=="Apprentice Education Director"){
+        staff_update[i,"RANK"] <- 09
+        i=i+1
+      } else if (a=="HQ Representative"){
+        staff_update[i,"RANK"] <- 08
+        i=i+1
+      } else if (a=="On-Site Director"){
+        staff_update[i,"RANK"] <- 07
+        i=i+1
+      } else if (a=="Assistant On-Site Director"){
+        staff_update[i,"RANK"] <- 06
+        i=i+1
+      } else if (a=="Secretary of State"){
+        staff_update[i,"RANK"] <- 05
+        i=i+1
+      }else if (a == "Apprentice Secretary of State"){
+        staff_update[i,"RANK"] <- 04
+        i=i+1
+      } else if (a=="Senior Counselor"){
+        staff_update[i,"RANK"] <- 03
+        i=i+1
+      } else if (a=="Junior Counselor"){
+        staff_update[i,"RANK"] <- 02
+        i=i+1
+      } else{
+        staff_update[i,"RANK"] <- 01
+        i=i+1
+      }
+    }
+    
     #Staff Final Database
     staff_final <- staff_update[,c("CITY","ST","GD","LDZ","CWS","ROLE","NAME",
                                    "HS","UNIV", "MAJ", "COLSTAT", "HSSTAT", "RANK")]
     staff_final <- staff_final[order(staff_final$RANK),]
     
-  })
-  
+    output$download_ftc_staff <- downloadHandler(
+      filename = function() {"Protocol_FTC_Staff.csv"},
+      content = function(file) {
+        write.csv(staff_final, file, row.names = FALSE)
+      }
+    )
+    
+    fileName="Protocol_FTC_Staff.csv"
+    filePath <- file.path(tempdir(), fileName)
+    write.csv(staff_final, filePath, row.names = FALSE)
+    drop_upload(filePath, path = outputDir)
+})
+
   ######################################### Output Files
-  output$download_ftc_protocol <- downloadHandler(
-    filename = function() {"Protocol_FTC_Script.csv"},
-    content = function(file) {
-      write.csv(ftc_protocol(), file, row.names = FALSE)
-    }
-  )
-  output$download_ftc_staff <- downloadHandler(
-    filename = function() {"Protocol_FTC_Staff.csv"},
-    content = function(file) {
-      write.csv(ftc_staff(), file, row.names = FALSE)
-    }
-  )
+
+  
+
   
   
   ####################################      Merchandise           ####################################

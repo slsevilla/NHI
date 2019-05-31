@@ -1,0 +1,124 @@
+---
+title: "FormingTheCommunity"
+author: "National Lorenzo de Zavala Youth Legislative Session"
+date: "May 31, 2019"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, include=FALSE}
+#Variable needed for program
+mc <- "MC"
+year <- "year"
+program <- "program"
+location_table <- "table"
+ed1 <- "ed1"
+staff_list <- "long list"
+staff1 <- "staff1"
+staff2 <- "staff 2"
+staffhigh <- "highest staff"
+ed2 <- "ed2"
+```
+
+# OBJECTIVE
+Participants develop familiarity with each other, build a strong sense of unity and common purpose, and a willingness to be active participants in the various learning experiences of the LDZ. 
+
+# PROGRAM
+## OFFICIAL WELCOME: 
+
+```{r, echo=FALSE}
+sprintf("DELIVERED BY A STAFF MEMBER: %s", mc)
+```
+
+```{r, echo=FALSE}
+sprintf("%s»: [With Emphasis] Welcome DELEGATES to the %s %s Lorenzo de Zavala...Youth...Legislative... Session...", mc, year, program)
+```
+
+```{r, echo=FALSE}
+sprintf("%s: [Wait for cheers in between each state/ country] We will now begin the official roll call. Who is here from...",mc)
+```
+
+```{r, echo=FALSE}
+location_table
+```
+
+```{r, echo=FALSE}
+sprintf("%s: Thank you all for being with us and we will continue with our program. I would now like to welcome to the stage, your Education Director, %s for opening remarks", mc, ed1)
+```
+
+## ED WELCOME: 
+Ed gives welcome speech
+```{r, echo=FALSE}
+sprintf("%s: Thank you all again! I would like to welcome back to the stage, your MC %s", ed1, mc)
+```
+
+##STAFF INTRODUCTIONS
+```{r, echo=FALSE}
+sprintf("%s: I would like to now introduce the %s %s Lorenzo de Zavala Youth Legislative Session Staff to the stage:", mc, year, program)
+```
+
+```{r, echo=FALSE}
+staff_list
+```
+
+##STAFF TESTIMONIALS
+```{r, echo=FALSE}
+sprintf("%s: Please give a hand for your staff! ", mc)
+
+sprintf("%s: would like to welcome to podium %s and %s to give staff testimonials and challenges for the delegation.",mc, staff1, staff2)
+
+```
+
+##NHI OATH
+```{r, echo=FALSE}
+sprintf("%s: Thank you to our two staff speakers!", mc)
+
+sprintf("%s: I would like to introduce the highest-ranking Staff member, %s back to the podium to lead us in the NHI oath.", mc, staffhigh)
+```
+
+###OATH
+- I, SAY YOUR NAME, [actually say the words “SAY YOUR NAME” so the students will say their name]
+- pledge that this weekend 
+- I will take on the title of community partner, investor, and NHI member. 
+- Therefore, I will commit to nothing but excellence. 
+- I will exhibit the behaviors of a professional
+- that reflect the ethics of my community. 
+- I know that my peers are not my competitors
+- or rivals 
+- but rather my biggest collaborators 
+- and heirs to grow with me. 
+- I will abide by all the rules and regulations 
+- and respect the policies of the National Hispanic Institute 
+- as I will reflect the core family values instilled me generations ago. 
+- I will push myself to be the best version of myself
+- and will exhibit a pride in my character 
+- and integrity that demonstrates
+- the deep lessons of my family and community. 
+- This is I swear. 
+- I am ready to begin.
+
+
+##NHI OATH
+```{r, echo=FALSE}
+sprintf("%s: I now welcome Education Director, %s, to the stage to share additional remarks", mc, ed2)
+```
+##ED OPENING MESSAGE 
+-	Official institutional welcome 
+-	History of the NHI partnership
+-	History and mission of the university
+-	Importance and why university partners with NHI
+-	The importance of “Envisioning the Future”
+-	Opportunities for higher education at host
+
+##Remaining Programming
+- Host introduction (as applicable)
+- Social Interactive Activities (Circle Counter Circle, Values, Diversity, What did we learn)
+
+###Optional other activities
+-	History game that challenges students to explain the conditions in Europe that led to the establishment of the U.S. and different Latin American countries. (30 minutes)
+-	Envision exercise in which students are challenged to imagine life in the world in the next 20, 30, and even 40 years from now. (30 minutes)
+-	Show and tell exercise where samples of proposals are selected and read to determine whether or not they meet the criterion for building and advancing societal/community life (asset view) (30 minutes)
+
