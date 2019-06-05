@@ -1,4 +1,4 @@
-reg_original <- read.csv("C:\\Users\\slsevilla\\Google Drive\\My Documents\\Programs & Orgs\\National Hispanic Institute\\Template National LDZ\\Director Guides\\Director of Registrar\\Expected_StudentDemo.csv", header=TRUE)
+reg_original <- read.csv("C:\\Users\\sevillas2\\Google Drive\\MyDocuments_Current\\Programs & Orgs\\National Hispanic Institute\\2019_NationalLDZ\\Director Guides\\Downloaded Files\\Registrar_StudentEB_Expected.csv", header=TRUE)
 
 sud.data <- reg_original[c("FNAME", "MNAME", "LNAME", "CELL", "P1.CELL", "P2.CELL", "arrival_airport", "arrival_time", "arrival_carrier")]
 
@@ -18,6 +18,13 @@ temptable2
 
 templist <- temptable2$x
 templist
+
+for (row in 1:nrow(reg_original)){
+  print(row)
+  print(reg_original[row,"Voter"])
+  reg_original[row,"VoterID"]<-sample(1:100000, 1)
+}
+
 
 staff <- read.csv("C:\\Users\\sevillas2\\Google Drive\\My Documents\\Programs & Orgs\\National Hispanic Institute\\Template National LDZ\\Director Guides\\Downloaded Files\\National Staff.csv", header=TRUE)
 fin <- read.csv("C:\\Users\\sevillas2\\Google Drive\\My Documents\\Programs & Orgs\\National Hispanic Institute\\Template National LDZ\\Director Guides\\Director of Merchandise\\MerchandiseLedger.csv", header=TRUE)

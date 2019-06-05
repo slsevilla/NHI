@@ -24,7 +24,7 @@ function(input,output, session){
   token <- readRDS("droptoken.rds")
   # Then pass the token to each drop_ function
   drop_acc(dtoken = token)
-  
+
   ##############################        HQ Database Conversion        ##############################
   #################################################################################################
   
@@ -111,7 +111,16 @@ function(input,output, session){
     output$hq_ST<- renderUI({
       selectInput("hq_ST", "State", cb_options)
     })
+  })
+  observe({
+    req(input$hq.file1)
+    dsnames <- names(hq_input())
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$hq_DOB<- renderUI({
+      selectInput("hq_DOB", "Birthday", cb_options)
     })
+  })
   observe({
     req(input$hq.file1)
     dsnames <- names(hq_input())
@@ -283,6 +292,12 @@ function(input,output, session){
     #Read in input table, and determine total number of rows
     table_in <- hq_input()
     
+    #Add Voter ID information
+    for (row in 1:nrow(table_in)){
+      table_in[row,"VOTERID"]<-sample(1:100000, 1)
+      print(table_in[row,"VOTERID"])
+    }
+    
     #Create an output table that matches the number of rows 
     n<- nrow(table_in)
     table_out <- data.frame(x=1:n)
@@ -304,6 +319,8 @@ function(input,output, session){
     table_out$P2 <- table_in[,input$hq_P2]
     table_out$P1.CELL <- table_in[,input$hq_P1.CELL]
     table_out$P2.CELL <- table_in[,input$hq_P2.CELL]
+    table_out$DOB <- table_in[,input$hq_DOB]
+    table_out$VOTERID <- table_in[,"VOTERID"]
     
     #Create balance column, removing $
     table_out$BALANCE <- table_in[,input$hq_BALANCE]
@@ -431,8 +448,8 @@ function(input,output, session){
     dsnames <- names(staff_db())
     cb_options <- list()
     cb_options[dsnames] <- dsnames
-    output$staff_UNIV<- renderUI({
-      selectInput("staff_UNIV", "College/Univ", cb_options)
+    output$staff_UNIV1<- renderUI({
+      selectInput("staff_UNIV1", "College/Univ (UG)", cb_options)
     })
   })
   observe({
@@ -440,8 +457,71 @@ function(input,output, session){
     dsnames <- names(staff_db())
     cb_options <- list()
     cb_options[dsnames] <- dsnames
-    output$staff_MAJ<- renderUI({
-      selectInput("staff_MAJ", "Major", cb_options)
+    output$staff_UNIV2<- renderUI({
+      selectInput("staff_UNIV2", "College/Univ (GRAD)", cb_options)
+    })
+  })  
+  observe({
+    req(input$staff.db1)
+    dsnames <- names(staff_db())
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$staff_UNIV3<- renderUI({
+      selectInput("staff_UNIV3", "College/Univ (GRAD2)", cb_options)
+    })
+  })
+  observe({
+    req(input$staff.db1)
+    dsnames <- names(staff_db())
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$staff_DEG1<- renderUI({
+      selectInput("staff_DEG1", "Degree (GRAD)", cb_options)
+    })
+  })
+  observe({
+    req(input$staff.db1)
+    dsnames <- names(staff_db())
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$staff_DEG2<- renderUI({
+      selectInput("staff_DEG2", "Degree (GRAD)", cb_options)
+    })
+  })
+  observe({
+    req(input$staff.db1)
+    dsnames <- names(staff_db())
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$staff_DEG3<- renderUI({
+      selectInput("staff_DEG3", "Degree (GRAD)", cb_options)
+    })
+  })
+  observe({
+    req(input$staff.db1)
+    dsnames <- names(staff_db())
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$staff_MAJ1<- renderUI({
+      selectInput("staff_MAJ1", "Major (UG)", cb_options)
+    })
+  })
+  observe({
+    req(input$staff.db1)
+    dsnames <- names(staff_db())
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$staff_MAJ2<- renderUI({
+      selectInput("staff_MAJ2", "Major (GRAD)", cb_options)
+    })
+  })
+  observe({
+    req(input$staff.db1)
+    dsnames <- names(staff_db())
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$staff_MAJ3<- renderUI({
+      selectInput("staff_MAJ3", "Major (GRAD2)", cb_options)
     })
   })
   observe({
@@ -458,8 +538,26 @@ function(input,output, session){
     dsnames <- names(staff_db())
     cb_options <- list()
     cb_options[dsnames] <- dsnames
-    output$staff_LDZ<- renderUI({
-      selectInput("staff_LDZ", "LDZ Info", cb_options)
+    output$staff_LDZPOS<- renderUI({
+      selectInput("staff_LDZPOS", "LDZ POS", cb_options)
+    })
+  })
+  observe({
+    req(input$staff.db1)
+    dsnames <- names(staff_db())
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$staff_LDZYEAR<- renderUI({
+      selectInput("staff_LDZYEAR", "LDZ YEAR", cb_options)
+    })
+  })
+  observe({
+    req(input$staff.db1)
+    dsnames <- names(staff_db())
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$staff_LDZLOC<- renderUI({
+      selectInput("staff_LDZLOC", "LDZ LOC", cb_options)
     })
   })
   observe({
@@ -511,11 +609,20 @@ function(input,output, session){
     table_out$HSSTAT <- table_in[,input$staff_HSSTAT]
     table_out$HS <- table_in[,input$staff_HS]
     table_out$COLSTAT <- table_in[,input$staff_COLSTAT]
-    table_out$UNIV <- table_in[,input$staff_UNIV]
-    table_out$MAJ <- table_in[,input$staff_MAJ]
+    table_out$UNIV1 <- table_in[,input$staff_UNIV1]
+    table_out$MAJ1 <- table_in[,input$staff_MAJ1]
+    table_out$DEG1 <- table_in[,input$staff_DEG1]
+    table_out$UNIV2 <- table_in[,input$staff_UNIV2]
+    table_out$MAJ2 <- table_in[,input$staff_MAJ2]
+    table_out$DEG2 <- table_in[,input$staff_DEG2]
+    table_out$UNIV3 <- table_in[,input$staff_UNIV3]
+    table_out$MAJ3 <- table_in[,input$staff_MAJ3]
+    table_out$DEG3 <- table_in[,input$staff_DEG3]
     table_out$STAT <- table_in[,input$staff_STAT]
     table_out$GD <- table_in[,input$staff_GD]
-    table_out$LDZ <- table_in[,input$staff_LDZ]
+    table_out$LDZYEAR <- table_in[,input$staff_LDZYEAR]
+    table_out$LDZPOS <- table_in[,input$staff_LDZPOS]
+    table_out$LDZLOC <- table_in[,input$staff_LDZLOC]
     table_out$CWS <- table_in[,input$staff_CWS]
     table_out$ROLE <- table_in[,input$staff_ROLE]
     
@@ -526,8 +633,9 @@ function(input,output, session){
   
   ######################################### Upload the file to dropbox
   #Upload to DropBox
-  outputDir <- file.path("national_ldz/registrar")
+  
   observeEvent(input$upload_staffdemo, {
+    outputDir <- file.path("national_ldz/registrar")
     fileName="Registrar_StaffDB.csv"
     filePath <- file.path(tempdir(), fileName)
     write.csv(staff_database(), filePath, row.names = FALSE)
@@ -544,11 +652,11 @@ function(input,output, session){
   ##Generate database for Student Demographic Database
   
   ##Generate database for input Student Demographic Database
-  outputDir <- file.path("national_ldz/registrar")
+  outputDir <- file.path("national_ldz/onsite")
   observeEvent(input$upload_day0_studentdb, {
     day0_expect<- drop_read_csv("national_ldz/registrar/Registrar_StudentDB_Expected.csv")
     toggle('text_div')
-    output$confirm_day0studentdemo <- renderText({"Downloaded from: https://www.dropbox.com/home/national_ldz"})
+    output$confirm_day0studentdemo <- renderText({"Download below files from: https://www.dropbox.com/home/national_ldz/onsite"})
     
     ###Attendance and Travel Verification
     d0_travelverify <- day0_expect[c("FNAME", "MNAME", "LNAME", "CELL", "P1.CELL",
@@ -571,7 +679,7 @@ function(input,output, session){
     
     ###Student labels
     studlabels <- day0_expect[c("FNAME", "MNAME", "LNAME", "CITY", "ST", "HS",
-                                    "DOT")]
+                                    "DOT", "DOB", "VOTERID")]
     
     fileName="Onsite_StudentLabels.csv"
     filePath <- file.path(tempdir(), fileName)
@@ -599,7 +707,7 @@ function(input,output, session){
     ###Student Door signs
     studdoor <- day0_expect[c("STATUS", "FNAME", "MNAME", "LNAME", "CITY", "ST", "MF",
                                   "DORM", "ROOM", "DOT")]
-    studdoor <- subset(studdoor,!(STATUS=="NON-ATTEND"))
+    #studdoor <- subset(studdoor,!(STATUS=="NON-ATTEND"))
     studdoor <- studdoor[order(studdoor$MF, studdoor$ROOM),]
     fileName="Onsite_StudentDoorSigns.csv"
     filePath <- file.path(tempdir(), fileName)
@@ -623,17 +731,29 @@ function(input,output, session){
     write.csv(d0_room_M, filePath, row.names = FALSE)
     drop_upload(filePath, path = outputDir)
   })
+
   
-  ##Generate database for input Staff Demographic Database
-  outputDir <- file.path("national_ldz/registrar")
+  ##Download Staff database to temp, and upload the label file to DB and download to user drive
   observeEvent(input$upload_day0_staffdb, {
+    #Read the Staff DB and generate database for staff labels
     staff_file<- drop_read_csv("national_ldz/registrar/Registrar_StaffDB.csv")
-    toggle('text_div')
-    output$confirm_day0staffdemo <- renderText({"Files sent to: https://www.dropbox.com/home/national_ldz"})
-  
-    #Generate database for staff labels, and upload to DropBox
     staff_labels <- staff_file[c("FNAME", "MNAME", "LNAME","CITY", "ST", "HSSTAT", "HS",
-                                 "COLSTAT","UNIV","MAJ","ROLE")]
+                                 "COLSTAT","UNIV1","MAJ1","UNIV3","MAJ3","ROLE")]
+    
+    #Confirm message
+    toggle('text_div')
+    output$confirm_day0staffdemo <- renderText({"File sent to: https://www.dropbox.com/home/national_ldz/onsite"})
+    
+    #Download file
+    output$download_day0staffdemo <- downloadHandler(
+      filename = function() {"Onsite_StaffLabels.csv"},
+      content = function(file) {
+        write.csv(staff_labels, file, row.names = FALSE)
+      }
+    )
+    
+    #Upload to Dropbox
+    outputDir <- file.path("national_ldz/onsite")
     fileName="Onsite_StaffLabels.csv"
     filePath <- file.path(tempdir(), fileName)
     write.csv(staff_labels, filePath, row.names = FALSE)
@@ -830,7 +950,7 @@ function(input,output, session){
   
   ##Takes the input file saving it to staff database
   ##Generate database for input Student Demographic Database
-  outputDir <- file.path("national_ldz/protocol")
+  #outputDir <- file.path("national_ldz/protocol")
   
   observeEvent(input$proto.file1, {
     proto_stud<- drop_read_csv("national_ldz/registrar/Registrar_StudentDB_Expected.csv")

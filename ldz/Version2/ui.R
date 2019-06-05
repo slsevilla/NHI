@@ -79,7 +79,8 @@ hq.out.2 <- fluidRow(
 )
 hq.out.3 <- fluidRow(
   column(4, uiOutput("hq_HOME")),
-  column(4, uiOutput("hq_CELL"))
+  column(4, uiOutput("hq_CELL")),
+  column(4, uiOutput("hq_DOB"))
 )
 hq.out.4 <- fluidRow(
   column(4, uiOutput("hq_FIN.FORM")),
@@ -136,7 +137,7 @@ hq.combo <- fluidRow(
 #Generate Boxes for text submission and user downloads
 box.hq.1 <- box(title = "Upload Student Database File", width=12, status="primary", 
                 solidHeader = TRUE, hq.input)
-box.hq.2 <- box(title = "Ouput Files", width=12, status="primary", collapsible = TRUE, 
+box.hq.2 <- box(title = "Output Files", width=12, status="primary", collapsible = TRUE, 
                  solidHeader = TRUE, hq.combo)
 
 
@@ -172,19 +173,41 @@ staff.out.3 <- fluidRow(
   column(6, uiOutput("staff_HS"))
 )
 staff.out.4 <- fluidRow(
-  column(4, uiOutput("staff_COLSTAT")),
-  column(4, uiOutput("staff_UNIV")),
-  column(4, uiOutput("staff_MAJ"))
+  column(4, 
+         uiOutput("staff_DEG1"),
+         uiOutput("staff_UNIV1"),
+         uiOutput("staff_MAJ1"),
+         uiOutput("staff_COLSTAT")
+         ),
+  column(4,
+         uiOutput("staff_DEG2"),
+         uiOutput("staff_UNIV2"),
+         uiOutput("staff_MAJ2")
+         ),
+  column(4,
+         uiOutput("staff_DEG3"),
+         uiOutput("staff_UNIV3"),
+         uiOutput("staff_MAJ3")
+         )
 )
 staff.out.5 <- fluidRow(
   column(6, uiOutput("staff_STAT")),
   column(6, uiOutput("staff_ROLE"))
 )
 staff.out.6 <- fluidRow(
-  column(4, uiOutput("staff_GD")),
-  column(4, uiOutput("staff_LDZ")),
-  column(4, uiOutput("staff_CWS"))
+  column(4, 
+         uiOutput("staff_LDZPOS"),
+         uiOutput("staff_GD")
+         ),
+  column(4, 
+         uiOutput("staff_LDZYEAR"),
+         uiOutput("staff_CWS")
+         ),
+  column(4, 
+         uiOutput("staff_LDZLOC")
+         )
 )
+
 #################################Create one large output box
 staff.combo <- fluidRow(
   column(6,
@@ -193,15 +216,15 @@ staff.combo <- fluidRow(
          box(title="Location", width=NULL, status="primary", collapsible = TRUE,
              solidHeader = TRUE, staff.out.2),
          box(title="Role", width=NULL, status="primary", collapsible=TRUE,
-             solidHeader=TRUE, staff.out.5)
+             solidHeader=TRUE, staff.out.5),
+         box(title="NHI Info", width=NULL, status="primary", collapsible=TRUE,
+             solidHeader=TRUE, staff.out.6)
   ),
   column(6,
          box(title="High School", width=NULL, status="primary", collapsible = TRUE,
              solidHeader = TRUE, staff.out.3),
          box(title="College", width=NULL, status="primary", collapsible = TRUE,
-             solidHeader = TRUE, staff.out.4),
-         box(title="NHI Info", width=NULL, status="primary", collapsible=TRUE,
-             solidHeader=TRUE, staff.out.6)
+             solidHeader = TRUE, staff.out.4)
   )
 )
 
@@ -209,7 +232,7 @@ staff.combo <- fluidRow(
 ###Generate Boxes for text submission, confirmation, and user downloads
 box.staff.1 <- box(title = "Upload Staff Database File", width=12, status="primary", 
                 solidHeader = TRUE, staff.db.input)
-box.staff.2 <- box(title = "Ouput Files", width=12, status="primary", collapsible = TRUE, 
+box.staff.2 <- box(title = "Output Files", width=12, status="primary", collapsible = TRUE, 
                 solidHeader = TRUE, staff.combo)
 
 ##########################         MainBody - Day 0 Admin Tasks         ##############################
@@ -229,7 +252,8 @@ day0.input <- fluidRow(
          actionButton("upload_day0_staffdb", "Create Staff Output files"),
          hidden(
            div(id='text_div',
-               verbatimTextOutput("confirm_day0staffdemo"))
+               verbatimTextOutput("confirm_day0staffdemo")),
+           downloadButton('download_day0staffdemo', 'Download Staff Files')
          )
          )
   )
