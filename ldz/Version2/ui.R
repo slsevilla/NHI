@@ -35,8 +35,9 @@ sidebar <- dashboardSidebar(
  sidebarMenu(
   menuItem("HQ Database Conversion", tabName="HQ"),
   menuItem("Staff Database Conversion", tabName="Staff"),
-  menuItem("Day 0 Admin Tasks", tabName="admin_pre"),
-  menuItem("Day1-7 Admin Tasks", tabName="admin_post"),
+  menuItem("Day0 Admin Tasks", tabName="admin_pre"),
+  menuItem("Day1 Admin Tasks", tabName="admin_post1"),
+  menuItem("Day2-7 Admin Tasks", tabName="admin_post2"),
   menuItem("Protocol", tabName="protocol"),
   menuItem("Election", tabName="elect"),
   menuItem("Awards", tabName="awards"),
@@ -285,28 +286,24 @@ box.day0.1 <- box(title = "Admin File Generation", width=12, status="primary",
 box.day0.2 <- box(title = "Ouput Files", width=12, status="primary", 
               solidHeader = TRUE, day0.out.combo)
 
-##########################        MainBody - Day 1-7 Admin Tasks        ###############################
+##########################        MainBody - Day 1 Admin Tasks        ###############################
 #######################################################################################################
 ################################# Input Files
 admin.post.reg <- fluidRow(
   #File upload of live  updated students demographic
-  column(6,
+  column(12,
          fileInput("admin.post.file1", "Upload the Live_StudentRegistration file")
-  ),
-  #File upload of registered students demographic
-  column(6,
-         fileInput("admin.post.file2", "Upload the Registrar_StudentDB_Registered file")
   )
 )
 
 ################################Ouputs
 #Selection for user - Post Registration
-admin.post.1 <- fluidRow(
+admin.post1.1 <- fluidRow(
   column(6, downloadButton('download_post_registered', 'Download Student Registered File')),
   column(6, downloadButton('download_post_nonattend', 'Download Student Non-Attend File'))
 )
 #Selection for Demographic Report File
-admin.post.2 <- fluidRow(
+admin.post1.2 <- fluidRow(
   column(6, downloadButton('download_post_demoreport', 'Download Demographic Report File'))
   )
 
@@ -314,21 +311,63 @@ admin.post.2 <- fluidRow(
 admin.post.out.combo <- fluidRow(
   column(6,
          box(title="Registration Status", width=NULL, status="primary", collapsible = TRUE,
-             solidHeader = TRUE, admin.post.1)
+             solidHeader = TRUE, admin.post1.1)
   ),
   column(6,
          box(title="Demographic Report", width=NULL, status="primary", collapsible = TRUE,
-             solidHeader = TRUE, admin.post.2)
+             solidHeader = TRUE, admin.post1.2)
          )
 )
 
 #################################Create boxes
 #Generate Boxes for text submission, verification, and user options
 
-box.post.1 <- box(title = "Create Post Registration Database File", width=8, status="primary", 
+box.post1.1 <- box(title = "Create Post Registration Database File", width=8, status="primary", 
                   solidHeader = TRUE, admin.post.reg)
-box.post.2 <- box(title = "Output Files", width=12, status="primary", 
+box.post1.2 <- box(title = "Output Files", width=12, status="primary", 
                   solidHeader = TRUE, admin.post.out.combo)
+
+##########################        MainBody - Day 2 Admin Tasks        ###############################
+#######################################################################################################
+################################Ouputs
+
+
+#Selection for user - Post Registration
+admin.post2.1 <- fluidRow(
+  column(12, 
+         actionButton("upload_tshirts", "Create Student Tshirt Files"),
+         hidden(
+           div(id='text_div',
+               verbatimTextOutput("confirm_tshirt"))
+         )),
+  
+  column(6,
+         downloadButton('download_post_tshirts', 'Download TShirt Lists')
+  )
+)
+#Selection for Demographic Report File
+admin.post2.2 <- fluidRow(
+  #column(6, downloadButton('download_post_demoreport', 'Download Demographic Report File'))
+)
+
+#Combine all previous rows together
+admin.post.out.combo <- fluidRow(
+  column(6,
+         box(title="TShirt", width=NULL, status="primary", collapsible = TRUE,
+             solidHeader = TRUE, admin.post2.1)
+  ),
+  column(6,
+         box(title="", width=NULL, status="primary", collapsible = TRUE,
+             solidHeader = TRUE, admin.post2.2)
+  )
+)
+
+#################################Create boxes
+#Generate Boxes for text submission, verification, and user options
+
+box.post2.1 <- box(title = "Output Files", width=12, status="primary", 
+                   solidHeader = TRUE, admin.post.out.combo)
+
 
 ##########################             MainBody - Awards                 ###############################
 #######################################################################################################
@@ -442,13 +481,10 @@ box.merch.2 <- box(title = "Ouput Files", width=12, status="primary",
 ###Upload registration database, nominee database, winner database
 elect.input <- fluidRow(
   column(6,
-         fileInput("elect.file1","Upload the Registrar_StudentDB_Registered File")
+         fileInput("elect.file1","Upload the Elections_Nominee File")
   ),
   column(6,
-         fileInput("elect.file2","Upload the Elections_NomineeFillin (Updated with info!) File")
-  ),
-  column(6,
-         fileInput("elect.file3","Upload the Elections_WinnerFillin (Updated with info!) File")
+         fileInput("elect.file3","Upload the Elections_Results File")
   ),
   column(6,
          fileInput("elect.file4","Upload the Elections_CommishReport File")
@@ -458,9 +494,6 @@ elect.input <- fluidRow(
 ##Ouputs selection for user - Nominees and winners
 elect.out.1 <- fluidRow(
   column(6, 
-         downloadButton('download_elect_nomineefillin', 'Download Nominee Fill-in')
-  ),
-  column(6, 
          downloadButton('download_elect_nomineeroster', 'Download Nominee Roster')
   ),
   column(6, 
@@ -468,14 +501,15 @@ elect.out.1 <- fluidRow(
   )
 )
 elect.out.2 <- fluidRow(
-  column(6, 
-         downloadButton('download_elect_winnersfillin', 'Download Election Winner Fill-in')
-  ),
   column(6,
          downloadButton('download_election_commish','Download Commisioners Report')
   ),
   column(6,
-         downloadButton('download_election_registrar','Download Registrar_StudentDB_Elections ')
+         actionButton('election_registration','Update the Registrars Database'),
+         hidden(
+           div(id='text_div',
+               verbatimTextOutput("confirm_electionreg"))
+         )
   )
 )
 
@@ -551,10 +585,13 @@ body <- dashboardBody(
           box.day0.1, 
           box.day0.2
           ),
-  tabItem(tabName="admin_post",
-          box.post.1,
-          box.post.2
+  tabItem(tabName="admin_post1",
+          box.post1.1,
+          box.post1.2
           ),
+  tabItem(tabName="admin_post2",
+          box.post2.1
+  ),
   tabItem(tabName="protocol",
           box.proto.1,
           box.proto.2

@@ -40,3 +40,5 @@ ftc <- read.csv("C:\\Users\\sevillas2\\Google Drive\\My Documents\\Programs & Or
 reg <- read.csv("C:\\Users\\slsevilla\\Google Drive\\My Documents\\Programs & Orgs\\National Hispanic Institute\\2018 National LDZ\\Director Guides\\Downloaded Files\\Registrar_StudentDB_Elections.csv", header=TRUE)
 points <- read.csv("C:\\Users\\slsevilla\\Google Drive\\My Documents\\Programs & Orgs\\National Hispanic Institute\\2018 National LDZ\\Director Guides\\Downloaded Files\\2018_LiveProposal - House Proposal Log (1).csv", header=TRUE)
 
+elect_winners <- read.csv("C:\\Users\\sevillas2\\Downloads\\Elections - Results.csv")
+
