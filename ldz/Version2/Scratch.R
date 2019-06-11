@@ -41,4 +41,10 @@ reg <- read.csv("C:\\Users\\slsevilla\\Google Drive\\My Documents\\Programs & Or
 points <- read.csv("C:\\Users\\slsevilla\\Google Drive\\My Documents\\Programs & Orgs\\National Hispanic Institute\\2018 National LDZ\\Director Guides\\Downloaded Files\\2018_LiveProposal - House Proposal Log (1).csv", header=TRUE)
 
 elect_winners <- read.csv("C:\\Users\\sevillas2\\Downloads\\Elections - Results.csv")
-
+elect_winners<-elect_winners[c("FNAME", "MNAME", "LNAME", "CITY", "ST_NAME", "DORM", "ROOM", "VOTERID", "SENATE",
+                               "SENATE_WIN","SUPREME.JUSTICE", "SUPREME.JUSTICE_WIN","VP", "VP_WIN", "ATTORNEY_WIN",
+                               "PRES","PRES_WIN")]
+elect_special <- read.csv("C:\\Users\\sevillas2\\Downloads\\Elections - Special.csv")
+elect_special<-elect_special[c("FNAME", "MNAME", "LNAME", "VOTERID", "HorS_Clerk",	"HorS_Srgt",
+   "HorS_Majority", "HorS_Minor", "ChiefNominees",	"Cabinet",	"SpeakerOfHouse",
+   "HorS_Chair","SpeakerProTemp")]

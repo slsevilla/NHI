@@ -32,22 +32,22 @@ header <- dashboardHeader(title = "Lorenzo de Zavala Youth Legislative Session")
 
 ##Create the sidebard 
 sidebar <- dashboardSidebar(
- sidebarMenu(
-  menuItem("HQ Database Conversion", tabName="HQ"),
-  menuItem("Staff Database Conversion", tabName="Staff"),
-  menuItem("Day0 Admin Tasks", tabName="admin_pre"),
-  menuItem("Day1 Admin Tasks", tabName="admin_post1"),
-  menuItem("Day2-7 Admin Tasks", tabName="admin_post2"),
-  menuItem("Protocol", tabName="protocol"),
-  menuItem("Election", tabName="elect"),
-  menuItem("Awards", tabName="awards"),
-  menuItem("Merchandise", tabName="merch"),
-  menuItem("Legislative", tabName="leg"),
-  menuItem("Judicial", tabName="jud")
+  sidebarMenu(
+    menuItem("HQ Database Conversion", tabName="HQ"),
+    menuItem("Staff Database Conversion", tabName="Staff"),
+    menuItem("Day0 Admin Tasks", tabName="admin_pre"),
+    menuItem("Day1 Admin Tasks", tabName="admin_post1"),
+    menuItem("Day2-7 Admin Tasks", tabName="admin_post2"),
+    menuItem("Protocol", tabName="protocol"),
+    menuItem("Election", tabName="elect"),
+    menuItem("Awards", tabName="awards"),
+    menuItem("Merchandise", tabName="merch"),
+    menuItem("Legislative", tabName="leg"),
+    menuItem("Judicial", tabName="jud")
   )
- )
+)
 
-##########################      MainBody - HQ Database Conversion        ########################
+##########################        MainBody - HQ Database Conversion        ########################
 #######################################################################################################
 
 ######################################### Input
@@ -71,7 +71,7 @@ hq.out.1 <- fluidRow(
   column(4, uiOutput("hq_FNAME")),
   column(4, uiOutput("hq_MNAME")),
   column(4, uiOutput("hq_LNAME"))
-  )
+)
 hq.out.2 <- fluidRow(
   column(3, uiOutput("hq_MF")),
   column(3, uiOutput("hq_HS")),
@@ -139,10 +139,10 @@ hq.combo <- fluidRow(
 box.hq.1 <- box(title = "Upload Student Database File", width=12, status="primary", 
                 solidHeader = TRUE, hq.input)
 box.hq.2 <- box(title = "Output Files", width=12, status="primary", collapsible = TRUE, 
-                 solidHeader = TRUE, hq.combo)
+                solidHeader = TRUE, hq.combo)
 
 
-##########################      MainBody - Staff Database Conversion    ##########################
+##########################        MainBody - Staff Database Conversion    ##########################
 ########################################################################################################
 ################################Staff Demographic File
 ##File upload of Staff demographic file
@@ -179,17 +179,17 @@ staff.out.4 <- fluidRow(
          uiOutput("staff_UNIV1"),
          uiOutput("staff_MAJ1"),
          uiOutput("staff_COLSTAT")
-         ),
+  ),
   column(4,
          uiOutput("staff_DEG2"),
          uiOutput("staff_UNIV2"),
          uiOutput("staff_MAJ2")
-         ),
+  ),
   column(4,
          uiOutput("staff_DEG3"),
          uiOutput("staff_UNIV3"),
          uiOutput("staff_MAJ3")
-         )
+  )
 )
 staff.out.5 <- fluidRow(
   column(6, uiOutput("staff_STAT")),
@@ -199,14 +199,14 @@ staff.out.6 <- fluidRow(
   column(4, 
          uiOutput("staff_LDZPOS"),
          uiOutput("staff_GD")
-         ),
+  ),
   column(4, 
          uiOutput("staff_LDZYEAR"),
          uiOutput("staff_CWS")
-         ),
+  ),
   column(4, 
          uiOutput("staff_LDZLOC")
-         )
+  )
 )
 
 #################################Create one large output box
@@ -232,11 +232,11 @@ staff.combo <- fluidRow(
 ##################################Create page boxes
 ###Generate Boxes for text submission, confirmation, and user downloads
 box.staff.1 <- box(title = "Upload Staff Database File", width=12, status="primary", 
-                solidHeader = TRUE, staff.db.input)
+                   solidHeader = TRUE, staff.db.input)
 box.staff.2 <- box(title = "Output Files", width=12, status="primary", collapsible = TRUE, 
-                solidHeader = TRUE, staff.combo)
+                   solidHeader = TRUE, staff.combo)
 
-##########################         MainBody - Day 0 Admin Tasks         ##############################
+##########################        MainBody - Day 0 Admin Tasks         ##############################
 ########################################################################################################
 
 ######################################### Input File
@@ -256,8 +256,8 @@ day0.input <- fluidRow(
                verbatimTextOutput("confirm_day0staffdemo")),
            downloadButton('download_day0staffdemo', 'Download Staff Files')
          )
-         )
   )
+)
 
 ############################### Create one large output box
 day0.out.combo <- fluidRow(
@@ -282,9 +282,9 @@ day0.out.combo <- fluidRow(
 ############################### Create page boxes
 ###Generate Boxes for text submission, confirmation, and user downloads
 box.day0.1 <- box(title = "Admin File Generation", width=12, status="primary", 
-              solidHeader = TRUE, day0.input)
+                  solidHeader = TRUE, day0.input)
 box.day0.2 <- box(title = "Ouput Files", width=12, status="primary", 
-              solidHeader = TRUE, day0.out.combo)
+                  solidHeader = TRUE, day0.out.combo)
 
 ##########################        MainBody - Day 1 Admin Tasks        ###############################
 #######################################################################################################
@@ -305,7 +305,7 @@ admin.post1.1 <- fluidRow(
 #Selection for Demographic Report File
 admin.post1.2 <- fluidRow(
   column(6, downloadButton('download_post_demoreport', 'Download Demographic Report File'))
-  )
+)
 
 #Combine all previous rows together
 admin.post.out.combo <- fluidRow(
@@ -316,22 +316,19 @@ admin.post.out.combo <- fluidRow(
   column(6,
          box(title="Demographic Report", width=NULL, status="primary", collapsible = TRUE,
              solidHeader = TRUE, admin.post1.2)
-         )
+  )
 )
 
 #################################Create boxes
 #Generate Boxes for text submission, verification, and user options
 
 box.post1.1 <- box(title = "Create Post Registration Database File", width=8, status="primary", 
-                  solidHeader = TRUE, admin.post.reg)
+                   solidHeader = TRUE, admin.post.reg)
 box.post1.2 <- box(title = "Output Files", width=12, status="primary", 
-                  solidHeader = TRUE, admin.post.out.combo)
+                   solidHeader = TRUE, admin.post.out.combo)
 
 ##########################        MainBody - Day 2 Admin Tasks        ###############################
 #######################################################################################################
-################################Ouputs
-
-
 #Selection for user - Post Registration
 admin.post2.1 <- fluidRow(
   column(12, 
@@ -369,7 +366,7 @@ box.post2.1 <- box(title = "Output Files", width=12, status="primary",
                    solidHeader = TRUE, admin.post.out.combo)
 
 
-##########################             MainBody - Awards                 ###############################
+##########################        MainBody - Awards                 ###############################
 #######################################################################################################
 ############################### #Voting
 points.1 <- fluidRow(
@@ -383,10 +380,13 @@ points.1 <- fluidRow(
          fileInput("points.file3","Upload the Election_WinnerFillin File")
   ),
   column(6, 
-         downloadButton('download_election_nomfillin', 'Download Election_NomFillin File')
-  ),
+         actionButton("upload_nomids", "Create Nomination ID Files"),
+         hidden(
+           div(id='text_div',
+               verbatimTextOutput("confirm_voterid"))
+         )),
   column(6, 
-         downloadButton('download_points_nom', 'Download Award_ElectNom File')
+         downloadButton('download_voterID', 'Download Voter_ID Files')
   ),
   column(6, 
          downloadButton('download_points_elect', 'Download Award_ElectWin File')
@@ -395,9 +395,9 @@ points.1 <- fluidRow(
 
 ################################ Generate Boxes for text submission, verification, and user options
 box.points.1 <- box(title = "Elections", width=12, 
-              status="primary", solidHeader = TRUE, points.1)
+                    status="primary", solidHeader = TRUE, points.1)
 
-##########################             MainBody - Protocol             ################################
+##########################        MainBody - Protocol             ################################
 #######################################################################################################
 ##Create rows of data
 ###Upload Forming the Community Database
@@ -414,15 +414,24 @@ proto.out.1 <- fluidRow(
          downloadButton('download_ftc_staff', 'Download FTC_Staff')
   )
 )
-
+proto.out.2 <- fluidRow(
+  column(6#, 
+         #downloadButton('download_ftc_protocol', 'Download FTC_Protocol'),
+         #downloadButton('download_ftc_staff', 'Download FTC_Staff')
+  )
+)
 
 ###Combine all outputs together
 proto.combo<- fluidRow(
-  column(12,
+  column(6,
          box(title="Forming the Community Output", width=NULL, status="primary", collapsible = TRUE,
              solidHeader = TRUE, 
              "Wait 10 seconds after submission before selecting DOWNLOAD:", br(), br(), 
-             proto.out.1 )
+             proto.out.1 ),
+         box(title="Awards File", width=NULL, status="primary", collapsible = TRUE,
+             solidHeader = TRUE, 
+             "Wait 10 seconds after submission before selecting DOWNLOAD:", br(), br(), 
+             proto.out.2 )
   )
 )
 
@@ -433,7 +442,7 @@ box.proto.1 <- box(title = "Forming the Community", width=12,
 box.proto.2 <- box(title = "Ouput Files", width=12, status="primary", 
                    solidHeader = TRUE, proto.combo)
 
-##########################             MainBody - Merchandise            ###############################
+##########################        MainBody - Merchandise            ###############################
 ########################################################################################################
 ################################ Input Files
 #Import Merchandise Ledger and Inventory File
@@ -441,7 +450,7 @@ merch.inv <- fluidRow(
   column(6,
          fileInput("merch.file1","Upload the Merchandise Ledger File")
   ),
- column(6,
+  column(6,
          fileInput("merch.file2","Upload the Inventory File")
   )
 )
@@ -449,11 +458,11 @@ merch.inv <- fluidRow(
 ###############################Ouputs selection for user 
 merch.out.1 <- fluidRow(
   column(12, downloadButton('download_merch_ledger', 'Download Merch Ledger'))
-  )
+)
 merch.out.2 <- fluidRow(
   column(6,uiOutput("merch.day")),
   column(6, downloadButton('download_merch_inv', 'Download Inventory'))
-  )
+)
 
 ############################### Combine all outputs together
 merch.combo<- fluidRow(
@@ -475,19 +484,19 @@ box.merch.1 <- box(title = "Merchandise Inputs", width=12,
 box.merch.2 <- box(title = "Ouput Files", width=12, status="primary", 
                    solidHeader = TRUE, merch.combo)
 
-##########################              MainBody - Elections             ###############################
+##########################        MainBody - Elections             ###############################
 ########################################################################################################
 ##Create rows of data
 ###Upload registration database, nominee database, winner database
 elect.input <- fluidRow(
   column(6,
-         fileInput("elect.file1","Upload the Elections_Nominee File")
+         fileInput("elect.file1","Upload the Elections-Nominations File")
   ),
   column(6,
-         fileInput("elect.file3","Upload the Elections_Results File")
+         fileInput("elect.file2","Upload the Elections-Results File")
   ),
   column(6,
-         fileInput("elect.file4","Upload the Elections_CommishReport File")
+         fileInput("elect.file3","Upload the Elections-Special File")
   )
 )
 
@@ -505,17 +514,41 @@ elect.out.2 <- fluidRow(
          downloadButton('download_election_commish','Download Commisioners Report')
   ),
   column(6,
-         actionButton('election_registration','Update the Registrars Database'),
+         actionButton('election_registration','Update the Registrars Database- Primary Elections'),
          hidden(
            div(id='text_div',
                verbatimTextOutput("confirm_electionreg"))
          )
+  ),
+  column(6,
+         actionButton('election_registration2','Update the Registrars Database- Special Elections'),
+         hidden(
+           div(id='text_div',
+               verbatimTextOutput("confirm_electionreg2"))
+         )
   )
+)
+elect.out.3 <- fluidRow(
+  column(6,
+         actionButton('election_ids','Create Voter ID files'),
+         hidden(
+           div(id='text_div',
+               verbatimTextOutput("confirm_electionids"))
+         )),
+  column(6,
+         actionButton('election_candidates','Create Candidate files'),
+         hidden(
+           div(id='text_div',
+               verbatimTextOutput("confirm_electcand"))
+         ))
 )
 
 ###Combine all outputs together
 elect.combo<- fluidRow(
   column(12,
+         box(title="Nominations", width=NULL, status="primary", collapsible = TRUE,
+             solidHeader = TRUE, elect.out.3)
+  ),column(12,
          box(title="Nominations", width=NULL, status="primary", collapsible = TRUE,
              solidHeader = TRUE, elect.out.1)
   ),
@@ -525,7 +558,6 @@ elect.combo<- fluidRow(
   )
 )
 
-
 ##Create boxed for Page 1
 ###Generate Boxes for text submission, verification, and user options
 box.elect.1 <- box(title = "Election Inputs", width=12, 
@@ -533,12 +565,12 @@ box.elect.1 <- box(title = "Election Inputs", width=12,
 box.elect.2 <- box(title = "Ouput Files", width=12, status="primary", 
                    solidHeader = TRUE, elect.combo)
 
-############################         MainBody - Legislative         ##############################
+##########################        MainBody - Legislative         ##############################
 ########################################################################################################
 
 
 
-############################         MainBody - Judicial         ##############################
+##########################        MainBody - Judicial         ##############################
 ########################################################################################################
 
 ######################################### Input File
@@ -564,53 +596,53 @@ jud.out.combo <- fluidRow(
 ############################### Create page boxes
 ###Generate Boxes for text submission, confirmation, and user downloads
 box.jud.1 <- box(title = "Upload Pre-Registration Database File", width=12, status="primary", 
-                  solidHeader = TRUE, jud.input)
+                 solidHeader = TRUE, jud.input)
 box.jud.2 <- box(title = "Ouput Files", width=12, status="primary", 
-                  solidHeader = TRUE, jud.out.combo)
+                 solidHeader = TRUE, jud.out.combo)
 
 ########################## Output Main Body Information ###############################
 #######################################################################################
 ##Combine all body information, and assign outputs to each appropriate tab 
 body <- dashboardBody(
- tabItems(
-   tabItem(tabName="HQ",
-           box.hq.1, 
-           box.hq.2
-   ),
-   tabItem(tabName="Staff",
-           box.staff.1, 
-           box.staff.2
-   ),
-   tabItem(tabName="admin_pre",
-          box.day0.1, 
-          box.day0.2
-          ),
-  tabItem(tabName="admin_post1",
-          box.post1.1,
-          box.post1.2
-          ),
-  tabItem(tabName="admin_post2",
-          box.post2.1
-  ),
-  tabItem(tabName="protocol",
-          box.proto.1,
-          box.proto.2
-  ),
-  tabItem(tabName="awards",
-          box.points.1
-  ),
-  tabItem(tabName="merch",
-          box.merch.1,
-          box.merch.2
-  ),
-  tabItem(tabName="elect",
-          box.elect.1,
-          box.elect.2
-  ),
-  tabItem(tabName="jud",
-          box.jud.1,
-          box.jud.2
+  tabItems(
+    tabItem(tabName="HQ",
+            box.hq.1, 
+            box.hq.2
+    ),
+    tabItem(tabName="Staff",
+            box.staff.1, 
+            box.staff.2
+    ),
+    tabItem(tabName="admin_pre",
+            box.day0.1, 
+            box.day0.2
+    ),
+    tabItem(tabName="admin_post1",
+            box.post1.1,
+            box.post1.2
+    ),
+    tabItem(tabName="admin_post2",
+            box.post2.1
+    ),
+    tabItem(tabName="protocol",
+            box.proto.1,
+            box.proto.2
+    ),
+    tabItem(tabName="awards",
+            box.points.1
+    ),
+    tabItem(tabName="merch",
+            box.merch.1,
+            box.merch.2
+    ),
+    tabItem(tabName="elect",
+            box.elect.1,
+            box.elect.2
+    ),
+    tabItem(tabName="jud",
+            box.jud.1,
+            box.jud.2
+    )
   )
- )
 )
 dashboardPage(header,sidebar,body)
