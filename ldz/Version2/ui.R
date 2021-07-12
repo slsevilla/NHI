@@ -5,8 +5,7 @@ library(shinyjs)
 library(shinydashboard)
 library("RColorBrewer")
 library(rJava)
-library(ReporteRsjars)
-library(ReporteRs)
+library(officer)
 #####################################################################################################
 #####################################################################################################
 ###                                            NOTES                                            ###
@@ -41,8 +40,6 @@ sidebar <- dashboardSidebar(
     menuItem("Protocol", tabName="protocol"),
     menuItem("Election", tabName="elect"),
     menuItem("Awards", tabName="awards"),
-    menuItem("Merchandise", tabName="merch"),
-    menuItem("Legislative", tabName="leg"),
     menuItem("Judicial", tabName="jud")
   )
 )
@@ -55,13 +52,21 @@ sidebar <- dashboardSidebar(
 hq.input <- fluidRow(
   column(12,
          fileInput("hq.file1","Upload the HQ Provided Demographic File (MUST be a CSV file)"),
-         #downloadButton('download_hq', 'Download new Database'),
+         #downloadButton('download_hq', 'Download new database'),
          actionButton("upload_hqdemo", "Submit file to DropBox"),
          hidden(
            div(id='text_div',
                verbatimTextOutput("confirm_uploadhqdemo"))
          )
   )
+)
+
+######################################### Program Info
+hq.program <- fluidRow(
+  column(12,
+         uiOutput("hq_progyear"),
+         uiOutput("hq_progloc")
+         )
 )
 
 ######################################### Outputs for Database
@@ -138,7 +143,9 @@ hq.combo <- fluidRow(
 #Generate Boxes for text submission and user downloads
 box.hq.1 <- box(title = "Upload Student Database File", width=12, status="primary", 
                 solidHeader = TRUE, hq.input)
-box.hq.2 <- box(title = "Output Files", width=12, status="primary", collapsible = TRUE, 
+box.hq.2 <- box(title = "Select Program Info", width=12, status="primary", collapsible = TRUE, 
+                solidHeader = TRUE, hq.program)
+box.hq.3 <- box(title = "Output Files", width=12, status="primary", collapsible = TRUE, 
                 solidHeader = TRUE, hq.combo)
 
 
@@ -154,6 +161,14 @@ staff.db.input <- fluidRow(
            div(id='text_div',
                verbatimTextOutput("confirm_uploadstaffdemo"))
          )
+  )
+)
+
+######################################### Program Info
+staff.program <- fluidRow(
+  column(12,
+         uiOutput("staff_progyear"),
+         uiOutput("staff_progloc")
   )
 )
 
@@ -234,11 +249,19 @@ staff.combo <- fluidRow(
 box.staff.1 <- box(title = "Upload Staff Database File", width=12, status="primary", 
                    solidHeader = TRUE, staff.db.input)
 box.staff.2 <- box(title = "Output Files", width=12, status="primary", collapsible = TRUE, 
+                   solidHeader = TRUE, staff.program)
+box.staff.3 <- box(title = "Output Files", width=12, status="primary", collapsible = TRUE, 
                    solidHeader = TRUE, staff.combo)
-
 ##########################        MainBody - Day 0 Admin Tasks         ##############################
 ########################################################################################################
 
+######################################### Program Info
+day0.program <- fluidRow(
+  column(12,
+         uiOutput("day0_progyear"),
+         uiOutput("day0_progloc")
+  )
+)
 ######################################### Input File
 ###File upload of excepted demographics, created from Page1
 day0.input <- fluidRow(
@@ -275,7 +298,7 @@ day0.out.combo <- fluidRow(
          box(title = "Staff Related Files", 
              width=NULL, status="primary", collapsible = TRUE,
              solidHeader = TRUE, 
-             "Staff Labels (Onsite_StaffLabels.csv)")
+             "Staff Labels")
   )
 )
 
@@ -283,7 +306,9 @@ day0.out.combo <- fluidRow(
 ###Generate Boxes for text submission, confirmation, and user downloads
 box.day0.1 <- box(title = "Admin File Generation", width=12, status="primary", 
                   solidHeader = TRUE, day0.input)
-box.day0.2 <- box(title = "Ouput Files", width=12, status="primary", 
+box.day0.2 <- box(title = "Select Program Info", width=12, status="primary", collapsible = TRUE, 
+                solidHeader = TRUE, day0.program)
+box.day0.3 <- box(title = "Output Files", width=12, status="primary", 
                   solidHeader = TRUE, day0.out.combo)
 
 ##########################        MainBody - Day 1 Admin Tasks        ###############################
@@ -296,26 +321,32 @@ admin.post.reg <- fluidRow(
   )
 )
 
-################################Ouputs
-#Selection for user - Post Registration
-admin.post1.1 <- fluidRow(
-  column(6, downloadButton('download_post_registered', 'Download Student Registered File')),
-  column(6, downloadButton('download_post_nonattend', 'Download Student Non-Attend File'))
+######################################### Program Info
+admin.program <- fluidRow(
+  column(12,
+         uiOutput("day1_progyear"),
+         uiOutput("day1_progloc")
+  )
 )
-#Selection for Demographic Report File
-admin.post1.2 <- fluidRow(
-  column(6, downloadButton('download_post_demoreport', 'Download Demographic Report File'))
+################################Ouputs
+admin.post.input <- fluidRow(
+  column(6,
+         actionButton("upload_day1_registration", "Create Student Registration Files"),
+         hidden(
+           div(id='text_div',
+               verbatimTextOutput("confirm_day1studentdemo"))
+         )
+  )
 )
 
 #Combine all previous rows together
 admin.post.out.combo <- fluidRow(
   column(6,
-         box(title="Registration Status", width=NULL, status="primary", collapsible = TRUE,
-             solidHeader = TRUE, admin.post1.1)
-  ),
-  column(6,
-         box(title="Demographic Report", width=NULL, status="primary", collapsible = TRUE,
-             solidHeader = TRUE, admin.post1.2)
+         box(title="Registration Files", width=NULL, status="primary", collapsible = TRUE,
+             solidHeader = TRUE, 
+             "Student Registered", br(),
+             "Demographic Report", br(),
+             "Student Non-Attennd")
   )
 )
 
@@ -324,7 +355,11 @@ admin.post.out.combo <- fluidRow(
 
 box.post1.1 <- box(title = "Create Post Registration Database File", width=8, status="primary", 
                    solidHeader = TRUE, admin.post.reg)
-box.post1.2 <- box(title = "Output Files", width=12, status="primary", 
+box.post1.2 <- box(title = "Select Program Info", width=8, status="primary", 
+                   solidHeader = TRUE, admin.program)
+box.post1.3 <- box(title = "Send files to Dropbox", width=8, status="primary", 
+                   solidHeader = TRUE, admin.post.input)
+box.post1.4 <- box(title = "Output Files", width=12, status="primary", 
                    solidHeader = TRUE, admin.post.out.combo)
 
 ##########################        MainBody - Day 2 Admin Tasks        ###############################
@@ -606,20 +641,24 @@ box.jud.2 <- box(title = "Ouput Files", width=12, status="primary",
 body <- dashboardBody(
   tabItems(
     tabItem(tabName="HQ",
-            box.hq.1, 
-            box.hq.2
+            box.hq.1,
+            box.hq.2,
+            box.hq.3
     ),
     tabItem(tabName="Staff",
             box.staff.1, 
-            box.staff.2
+            box.staff.2,
+            box.staff.3
     ),
     tabItem(tabName="admin_pre",
-            box.day0.1, 
-            box.day0.2
+            box.day0.2,
+            box.day0.1,
+            box.day0.3
     ),
     tabItem(tabName="admin_post1",
             box.post1.1,
-            box.post1.2
+            box.post1.2,
+            box.post1.3
     ),
     tabItem(tabName="admin_post2",
             box.post2.1

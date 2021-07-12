@@ -51,6 +51,24 @@ function(input,output, session){
   ##Generate Drop Downs for user to choose
   observe({
     req(input$hq.file1)
+    dsnames <- c("2021","2022","2023","2024")
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$hq_progyear<- renderUI({
+      selectInput("hq_progyear", "Program Year", cb_options)
+    })
+  })
+  observe({
+    req(input$hq.file1)
+    dsnames <- c("National","CO","CA","TX","NY","LDZX")
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$hq_progloc<- renderUI({
+      selectInput("hq_progloc", "Program Location", cb_options)
+    })
+  })
+  observe({
+    req(input$hq.file1)
     dsnames <- names(hq_input())
     cb_options <- list()
     cb_options[dsnames] <- dsnames
@@ -348,13 +366,13 @@ function(input,output, session){
   ######################################### Upload the file to dropbox
   #Upload to DropBox
   observeEvent(input$upload_hqdemo, {
-    outputDir <- file.path("national_ldz/registrar")
+    outputDir <- file.path(paste0("ldz/",input$hq_progyear,"_",input$hq_progloc,"/registrar"))
     fileName="Registrar_StudentDB_Expected.csv"
     filePath <- file.path(tempdir(), fileName)
     write.csv(hq_database(), filePath, row.names = FALSE)
     drop_upload(filePath, path = outputDir)
     toggle('text_div')
-    output$confirm_uploadhqdemo <- renderText({"Check the file upload status: https://www.dropbox.com/home/national_ldz"})
+    output$confirm_uploadhqdemo <- renderText({"Check the file upload status: https://www.dropbox.com/home/ldz/[yourprograminfo]/registrar"})
   })
   
   #########################         Staff Database Conversion         ##############################
@@ -371,6 +389,24 @@ function(input,output, session){
   
   ######################################### User Dropdowns
   ##Generate Drop Downs for user to choose
+  observe({
+    req(input$staff.db1)
+    dsnames <- c("2021","2022","2023","2024")
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$staff_progyear<- renderUI({
+      selectInput("staff_progyear", "Program Year", cb_options)
+    })
+  })
+  observe({
+    req(input$staff.db1)
+    dsnames <- c("National","CO","CA","TX","NY","LDZX")
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$staff_progloc<- renderUI({
+      selectInput("staff_progloc", "Program Location", cb_options)
+    })
+  })
   observe({
     req(input$staff.db1)
     dsnames <- names(staff_db())
@@ -633,15 +669,14 @@ function(input,output, session){
   
   ######################################### Upload the file to dropbox
   #Upload to DropBox
-  
   observeEvent(input$upload_staffdemo, {
-    outputDir <- file.path("national_ldz/registrar")
+    outputDir <- file.path(paste0("ldz/",input$staff_progyear,"_",input$staff_progloc,"/staff"))
     fileName="Registrar_StaffDB.csv"
     filePath <- file.path(tempdir(), fileName)
     write.csv(staff_database(), filePath, row.names = FALSE)
     drop_upload(filePath, path = outputDir)
     toggle('text_div')
-    output$confirm_uploadstaffdemo <- renderText({"Check the file upload status: https://www.dropbox.com/home/national_ldz"})
+    output$confirm_uploadstaffdemo <- renderText({"Check the file upload status: https://www.dropbox.com/home/ldz/[yourprograminfo]/registrar"})
   })
   
   
@@ -650,15 +685,29 @@ function(input,output, session){
   
   ######################################### File input
   ##Generate database for Student Demographic Database
-  
-  ##Generate database for input Student Demographic Database
+  observe({
+    dsnames <- c("2021","2022","2023","2024")
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$day0_progyear<- renderUI({
+      selectInput("day0_progyear", "Program Year", cb_options)
+    })
+  })
+  observe({
+    dsnames <- c("National","CO","CA","TX","NY","LDZX")
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$day0_progloc<- renderUI({
+      selectInput("day0_progloc", "Program Location", cb_options)
+    })
+  })
   observeEvent(input$upload_day0_studentdb, {
-    day0_expect<- drop_read_csv("national_ldz/registrar/Registrar_StudentDB_Expected.csv")
+    day0_expect<- drop_read_csv(paste0("ldz/",input$day0_progyear,"_",input$day0_progloc,"/registrar/Registrar_StudentDB_Expected.csv"))
     toggle('text_div')
-    output$confirm_day0studentdemo <- renderText({"Download below files from: https://www.dropbox.com/home/national_ldz/onsite"})
+    output$confirm_day0studentdemo <- renderText({"Download below files from: https://www.dropbox.com/home/[yourporgraminfo]/registrar"})
     
     ###Attendance and Travel Verification
-    outputDir <- file.path("national_ldz/onsite")
+    outputDir <- file.path(paste0("ldz/",input$day0_progyear,"_",input$day0_progloc,"/registrar/"))
     d0_travelverify <- day0_expect[c("FNAME", "MNAME", "LNAME", "CELL", "P1.CELL",
                                      "P2.CELL", "ARRIVAL_AIR", "ARRIVAL_TIME",
                                      "ARRIVAL_CARRIER", "ARRIVAL_FLIGHT",
@@ -669,7 +718,7 @@ function(input,output, session){
     drop_upload(filePath, path = outputDir)
     
     ####Student Self Verification forms
-    outputDir <- file.path("national_ldz/registrar")
+    outputDir <- file.path(paste0("ldz/",input$day0_progyear,"_",input$day0_progloc,"/registrar"))
     d0_studselfverify <- day0_expect[c("FNAME", "MNAME", "LNAME", "CELL", "CITY",
                                        "ST", "P1", "P2", "HS", "DEPART_AIR",
                                        "DEPART_TIME")]
@@ -679,7 +728,7 @@ function(input,output, session){
     drop_upload(filePath, path = outputDir)
     
     ###Student labels
-    outputDir <- file.path("national_ldz/onsite")
+    outputDir <- file.path(paste0("ldz/",input$day0_progyear,"_",input$day0_progloc,"/registrar/"))
     studlabels <- day0_expect[c("FNAME", "MNAME", "LNAME", "CITY", "ST", "HS",
                                 "DOT", "DOB", "VOTERID")]
     
@@ -689,7 +738,7 @@ function(input,output, session){
     drop_upload(filePath, path = outputDir)
     
     ###Students with balance
-    outputDir <- file.path("national_ldz/registrar")
+    outputDir <- file.path(paste0("ldz/",input$day0_progyear,"_",input$day0_progloc,"/registrar/"))
     studbalance <- subset(day0_expect, !BALANCE=="")
     studbalance <- studbalance[c("FNAME", "MNAME", "LNAME", "CELL", "CITY", "ST",
                                  "HS", "BALANCE")]
@@ -699,7 +748,7 @@ function(input,output, session){
     drop_upload(filePath, path = outputDir)
     
     ##Students with missing forms
-    outputDir <- file.path("national_ldz/registrar")
+    outputDir <- file.path(paste0("ldz/",input$day0_progyear,"_",input$day0_progloc,"/registrar/"))
     studforms <- subset(day0_expect, FIN.FORM=='No' | MED.FORM=='No' )
     studforms <- studforms[c("FNAME", "MNAME", "LNAME", "CELL", "CITY", "ST",
                              "HS", "FIN.FORM", "MED.FORM")]
@@ -709,10 +758,10 @@ function(input,output, session){
     drop_upload(filePath, path = outputDir)
     
     ###Student Door signs
-    outputDir <- file.path("national_ldz/onsite")
+    outputDir <- file.path(paste0("ldz/",input$day0_progyear,"_",input$day0_progloc,"/registrar/"))
     studdoor <- day0_expect[c("STATUS", "FNAME", "MNAME", "LNAME", "CITY", "ST", "MF",
                               "DORM", "ROOM", "DOT")]
-    #studdoor <- subset(studdoor,!(STATUS=="NON-ATTEND"))
+    
     studdoor <- studdoor[order(studdoor$MF, studdoor$ROOM),]
     fileName="Onsite_StudentDoorSigns.csv"
     filePath <- file.path(tempdir(), fileName)
@@ -720,7 +769,7 @@ function(input,output, session){
     drop_upload(filePath, path = outputDir)
     
     ###Student Dorming Lists - Female and Male
-    outputDir <- file.path("national_ldz/onsite")
+    outputDir <- file.path(paste0("ldz/",input$day0_progyear,"_",input$day0_progloc,"/registrar/"))
     d0_room_F <- subset(day0_expect,MF=="Female")
     d0_room_F <- d0_room_F[c("FNAME", "MNAME", "LNAME", "CITY", "ST","DOT", "DORM",
                              "ROOM")]
@@ -742,25 +791,25 @@ function(input,output, session){
   ##Download Staff database to temp, and upload the label file to DB and download to user drive
   observeEvent(input$upload_day0_staffdb, {
     #Read the Staff DB and generate database for staff labels
-    staff_file<- drop_read_csv("national_ldz/registrar/Registrar_StaffDB.csv")
+    staff_file<-  drop_read_csv(paste0("ldz/",input$day0_progyear,"_",input$day0_progloc,"/staff/Registrar_StaffDB.csv"))
     staff_labels <- staff_file[c("FNAME", "MNAME", "LNAME","CITY", "ST", "HSSTAT", "HS",
                                  "COLSTAT","UNIV1","MAJ1","UNIV3","MAJ3","ROLE")]
     
     #Confirm message
     toggle('text_div')
-    output$confirm_day0staffdemo <- renderText({"File sent to: https://www.dropbox.com/home/national_ldz/onsite"})
+    output$confirm_day0staffdemo <- renderText({"Download below files from: https://www.dropbox.com/home/[yourporgraminfo]/staff"})
     
     #Download file
     output$download_day0staffdemo <- downloadHandler(
-      filename = function() {"Onsite_StaffLabels.csv"},
+      filename = function() {"StaffLabels.csv"},
       content = function(file) {
         write.csv(staff_labels, file, row.names = FALSE)
       }
     )
     
     #Upload to Dropbox
-    outputDir <- file.path("national_ldz/onsite")
-    fileName="Onsite_StaffLabels.csv"
+    outputDir <- file.path(paste0("ldz/",input$day0_progyear,"_",input$day0_progloc,"/staff/"))
+    fileName="StaffLabels.csv"
     filePath <- file.path(tempdir(), fileName)
     write.csv(staff_labels, filePath, row.names = FALSE)
     drop_upload(filePath, path = outputDir)
@@ -777,11 +826,34 @@ function(input,output, session){
     read.csv(fill=TRUE,file=input$admin.post.file1$datapath, header=TRUE, 
              colClasses = "factor")
   })
-  
-  ######################################### Create dataframe 
+  ##Display confirmation of upload for user
+  output$confirm.day1 <- renderUI({
+    if(is.null(day1.status())) return()
+    tableOutput("day1.input")
+  })
+  ######################################## Program Info
+  observe({
+    dsnames <- c("2021","2022","2023","2024")
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$day1_progyear<- renderUI({
+      selectInput("day1_progyear", "Program Year", cb_options)
+    })
+  })
+  observe({
+    dsnames <- c("National","CO","CA","TX","NY","LDZX")
+    cb_options <- list()
+    cb_options[dsnames] <- dsnames
+    output$day1_progloc<- renderUI({
+      selectInput("day1_progloc", "Program Location", cb_options)
+    })
+  })
+  ######################################## Create dataframe 
   #Registered students
-  day1_registered <- reactive({
-    if(is.null(day1.status)) return(NULL)
+  observeEvent(input$upload_day1_registration, {
+    #Confirm message
+    toggle('text_div')
+    output$confirm_day1studentdemo <- renderText({"Download below files from: https://www.dropbox.com/home/[yourporgraminfo]/registrar"})
     
     #Read in the database
     registered_w <- day1.status()[c("VOTERID", "STATUS", "FNAME", "MNAME", "LNAME", "MF", "CELL", "P1.CELL",
@@ -791,7 +863,7 @@ function(input,output, session){
     #Output a table of only registered students
     registered_f <- subset(registered_w,!(STATUS=="Absent"))
     
-    outputDir <- file.path("national_ldz/registrar")
+    outputDir <- file.path(paste0("ldz/",input$day1_progyear,"_",input$day1_progloc,"/registrar/"))
     fileName="Registrar_StudentDB_Registered.csv"
     filePath <- file.path(tempdir(), fileName)
     write.csv(registered_f, filePath, row.names = FALSE)
@@ -801,8 +873,7 @@ function(input,output, session){
   })
   
   #Create dataframe of non-attending students
-  day1_nonattend <- reactive({
-    if(is.null(day1.status)) return(NULL)
+  observeEvent(input$upload_day1_registration, {
     
     #Read in the database
     nonattend_w <- day1.status()[c("STATUS", "FNAME", "MNAME", "LNAME", "MF", "CELL", "P1.CELL",
@@ -811,7 +882,7 @@ function(input,output, session){
     #Output a table of only registered students
     nonattend_f <- subset(nonattend_w,(STATUS=="Absent"))
     
-    outputDir <- file.path("national_ldz/registrar")
+    outputDir <-  file.path(paste0("ldz/",input$day1_progyear,"_",input$day1_progloc,"/registrar/"))
     fileName="Registrar_StudentDB_Non-Registered.csv"
     filePath <- file.path(tempdir(), fileName)
     write.csv(nonattend_f, filePath, row.names = FALSE)
@@ -820,11 +891,17 @@ function(input,output, session){
     nonattend_f
   })
   
-  day1_demoreport <- reactive({
-    if(is.null(day1.status)) return(NULL)
+  #Create demographics report
+  observeEvent(input$upload_day1_registration, {
     
     #Read in the database
-    day1_demoreport <- day1_registered()[c("FNAME", "MNAME", "LNAME", "MF", 
+    nonattend_w <- day1.status()[c("STATUS", "FNAME", "MNAME", "LNAME", "MF", "CELL", "P1.CELL",
+                                   "P2.CELL", "P1", "HS", "CITY", "ST", "DORM", "ROOM")]
+    
+    #Output a table of only registered students
+    nonattend_f <- subset(nonattend_w,(STATUS=="Absent"))
+    
+    day1_demoreport <- nonattend_f[c("FNAME", "MNAME", "LNAME", "MF", 
                                            "HS", "CITY", "ST", "ST_NAME")]
     
     #Create new dataframe
@@ -885,7 +962,7 @@ function(input,output, session){
     
     demoreport[1,"CY_COUNT"] <- i-1-value
     
-    outputDir <- file.path("national_ldz/registrar")
+    outputDir <- file.path(paste0("ldz/",input$day1_progyear,"_",input$day1_progloc,"/registrar/"))
     fileName="Registrar_DemoReport.csv"
     filePath <- file.path(tempdir(), fileName)
     write.csv(demoreport, filePath, row.names = FALSE)
@@ -893,30 +970,6 @@ function(input,output, session){
     
     demoreport
   })
-  
-  ######################################### Send file to download screen
-  #Registration file
-  output$download_post_registered <- downloadHandler(
-    filename = function() {"Registrar_StudentDB_Registered.csv"},
-    content = function(file) {
-      write.csv(day1_registered(), file, row.names = FALSE)
-    }
-  )
-  
-  #Non-registration file
-  output$download_post_nonattend <- downloadHandler(
-    filename = function() {"Registrar_StudentDB_Non-Registered.csv"},
-    content = function(file) {
-      write.csv(day1_nonattend(), file, row.names = FALSE)
-    }
-  )
-  #Demographics Report
-  output$download_post_demoreport <- downloadHandler(
-    filename = function() {"Registrar_DemoReport.csv"},
-    content = function(file) {
-      write.csv(day1_demoreport(), file, row.names = FALSE)
-    }
-  )
   
   ##############################      Day 2 Admin Tasks       #################################### 
   #################################################################################################

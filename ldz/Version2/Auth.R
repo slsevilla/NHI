@@ -1,4 +1,5 @@
 library(rdrop2)
+drop_auth()
 token <- drop_auth()
 saveRDS(token, "droptoken.rds")
 # Upload droptoken to your server

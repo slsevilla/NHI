@@ -5,8 +5,9 @@ account: samantha-sevilla
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 971487
-bundleId: 2139075
+bundleId: 4811511
 url: https://samantha-sevilla.shinyapps.io/Version2/
-when: 1559967437.81769
+when: 1626101591.15743
+lastSyncTime: 1626101591.15744
 asMultiple: FALSE
 asStatic: FALSE
